@@ -1,0 +1,202 @@
+﻿@using Restaurante.Model.DTOs;
+@using System.Text.Json;
+@model List<Usuario>
+@{
+    ViewBag.Title = "Usuarios";
+}
+
+<div class="row page-titles mx-0">
+    <div class="col-sm-6 p-md-0">
+        <div class="breadcrumb-range-picker">
+            <span><i class="icon-calender"></i></span>
+            <span class="ml-1">
+                LISTADO DE USUARIOS
+            </span>
+        </div>
+    </div>
+    <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+            <li class="breadcrumb-item active"><a href="javascript:void(0)">Lista Usuarios</a></li>
+        </ol>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row justify-content-between mb-3">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header card-header-danger">
+                    <p class="card-category">
+                        <h4 class="card-title ">Listado de Usuarios</h4>
+                        Usuarios registrados en el sistema
+                        <button type="button" class="btn btn-rounded btn-danger" data-toggle="modal" data-target=".bd-as" style="float:right; margin-right:25px; top:-20px">
+                            <i class="icon-plus"></i> <strong>REGISTRAR USUARIO</strong>
+                        </button>
+                    </p>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive m-t-40">
+                        <table id="dtUsuarios" class="table table-bordered table-striped">
+                            <thead class="text-danger textAlign">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Nombre</th>
+                                    <th>Usuario</th>
+                                    <th>Rol</th>
+                                    <th>Teléfono</th>
+                                    <th class="txtCenter">Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var usr in Model)
+                                {
+                                    <tr class="textAlign">
+                                        <td> @usr.Id</td>
+                                        <td> @usr.Nombre @usr.Apellido</td>
+                                        <td> @usr.NombreUsuario</td>
+                                        <td> @usr.IdRolNavigation.Rol</td>
+                                        <td> @usr.Telefono</td>
+                                        <td width="20%" class="txtCenter">
+                                            @if (usr.Estatus.Value)
+                                            {
+                                                <button onclick="ModificarEstatus('@usr.NombreUsuario', true, '@usr.Nombre')" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Desactivar Usuario" data-container="body">
+                                                    <i class="icon-check"></i>
+                                                </button>
+                                            }
+                                            else
+                                            {
+                                                <button onclick="ModificarEstatus('@usr.NombreUsuario', false, '@usr.Nombre')" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Activar Usuario" data-container="body">
+                                                    <i class="icon-close"></i>
+                                                </button>
+                                            }
+                                            <button onclick="EditarUsuarioModal(@(JsonSerializer.Serialize(usr)), @usr.Id)" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Editar Usuario" data-container="body">
+                                                <i class="icon-note"></i>
+                                            </button>
+                                            <button onclick="EliminarUsuario(@usr.Id)" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Eliminar Usuario" data-container="body">
+                                                <i class="icon-trash"></i>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Large modal -->
+<div class="modal fade bd-as" id="modal-usuario" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTitle"><i class="icon-plus"></i> CREAR NUEVO USUARIO</h5>
+                <button type="button" class="close txtWhite" data-dismiss="modal" aria-label="Close">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="formUsuario">
+                    <input type="hidden" name="id" id="id" />
+                    <input type="hidden" name="estatus" id="estatus" value="true" />
+                    <fieldset id="fsUsuario">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Rol:</label>
+                                    <select type="text" name="idRol" id="idRol" class="form-control" required>
+                                        <option value="1">Administrador</option>
+                                        <option value="2">Soporte</option>
+                                        <option value="3">Mesero</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Usuario</label>
+                                    <input type="text" id="nombreUsuario" name="nombreUsuario" class="form-control form-control-line" value="Ingresa nombre de usuario" required>
+                                </div>
+                                @*<div class="form-group">
+                                        <label class="bmd-label-floating">Usuario:</label>
+                                        <input type="text" id="nombreUsuario" name="nombreUsuario" class="form-control">
+                                    </div>*@
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Correo Electronico</label>
+                                    <input type="email" id="correoElectronico" name="correoElectronico" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Nombre(s)</label>
+                                    <input type="text" id="nombre" name="nombre" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Apellido(s)</label>
+                                    <input type="text" id="apellido" name="apellido" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Dirección</label>
+                                    <input type="text" id="direccion" name="direccion" class="form-control">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Teléfono</label>
+                                    <input type="number" id="telefono" name="telefono" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Cargar Foto</label>
+                                    <input type="text" id="rutaFoto" name="rutaFoto" class="form-control">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Contraseña</label>
+                                    <input type="password" id="contrasena" name="contrasena" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label class="bmd-label-floating"> Quien eres?</label>
+                                        <textarea class="form-control" id="descripcion" name="descripcion" rows="2"></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </fieldset>
+                    <label class="labelObligatorio"> Campos obligatorios <span class="text-danger">*</span></label>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-circle btn-lg txtWhite" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger btn-circle btn-lg" id="idBtnUsuario"><i class="icon-save"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Content/Scripts/Ususario.js"></script>
+}

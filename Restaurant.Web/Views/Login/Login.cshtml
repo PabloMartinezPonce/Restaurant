@@ -1,0 +1,139 @@
+﻿@{
+    ViewBag.Title = "Login";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="images/favicon.ico">
+
+    <title>Login - Las Paseras</title>
+
+    <!-- Vendors Style-->
+    <link rel="stylesheet" href="css/vendors_css.css">
+
+    <!-- Style-->
+    <link rel="stylesheet" href="css/horizontal-menu.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/skin_color.css">
+
+</head>
+
+<body class="hold-transition theme-primary bg-img" style="background-image: url(images/Background/BG1.jpeg);">
+
+    <div class="container h-p100">
+        <div class="row align-items-center justify-content-md-center h-p100">
+            <form class="form-horizontal form-material" id="loginForm">
+                <div class="col-12">
+                    <div class="row justify-content-center g-0">
+                        <div class="col-lg-5 col-md-5 col-12">
+                            <div class="bg-white rounded10 shadow-lg">
+                                <div class="content-top-agile p-20 pb-0">
+                                    <h2 class="text-primary">Iniciar Sesión</h2>
+                                    <p class="mb-0">Ingresa tus credenciales.</p>
+                                </div>
+                                <div class="p-40">
+                                    <form action="index.html" method="post">
+                                        <div class="form-group">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text bg-transparent"><i class="ti-user"></i></span>
+                                                <input type="text" class="form-control ps-15 bg-transparent" name="usuario" required placeholder="Nombre de Usuario">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <div class="input-group mb-3">
+                                                <span class="input-group-text  bg-transparent"><i class="ti-lock"></i></span>
+                                                <input name="contrasena" type="password" class="form-control ps-15 bg-transparent" required placeholder="Contraseña">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-12 text-center">
+                                                <button class="btn btn-danger mt-10" type="submit">
+                                                    <div id="ingresar">
+                                                        <i class="icon-login"></i> INGRESAR
+                                                    </div>
+                                                    <div id="loading">
+                                                        <span style="font-size: 50px" class="spinner-grow spinner-grow-md" role="status" aria-hidden="true"></span>
+                                                        @*CARGANDO...*@
+                                                    </div>
+                                                </button>
+                                                @*<button type="submit" class="btn btn-danger mt-10">INGRESAR</button>*@
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <!-- Vendor JS -->
+    <script src="js/vendors.min.js"></script>
+    <script src="js/pages/chat-popup.js"></script>
+    <script src="assets/vendor_components/apexcharts-bundle/dist/apexcharts.min.js"></script>
+    <script src="assets/icons/feather-icons/feather.min.js"></script>
+
+    <!-- Toast -->
+    <script src="assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
+    <script src="js/pages/toastr.js"></script>
+    <script src="js/pages/notification.js"></script>
+
+    <script>
+            $(document).ready(function () {
+                $('#loginForm').submit(function (e) {
+                    e.preventDefault();
+
+                   var url = "@Url.Content("~/Login/ValidateLogin")"
+                    parametros = $(this).serialize();
+                    Loading(true);
+
+                    $.ajax({
+                        url: "Login/ValidateLogin",
+                        data: parametros,
+                        type: 'POST',
+                        success: function (data) {
+                            console.log(data);
+                            var obj = JSON.parse(data);
+                            if (obj.objectResponse) {
+                                document.location.href = "@Url.Content("~/Login/Dashboard")"
+                            } else {
+                                $.toast({
+                                    heading: 'Error al iniciar sesión',
+                                    text: obj.message,
+                                    position: 'top-center',
+                                    loaderBg: '#ff6849',
+                                    icon: 'error',
+                                    hideAfter: 9000,
+                                    stack: 6
+                                });
+                            }
+                        }
+                    }).done(function (data) {
+                        Loading(false);
+                    });;
+                });
+            });
+
+            function Loading(mostrar) {
+                if (mostrar) {
+                    $('#loading').show();
+                    $('#ingresar').hide();
+                }
+                else {
+                    $('#loading').hide();
+                    $('#ingresar').show();
+                }
+            }
+            Loading(false);
+    </script>
+</body>
+</html>

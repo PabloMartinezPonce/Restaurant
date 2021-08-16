@@ -1,0 +1,17 @@
+﻿@{
+    ViewBag.Title = "Permiso Denegado";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var usuario = JsonSerializer.Deserialize<UsuarioDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+}
+<div class="note note-warning">
+    <div class="note-icon"><i class="fa fa-exclamation"></i></div>
+    <div class="note-content">
+        <h4><b>¡Acción Denegada!</b></h4>
+        <p style="font-size: medium"> El rol @usuario.Roles.rol no tiene permiso para realizar esta acción.</p>
+    </div>
+</div>

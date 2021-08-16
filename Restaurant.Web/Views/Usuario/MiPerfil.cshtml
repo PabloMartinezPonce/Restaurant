@@ -1,0 +1,131 @@
+﻿@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    ViewBag.Title = "Inicio";
+    var usuario = JsonSerializer.Deserialize<UsuarioDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+}
+<div class="row page-titles">
+    <div class="col-md-5 align-self-center">
+        <h3 class="text-themecolor">Mi Perfil</h3>
+    </div>
+    <div class="col-md-7 align-self-center">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
+            <li class="breadcrumb-item active">Mi Perfil</li>
+        </ol>
+    </div>
+    <div>
+        <button class="right-side-toggle waves-effect waves-light btn-inverse btn btn-circle btn-sm pull-right m-l-10"><i class="ti-settings text-white"></i></button>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row">
+        <!-- Column -->
+        <div class="col-lg-4 col-xlg-3 col-md-5">
+            <div class="card">
+                <div class="card-body">
+                    <center class="m-t-30">
+                        <img src="~/Content/img/faces/@usuario.rutaFoto" class="img-circle" width="150" />
+                        <h4 class="card-title m-t-10">@usuario.nombre @usuario.apellido</h4>
+                        <h6 class="card-subtitle">@usuario.Roles.rol</h6>
+                        @*<div class="row text-center justify-content-md-center">
+                                <div class="col-4"><a href="javascript:void(0)" class="link"><i class="icon-people"></i> <font class="font-medium">254</font></a></div>
+                                <div class="col-4"><a href="javascript:void(0)" class="link"><i class="icon-picture"></i> <font class="font-medium">54</font></a></div>
+                            </div>*@
+                    </center>
+                </div>
+                <div>
+                    <hr>
+                </div>
+                <div class="card-body">
+                    <small class="text-muted">Correo Electrónico </small>
+                    <h6>@usuario.correoElectronico</h6>
+                    <small class="text-muted p-t-30 db">Teléfono</small>
+                    <h6>@usuario.telefono</h6>
+                    <small class="text-muted p-t-30 db">Dirección</small>
+                    <h6>@usuario.direccion</h6>
+                    <small class="text-muted p-t-30 db">Social Profile</small>
+                    <br />
+                    <button class="btn btn-circle btn-secondary"><i class="fa fa-facebook"></i></button>
+                    <button class="btn btn-circle btn-secondary"><i class="fa fa-twitter"></i></button>
+                    <button class="btn btn-circle btn-secondary"><i class="fa fa-youtube"></i></button>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+        <!-- Column -->
+        <div class="col-lg-8 col-xlg-9 col-md-7">
+            <div class="card">
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs profile-tab" role="tablist">
+                    <li class="nav-item"> <a class="nav-link active show" data-toggle="tab" href="#settings" role="tab">Edición de datos</a> </li>
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+
+                    <div class="tab-pane active" id="settings" role="tabpanel">
+                        <div class="card-body">
+                            <form class="form-horizontal form-material">
+                                <div class="form-group">
+                                    <label class="col-md-12">Nombre(s)</label>
+                                    <div class="col-md-12">
+                                        <input type="text" value="@usuario.nombre" placeholder="Ingresa tu nombre" class="form-control form-control-line">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="example-email" class="col-md-12">Correo Electrónico</label>
+                                    <div class="col-md-12">
+                                        <input type="email" placeholder="Ingresa tu correo" class="form-control form-control-line" value="@usuario.correoElectronico" name="correo" id="correo">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Contraseña</label>
+                                    <div class="col-md-12">
+                                        <input type="password" value="@usuario.contrasena" class="form-control form-control-line">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Teléfono</label>
+                                    <div class="col-md-12">
+                                        <input type="text" value="@usuario.telefono" placeholder="Ingresa capture teléfono" class="form-control form-control-line">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-md-12">Sobre mi</label>
+                                    <div class="col-md-12">
+                                        <textarea rows="3" class="form-control form-control-line">
+                                            @usuario.descripcion
+                                        </textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-12">Selecciona perfil de usuario</label>
+                                    <div class="col-sm-12">
+                                        <select class="form-control form-control-line">
+                                            <option>Administrador</option>
+                                            <option>Ingeniero</option>
+                                            <option>Mesero</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-12">
+                                        <button class="btn btn-success">Actualizar Perfil</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Column -->
+    </div>
+</div>
+
+@section scripts
+{
+    <script src="~/Content/Scripts/Ususario.js"></script>
+}
