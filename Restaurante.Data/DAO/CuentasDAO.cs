@@ -83,6 +83,52 @@ namespace Restaurante.Data.DAO
             }
         }
 
+        public async Task<ResponseModel> GetCuentaByIdEmpleado(int IdEmpleado)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var Cuentas = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking().Where(cu => cu.CuentaActiva.Value == true && cu.IdEmpleado == IdEmpleado).ToListAsync();
+                    var empleado = await db.Usuarios.AsNoTracking().Where(us => us.Id == IdEmpleado).FirstAsync();
+                    foreach (var cuenta in Cuentas)
+                    {
+                        cuenta.NombreEmpleado = empleado.Nombre;
+                        decimal total = 0;
+                        foreach (var productos in cuenta.RelCuentaProductos)
+                        {
+                            var subtotal = Convert.ToDecimal(productos.Precio) * Convert.ToInt32(productos.Cantidad);
+                            total = total + subtotal;
+
+                            productos.IdProductoNavigation =
+                                     (from usr in db.Productos.AsNoTracking()
+                                      where usr.Id == productos.IdProducto
+                                      select new Producto
+                                      {
+                                          Id = usr.Id,
+                                          Nombre = usr.Nombre,
+                                          Cantidad = usr.Cantidad,
+                                          RutaImagen = usr.RutaImagen,
+                                          PrecioVenta = usr.PrecioVenta,
+                                          PrecioCosto = usr.PrecioCosto,
+                                          Descripcion = usr.Descripcion,
+                                      }).First();
+                        }
+                        cuenta.total = total;
+                    }
+
+                    if (Cuentas.Count() >= 1)
+                        return new ResponseModel { responseCode = 200, objectResponse = Cuentas, message = "Success" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontraron cuentas." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
+            }
+        }
+
         public async Task<ResponseModel> Create(Cuenta cuentas)
         {
             try
@@ -207,6 +253,8 @@ namespace Restaurante.Data.DAO
                     foreach (var cuenta in Cuentas)
                     {
                         decimal total = 0;
+                        var empleado = await db.Usuarios.AsNoTracking().Where(us => us.Id == cuenta.IdEmpleado).FirstAsync();
+                        cuenta.NombreEmpleado = empleado.Nombre;
                         foreach (var productos in cuenta.RelCuentaProductos)
                         {
                             var subtotal = Convert.ToDecimal(productos.Precio) * Convert.ToInt32(productos.Cantidad);

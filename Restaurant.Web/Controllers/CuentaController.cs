@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
@@ -29,11 +31,15 @@ namespace Restaurant.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Cuentas()
+        public async Task<ActionResult> Cuentas(int idEmpleado)
         {
             try
             {
-                var result = await _dao.GetAll();
+                ResponseModel result = new ResponseModel();
+                if (idEmpleado == 0)
+                    result = await _dao.GetAll();
+                else
+                    result = await _dao.GetCuentaByIdEmpleado(idEmpleado);
 
                 var resultCom = await _daoUsr.GetUserByRol(3);
                 ViewBag.ListaEmpleados = resultCom.objectResponse;
@@ -73,6 +79,13 @@ namespace Restaurant.Web.Controllers
 
                 var resultProductos = await _daoPro.Get();
                 ViewBag.ListaProductos = resultProductos.objectResponse;
+
+                //var resultProductos = await _daoPro.Get();
+                //List<Producto> list = resultProductos.objectResponse;
+                //ViewBag.ListaProductos = list
+                //                         .GroupBy(u => u.IdCategoria)
+                //                         .Select(grp => grp.ToList())
+                //                         .ToList();
 
                 return View(result.objectResponse);
             }

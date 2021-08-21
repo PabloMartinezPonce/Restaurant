@@ -127,6 +127,7 @@
                 <div class="box-footer">
                     <button id="btnEnviar" class="btn btn-success pull-right"><i class="fa fa fa-shopping-cart"></i> Pagar Cuenta</button>
                     <a href="Cuentas" class="btn btn-default"><i class="fa fa-arrow-left"></i> Regresar </a>
+                    <button onclick="$('#modalReceipt').modal('show')" class="btn btn-secondary"><i class="fa fa fa-print"></i> Ticket</button>
                 </div>
             </div>
 
@@ -151,6 +152,8 @@
     </div>
 </section>
 
+@Html.Partial("FormTicket", @Model)
+
 @section scripts
 {
     @*<script src="../Scripts/Productos.js"></script>*@
@@ -158,6 +161,7 @@
         function SumarPropina(input) {
             var propina = input.value;
             document.getElementById("propina").innerText = "$" + propina;
+            document.getElementById("ticketPropina").innerText = "$" + propina;
 
             SumarTotal();
         }
@@ -168,14 +172,17 @@
                 var subtotal = parseFloat('@Model.total');
                 var interes = subtotal * 0.035;
                 document.getElementById("interes").innerText = "$" + interes.toFixed(2);
+    
+                document.getElementById("ticketInteres").innerText = "$" + interes.toFixed(2);
             } else if (metodo === "No me quiere pagar") {
                 swal({ title: "¡Atención!", text: "Aquí tienes el número de la policia.", type: "warning" },
                     function (isConfirm) { if (isConfirm) { location.href = 'tel:4959560302'; } });
                 document.getElementById("interes").innerText = "$" + 0;
             } else {
-                document.getElementById("interes").innerText = "$" + 0;
+                document.getElementById("interes").innerText = metodo;
             }
 
+            document.getElementById("ticketMetodo").innerText = "Método Pago: " + metodo;
             SumarTotal();
         }
 

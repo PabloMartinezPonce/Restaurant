@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Restaurante.Model;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
 namespace Restaurante.Data.DBModels
 {
-    public partial class Venta
+    public partial class Venta : VentaDTO
     {
         public int Id { get; set; }
         public decimal? Propina { get; set; }

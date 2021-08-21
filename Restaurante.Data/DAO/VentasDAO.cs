@@ -19,10 +19,19 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
-                    var ventas = await db.Ventas.AsNoTracking().ToListAsync();
+                    var ventas = await db.Ventas.Include("IdCuentaNavigation").AsNoTracking().ToListAsync();
+                    decimal total = 0;
+                    decimal propina = 0;
+                    foreach (var venta in ventas)
+                    {
+                        total = venta.TotalDiaria + venta.Total.Value;
+                        propina = venta.PropinaDiaria + venta.Propina.Value;
+                        venta.TotalDiaria = total;
+                        venta.PropinaDiaria = propina;
+                    }
 
                     if (ventas.Count() >= 1)
-                        return new ResponseModel { responseCode = 200, objectResponse = ventas, message = "Success" };
+                        return new ResponseModel { responseCode = 200, objectResponse = ventas, message = "Éxito" };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "No se encontraron ventas." };
                 }

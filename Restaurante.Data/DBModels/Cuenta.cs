@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Restaurante.Model;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,7 +7,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Restaurante.Data.DBModels
 {
-    public partial class Cuenta
+    public partial class Cuenta : CuentaDTO
     {
         public Cuenta()
         {
@@ -21,8 +22,6 @@ namespace Restaurante.Data.DBModels
         public string Descripcion { get; set; }
         public int? CantidadPersonas { get; set; }
         public decimal? Propina { get; set; }
-        [NotMapped]
-        public decimal total { get; set; }
         public int IdMesa { get; set; }
         public int IdEmpleado { get; set; }
 

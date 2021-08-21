@@ -1,0 +1,109 @@
+﻿@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
+@using Restaurante.Data.DBModels;
+@inject IHttpContextAccessor HttpContextAccessor;
+@model Cuenta
+@{
+    ViewBag.Title = "Cuentas";
+    var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+}
+
+<!-- CSS -->
+<link href="~/css/receipt.css" rel="stylesheet" />
+
+<!-- Modal - Receipt -->
+<div class="modal fade" id="modalReceipt" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div class="print-container" id="invoice-POS">
+
+                    <center id="top">
+                        <div class="logo"></div>
+                        <div class="info">
+                            <p class="h2Ti">Las Paseras Bar</p>
+                        </div><!--End Info-->
+                    </center><!--End InvoiceTop-->
+
+                    <div id="mid">
+                        <div class="info">
+                            <p class="h3Ti" id="ticketMetodo">Pago en efectivo</p>
+                            <p class="h3Ti">@DateTime.Now.ToShortDateString() @DateTime.Now.ToShortTimeString()</p>
+                        </div>
+                    </div><!--End Invoice Mid-->
+                    <br />
+                    <div id="bot">
+                        <div id="table">
+                            <table>
+                                <tr class="tabletitle">
+                                    <td class="item"><p class="h2Ti">PRODUCTO</p></td>
+                                    <td class="Hours"><p class="h2Ti">#</p></td>
+                                    <td class="Rate"><p class="h2Ti">PRECIO</p></td>
+                                </tr>
+                                @foreach (var obj in Model.RelCuentaProductos)
+                                {
+                                    <tr class="service">
+                                        <td class="tableitem"><p class="itemtext">@obj.Nombre</p></td>
+                                        <td class="tableitem"><p class="itemtext">@obj.Cantidad</p></td>
+                                        <td class="tableitem"><p class="itemtext">$@obj.Precio</p></td>
+                                    </tr>
+                                }
+                                <tr>
+                                    <td colspan="3" class="lineTxt">________________________________</td>
+                                    @*<td colspan="3">******************************</td>*@
+                                </tr>
+                                <tr class="h2Ti">
+                                    <td class="Rate"><p class="totalText">TOTAL</p></td>
+                                    <td class="payment" colspan="2"><p class="totalCantidad">$@Model.total</p></td>
+                                </tr>
+                                <tr class="h2Ti">
+                                    <td class="Rate"><p class="h3Ti">Comisión</p></td>
+                                    <td class="payment"><p class="h3Ti" id="ticketInteres">$0</p></td>
+                                    <td></td>
+                                </tr>
+
+                                <tr class="h2Ti">
+                                    <td class="Rate"><p class="h3Ti">Propina</p></td>
+                                    <td class="payment" colspan="2"><p class="h3Ti" id="ticketPropina">$0</p></td>
+                                </tr>
+
+
+                            </table>
+                        </div><!--End Table-->
+
+                        <div id="legalcopy">
+                            <p class="legal">
+                                <span>******************************</span>
+                                <strong>¡Gracias por tu visita!</strong> <br />Te atendió @usuario.Nombre
+                                <span>******************************</span>
+                            </p>
+                        </div>
+
+                    </div><!--End InvoiceBot-->
+                </div><!--End Invoice-->
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                <button onclick="window.print();" class="btn btn-secondary"><i class="fa fa-print"></i> Imprimir</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts
+{
+    @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
+
+    <script>
+        onclick
+        //Envia a liquidar cuenta
+        function PrintTicket() {
+            var c = document.getElementById('the_canvas_element_id');
+            var t = c.getContext('2d');
+            window.open('', document.getElementById('the_canvas_element_id').toDataURL());
+        }
+    </script>
+}

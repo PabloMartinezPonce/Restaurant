@@ -1,0 +1,149 @@
+#invoice-POS {
+    color: #000;
+    /*box-shadow: 0 0 1in -0.25in rgba(0, 0, 0, 0.5);*/
+    padding: .5mm;
+    margin: 0 auto;
+    width: 57mm;
+    background: #FFF;
+    font-weight: 900;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif
+}
+
+.h1Ti {
+    font-size: 2.5em;
+    color: #000;
+}
+
+.h2Ti {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 1.1em;
+    font-weight: 900;
+    color: #000;
+    margin: -2px;
+}
+
+.totalText {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 1em;
+    font-weight: 900;
+    color: #000;
+    margin: -2px;
+}
+
+.totalCantidad {
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    font-size: 1.2em;
+    font-weight: 900;
+    color: #000;
+    margin: -2px;
+}
+
+.h3Ti {
+    margin: -2px;
+    font-size: .8em;
+    font-weight: 900;
+    line-height: 2em;
+    color: #000;
+}
+
+.lineTxt {
+    font-size: .9em;
+    font-weight: 900;
+    line-height: 5px;
+    color: #000;
+}
+
+.itemtext {
+    margin: -2px;
+    font-size: 1em;
+    color: #000;
+    line-height: 1.2em;
+}
+
+#mid {
+    border-bottom: 3px solid #000;
+    /*border-top: 3px solid #000;*/
+}
+
+#top {
+    min-height: 100px;
+}
+
+#mid {
+    min-height: 50px;
+}
+
+#bot {
+    min-height: 50px;
+}
+
+#top .logo {
+    height: 60px;
+    width: 60px;
+    background: url(https://kraken-soft.com/images/logo/LogoArbol.png) no-repeat;
+    background-size: 60px 60px;
+}
+
+.info {
+    display: block;
+    margin-left: 0;
+}
+
+.title {
+    float: right;
+}
+
+    .title p {
+        text-align: right;
+    }
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.tabletitle {
+    font-weight: 900;
+    font-size: .8em;
+    background: #EEE;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.service {
+    border-bottom: 1px solid #FFF;
+}
+
+.item {
+    width: 24mm;
+}
+
+.itemtext {
+    font-size: .8em;
+}
+
+#legalcopy {
+    margin-top: 5mm;
+}
+
+
+/*@media screen {
+    #printSection {
+        display: none;
+    }
+}*/
+
+@media print {
+    body * {
+        visibility: hidden;
+    }
+
+    .print-container, .print-container * {
+        visibility: visible;
+    }
+
+    .print-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+    }
+}

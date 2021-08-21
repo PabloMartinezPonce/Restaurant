@@ -500,6 +500,7 @@ namespace Restaurant.Web
                     .HasColumnName("direccion");
 
                 entity.Property(e => e.Estatus).HasColumnName("estatus");
+                entity.Property(e => e.Sexo).HasColumnName("sexo");
 
                 entity.Property(e => e.IdRol)
                     .HasColumnType("int(11)")

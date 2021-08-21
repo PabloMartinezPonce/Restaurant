@@ -1,0 +1,152 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model List<Venta>
+@{
+    ViewBag.Title = "Ventas";
+}
+
+@*<div class="content-header">
+        <div class="d-flex align-items-center">
+            <div class="me-auto">
+                <h3 class="page-title">Invoice List</h3>
+                <div class="d-inline-block align-items-center">
+                    <nav>
+                        <ol class="breadcrumb">
+                            <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                            <li class="breadcrumb-item" aria-current="page">Invoice</li>
+                            <li class="breadcrumb-item active" aria-current="page">Invoice List</li>
+                        </ol>
+                    </nav>
+                </div>
+            </div>
+
+        </div>
+    </div>*@
+<br />
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col-xl-10 col-lg-9 col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h4 class="box-title">Ventas</h4>
+                    <h6 class="box-subtitle">Export Invoice List to Copy, CSV, Excel, PDF & Print</h6>
+                </div>
+                <div class="box-body">
+                    <div class="table-responsive">
+
+                        <table id="example" class="table table-lg invoice-archive">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Fecha</th>
+                                    <th>Cuenta</th>
+                                    <th>Método</th>
+                                    <th>Calificación</th>
+                                    <th>Propina</th>
+                                    <th>Totales</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var obj in Model)
+                                {
+                                    <tr>
+                                        <td>#@obj.Id</td>
+                                        <td>@obj.Fecha</td>
+                                        <td>
+                                            <h6 class="mb-0">
+                                                <a href="#">Mesa #@obj.IdCuentaNavigation.IdMesa</a>
+                                                <span class="d-block text-muted">Personas: @obj.IdCuentaNavigation.CantidadPersonas</span>
+                                            </h6>
+                                        </td>
+                                        <td>
+                                            Pago: @obj.Metodopago
+                                        </td>
+                                        <td>
+                                            <span class="badge badge-pill badge-success">Buena</span>
+                                        </td>
+                                        <td>
+                                            <h6 class="mb-0 fw-bold"> @obj.Propina <span class="d-block text-muted fw-normal"> efectivo</span></h6>
+                                        </td>
+                                        <td>
+                                            <h6 class="mb-0 fw-bold">T: @obj.Total <span class="d-block text-muted fw-normal">S: @obj.Subtotal</span></h6>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="list-icons d-inline-flex">
+                                                <a href="#" class="list-icons-item me-10"><i class="fa fa-eye-slash"></i></a>
+                                                <div class="list-icons-item dropdown">
+                                                    <a href="#" class="list-icons-item dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <a href="#" class="dropdown-item"><i class="fa fa-download"></i> Download</a>
+                                                        <a href="#" class="dropdown-item"><i class="fa fa-print"></i> Print</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a href="#" class="dropdown-item"><i class="fa fa-pencil"></i> Edit</a>
+                                                        <a href="#" class="dropdown-item"><i class="fa fa-remove"></i> Remove</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-2 col-lg-3 col-12">
+            <div class="box box-inverse box-success">
+                <div class="box-body">
+                    <div class="flexbox">
+                        <h5>Ingresos</h5>
+                        <div class="dropdown">
+                            <span class="dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="ion-android-more-vertical rotate-90"></i></span>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="ion-android-list"></i> Details</a>
+                                <a class="dropdown-item" href="#"><i class="ion-android-add"></i> Add new</a>
+                                <a class="dropdown-item" href="#"><i class="ion-android-refresh"></i> Refresh</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center my-2">
+                        <div class="fs-60">$@Model.Last().TotalDiaria</div>
+                        <span>Ingresos totales</span>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-inverse box-primary">
+                <div class="box-body">
+                    <div class="flexbox">
+                        <h5>Propinas</h5>
+                        <div class="dropdown">
+                            <span class="dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="ion-android-more-vertical rotate-90"></i></span>
+                            <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="#"><i class="ion-android-list"></i> Details</a>
+                                <a class="dropdown-item" href="#"><i class="ion-android-add"></i> Add new</a>
+                                <a class="dropdown-item" href="#"><i class="ion-android-refresh"></i> Refresh</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-center my-2">
+                        <div class="fs-60">$0</div>
+                        <span>Total de propinas</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+
+@section scripts
+{
+    @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
+    <script src="~/ViewAjax/ProductoFunction.js"></script>
+}
