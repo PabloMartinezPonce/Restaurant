@@ -2,11 +2,12 @@
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Restaurant.Web;
+using Restaurante.Data.DBModels;
 using Restaurant.Web.Common;
 using Restaurante.Data.DAO;
 using Restaurante.Web.Common;
 
-namespace LasPaseras.Web.Controllers
+namespace Restaurant.Web.Controllers
 {
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class CategoriaController : Controller
@@ -23,11 +24,26 @@ namespace LasPaseras.Web.Controllers
             try
             {
                 var result = await _dao.GetAllCategorias();
-                return View(result);
+                return View(result.objectResponse);
             }
             catch (Exception ex)
             {
                 return Content(CommonTxt.GetMessage(ex));
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> FormCategoria(int id)
+        {
+            try
+            {
+                var result = await _dao.GetById(id);
+
+                return View(result.objectResponse);
+            }
+            catch (Exception ex)
+            {
+                return View(CommonTxt.GetMessage(ex));
             }
         }
 

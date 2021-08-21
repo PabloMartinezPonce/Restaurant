@@ -1,0 +1,77 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model Cuenta
+@{
+    ViewBag.Title = "Detalle de Cuenta";
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-lg-4">
+            <div class="box box-inverse bg-gradient-primary">
+                <div class="box-body text-center">
+                    <h5 class="text-uppercase text-muted">Cuenta #@Model.Id</h5>
+                    <br>
+                    <h5 class="price">
+                        <sup>$</sup>@Model.total
+                        <span>&nbsp;</span>
+                    </h5>
+                    <hr>
+                    <p>Mesa <strong>#@Model.IdMesa</strong> con <strong>@Model.CantidadPersonas</strong> personas</p>
+                    <p>Apertura a las <strong>@Model.FechaApertura.ToLongTimeString()</strong> </p>
+                    <p>Liquidada a las: <strong>@Model.FechaCierre.ToLongTimeString()</strong> </p>
+                    <p><strong>Nota: </strong> @Model.Descripcion</p>
+                    <p>Propina:<strong>@Model.Propina</strong> </p>
+                    <a class="btn btn-outline btn-success" href="Cuentas"><i class="fa fa-arrow-circle-left"></i> Regresar</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-lg-8">
+            <div class="box">
+                <div class="box-header bg-info">
+                    <h4 class="box-title">Productos (@Model.RelCuentaProductos.Count) de Cuenta #@Model.Id </h4>
+                </div>
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table product-overview">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th style="text-align:center">Total</th>
+                                    @*<th style="text-align:center">Acci</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var obj in Model.RelCuentaProductos)
+                                {
+                                    <tr>
+                                        <td><img src="~/images/productos/@obj.IdProductoNavigation.RutaImagen" alt="" width="80"></td>
+                                        <td>
+                                            <h5>@obj.Nombre</h5>
+                                            <p>@obj.IdProductoNavigation.Descripcion</p>
+                                        </td>
+                                        <td>$@obj.Precio</td>
+                                        <td width="70">@obj.Cantidad</td>
+                                        <td width="100" align="center" class="fw-900">$@(Convert.ToDecimal(obj.Cantidad) * Convert.ToDecimal(obj.Precio)) </td>
+                                        @*<td align="center"><a href="javascript:void(0)" class="btn btn-circle btn-danger btn-xs" title="" data-bs-toggle="tooltip" data-bs-original-title="Delete"><i class="ti-trash"></i></a></td>*@
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section scripts
+{
+    <script src="../Scripts/Productos.js"></script>
+}

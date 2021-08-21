@@ -5,7 +5,7 @@
 var rec;
 var frase;
 var fraseUsuario;
-var nombre = usuario.nombre;
+//var nombre = usuario.nombre;
 var formatoIncorrecto = "Comando inválido. por favor usa el formato correcto, por ejemplo. 5 coronas para la mesa 6, intentalo de nuevo";
 rec = new webkitSpeechRecognition();
 rec.lang = "es-MX";
@@ -21,7 +21,8 @@ function AlertExpiration(data) {
 
 function Hablame() {
     MicroOn();
-    $('#modal-cuentas').modal({ backdrop: 'static', keyboard: false });
+    //$('#modal-cuentas').modal({ backdrop: 'static', keyboard: false });
+    $('#modal-cuentas').modal('show');
     rec.start();
 }
 
@@ -35,9 +36,33 @@ function Escuchar(event) {
 
 function Hablar(texto) {
     fraseUsuario = texto;
-    if (texto.includes("inicio")) {
-        frase = "Redirigiendo a inicio";
+    if (texto.includes("inicio") || texto.includes("estadistica") || texto.includes("dashboard")) {
+        frase = "Redirigiendo a dashboard";
         window.location.href = location.origin + "/Login/Dashboard";
+    } else if (texto.includes("producto") && (texto.includes("crear") || texto.includes("creo") || texto.includes("nuevo"))) {
+        frase = "Selecciona el botón nuevo, llena los campos y guarda.";
+        window.location.href = location.origin + "/Producto/Productos";
+    } else if (texto.includes("producto") && (texto.includes("ver") || texto.includes("cuantos") || texto.includes("donde"))) {
+        frase = "Aquí tienes todos los productos registrados.";
+        window.location.href = location.origin + "/Producto/Productos";
+    } else if (texto.includes("complemento") && (texto.includes("crear") || texto.includes("creo") || texto.includes("nuevo"))) {
+        frase = "Selecciona el botón nuevo, llena los campos y guarda.";
+        window.location.href = location.origin + "/Complemento/Complementos";
+    } else if (texto.includes("complemento") && (texto.includes("ver") || texto.includes("cuantos") || texto.includes("donde"))) {
+        frase = "Aquí tienes todos los complementos registrados.";
+        window.location.href = location.origin + "/Complemento/Complementos";
+    } else if (texto.includes("categoria") && (texto.includes("crear") || texto.includes("creo") || texto.includes("nuevo"))) {
+        frase = "Selecciona el botón nuevo, llena los campos y guarda.";
+        window.location.href = location.origin + "/Categoria/Categorias";
+    } else if (texto.includes("categoria") && (texto.includes("ver") || texto.includes("cuantos") || texto.includes("donde"))) {
+        frase = "Aquí tienes todas las categorías registradas.";
+        window.location.href = location.origin + "/Categoria/Categorias";
+    } else if (texto.includes("usuario") && (texto.includes("crear") || texto.includes("creo") || texto.includes("nuevo"))) {
+        frase = "Selecciona el botón nuevo, llena los campos y guarda.";
+        window.location.href = location.origin + "/Usuario/Usuarios";
+    } else if ((texto.includes("usuario") || (texto.includes("staf") || (texto.includes("empleados")) && (texto.includes("ver") || texto.includes("cuantos") || texto.includes("donde"))))) {
+        frase = "Aquí tienes todos los usuarios registrados.";
+        window.location.href = location.origin + "/Usuario/Usuarios";
     } else if (texto.includes("perfil")) {
         frase = "Redirigiendo a tu perfil";
         window.location.href = location.origin + "/Usuario/MiPerfil";
@@ -46,7 +71,8 @@ function Hablar(texto) {
         window.location.href = location.origin;
     } else if (texto.includes("nuevo pedido")) {
         frase = "Selecciona una mesa";
-        $('#modalPedidoManual').modal({ backdrop: 'static', keyboard: false });
+        $('#modalPedidoManual').modal('show');
+        //$('#modalPedidoManual').modal({ backdrop: 'static', keyboard: false });
     } else if (texto.includes("mesa")) {
         AgregarProducto();
         return false;
@@ -164,7 +190,8 @@ function ValidarPedido(idMesa, unidades, producto) {
             if (data.responseCode == 200) {
                 //Obtener precio de producto y calcular total
                 $('#modal-cuentas').modal('toggle');
-                $('#modalPedidoAuto').modal({ backdrop: 'static', keyboard: false });
+                $('#modalPedidoManual').modal('show');
+                //$('#modalPedidoAuto').modal({ backdrop: 'static', keyboard: false });
 
                 let total = parseFloat(data.objectResponse.precioVenta) * parseFloat(unidades);
 
@@ -211,7 +238,8 @@ $("#btnEnviarVenta").click(function (event) {
         success: function (data) {
             if (data.responseCode == 200) {
                 $('#modalPedidoAuto').modal('toggle');
-                $('#modalCuenta').modal({ backdrop: 'static', keyboard: false });
+                //$('#modalCuenta').modal({ backdrop: 'static', keyboard: false });
+                $('#modalCuenta').modal('show');
                 PopulateSales(data.objectResponse);
                 swal({ title: "¡Guardado!", text: "Se agregó el pedido exitosamente.", icon: "success" });
             } else {
@@ -225,26 +253,26 @@ $("#btnEnviarVenta").click(function (event) {
     });
 });
 
-$('#dtCuenta').DataTable({
-    responsive: true,
-    paging: false,
-    searching: false,
-    ordering: false,
-    info: false,
-});
+//$('#dtCuenta').DataTable({
+//    responsive: true,
+//    paging: false,
+//    searching: false,
+//    ordering: false,
+//    info: false,
+//});
 
-function PopulateSales(data) {
-    $('#dtCuenta').DataTable().clear().draw();
-    for (var i = 0; i < data.length; i++) {
-        var rowImg = '<img src="~/Content/images/productos/Corona.png" width="70" alt=pro />';
-        var rowPrecio = '<span class="text-right" style="font-size:25px; color:white">$' + data[i].precioVenta + '</span>';
-        $('#dtCuenta').dataTable().fnAddData([
-            rowImg,
-            data[i].unidades + " " + data[i].producto,
-            rowPrecio
-        ]);
-    }
-}
+//function PopulateSales(data) {
+//    $('#dtCuenta').DataTable().clear().draw();
+//    for (var i = 0; i < data.length; i++) {
+//        var rowImg = '<img src="~/Content/images/productos/Corona.png" width="70" alt=pro />';
+//        var rowPrecio = '<span class="text-right" style="font-size:25px; color:white">$' + data[i].precioVenta + '</span>';
+//        $('#dtCuenta').dataTable().fnAddData([
+//            rowImg,
+//            data[i].unidades + " " + data[i].producto,
+//            rowPrecio
+//        ]);
+//    }
+//}
 
 function GetProduct(items) {
     var producto;

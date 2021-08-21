@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Restaurante.Data.DBModels;
 
 namespace Restaurante.Data.DAO
 {
@@ -58,40 +59,13 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
-                    var listaAgrupada = new List<Venta>();
-
                     db.Ventas.Add(regitro);
-                    var resU = await db.SaveChangesAsync();
 
-                    if (resU > 0)
-                    {
-                        var listVentas = await db.Ventas.AsNoTracking().Where(e => e.IdCuenta == regitro.IdCuenta).ToListAsync();
-                        foreach (var item in listVentas)
-                        {
-                            if (listaAgrupada.Any(a => a.IdProducto == item.IdProducto))
-                            {
-                                foreach (var item2 in listaAgrupada.Where(p => p.IdProducto == item.IdProducto))
-                                    item2.Unidades = item2.Unidades + item.Unidades;
-                            }
-                            else
-                            {
-                                listaAgrupada.Add(new Venta
-                                {
-                                    Id = item.Id,
-                                    PrecioVenta = item.PrecioVenta,
-                                    Unidades = item.Unidades,
-                                    Descuento = item.Descuento,
-                                    IdProducto = item.IdProducto,
-                                    IdCuenta = item.IdCuenta,
-                                });
-                            }
-                        } 
-                    }
-
-                    if (listaAgrupada.Count() >= 1)
-                        return new ResponseModel { responseCode = 200, objectResponse = listaAgrupada, message = "Success" };
+                    var result = await db.SaveChangesAsync();
+                    if (result > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Venta registrada exitosamente" };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = null, message = "La venta no se reguistrada." };
+                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La venta no pudo ser registrada" };
                 }
             }
             catch (SqlException ex)

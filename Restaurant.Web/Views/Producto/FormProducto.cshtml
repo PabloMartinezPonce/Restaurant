@@ -1,0 +1,218 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model Producto
+@{
+    ViewBag.Title = "Formulario Producto";
+}
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Productos</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Listado de productos</li>
+                        <li class="breadcrumb-item active" aria-current="page">Productos</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    @if (Model.Id != 0)
+                    {
+                    <img width="70" src="~/images/productos/@Model.RutaImagen" />
+                    <h4 class="box-title">Edición de producto '@Model.Nombre'</h4>
+                    }
+                    else
+                    {
+                    <h4 class="box-title">Creación de nuevo @Model.Nombre</h4>
+                    }
+                </div>
+                <div class="box-body">
+                    <form method="post" enctype="multipart/form-data" asp-controller="Producto" asp-action="Productos">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <input class="form-control" type="file" name="postedFile" />
+                            </div>
+                            <div class="col-md-6">
+                                <input type="submit" value="Subir" class="btn btn-success" />
+                            </div>
+                        </div>
+                        <input type="hidden" name="id" value="@Model.Id" />
+                        @*<br />
+                            <span style="color:green">@Html.Raw(ViewBag.Message)</span>*@
+                    </form>
+                    @*<form class="dropzone" method="post" enctype="multipart/form-data" asp-controller="Producto" asp-action="Productos">
+                            <div class="fallback">
+                                <input type="file" name="postedFile" />
+                            </div>
+                            <input type="hidden" name="id" value="@Model.Id" />
+                        </form>*@
+                    <br />
+                    <form id="formProducto">
+                        <input id="Id" name="Id" value="@Model.Id" type="hidden" />
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Nombre del producto</label>
+                                        <input type="text" class="form-control" placeholder="Nombre del producto" value="@Model.Nombre" name="Nombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Código</label>
+                                        <input type="text" class="form-control" placeholder="Ingresa código" value="@Model.Codigo" name="Codigo" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Stock</label>
+                                        <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Stock" name="Stock" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/row-->
+                            <!--/row-->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Categoría</label>
+                                        <select class="form-select" id="idCategoria" name="idCategoria" required>
+                                            @foreach (var item in ViewBag.ListaCategorias)
+                                            {
+                                            <option value="@item.Id">@item.Nombre</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Proveedor</label>
+                                        <select class="form-select" id="idProveedor" name="idProveedor">
+                                            @foreach (var item in ViewBag.ListaProveedores)
+                                            {
+                                            <option value="@item.Id">@item.Compania</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <h5 class="my-10">Complementos</h5>
+                                    <select class="selectpicker" name="complementos" multiple>
+                                        @foreach (var list in ViewBag.ListaComplementos)
+                                        {
+                                        <optgroup label="@list[0].IdTipoComplementoNavigation.Nombre">
+                                            @foreach (var item in list)
+                                                {
+                                            <option value="@item.Id">@item.Nombre</option>
+                                                }
+                                        </optgroup>
+                                        }
+                                    </select>
+                                </div>
+                                <!--/span-->
+                            </div>
+                            <!--/row-->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Precio compra</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-money"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioCosto" name="PrecioCosto" id="PrecioCosto">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Precio venta</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-money"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioVenta" name="PrecioVenta" id="PrecioVenta">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Descuento</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-cut"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa descuento" value="@Model.Descuento" name="Descuento" id="Descuento">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Descripción de producto</label>
+                                        <textarea class="form-control p-15" rows="2" name="Descripcion" id="Descripcion">@Model.Descripcion</textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <!--/row-->
+                        </div>
+                        <div class="form-actions mt-10">
+                            <a href="/Producto/Productos" class="btn btn-danger">Cancelar</a>
+                            <button type="button" id="idBtnProducto" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section scripts
+{
+    <script>
+        //Envia a guardar formulario
+        $("#idBtnProducto").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let id = document.getElementById("Id").value;
+            let $form = $('#formProducto');
+            let valid = $form.parsley().validate();
+            let url = id == "0" ? "CrearProducto" : "EditarProducto";
+
+            if (!valid) {
+                return false;
+            }
+            var formData = $form.serialize();
+
+            $.ajax({
+                url: url,
+                data: formData,
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Producto/Productos"; } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+    </script>
+}

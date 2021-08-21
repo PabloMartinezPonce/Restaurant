@@ -1,0 +1,201 @@
+﻿@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
+@using Restaurante.Data.DBModels;
+@inject IHttpContextAccessor HttpContextAccessor;
+@model List<Cuenta>
+@{
+    ViewBag.Title = "Cuentas";
+    var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+}
+
+<br />
+<div class="box">
+    <div class="box-body p-0">
+        <div class="flexbox align-items-center p-15">
+            <div class="flexbox align-items-center">
+                <div class="custom-control custom-checkbox ps-0">
+                    <button type="button" class="btn btn-success btn-round" data-bs-toggle="modal" data-bs-target="#modal-fill">
+                        <i class="ion ion-plus"></i> Nueva Cuenta
+                    </button>
+                </div>
+
+                <span class="divider-line mx-1"></span>
+
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesero</button>
+                    <div class="dropdown-menu">
+                        @foreach (var item in ViewBag.ListaEmpleados)
+                        {
+                            <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.Nombre</a>
+                        }
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesa</button>
+                    <div class="dropdown-menu">
+                        @foreach (var item in ViewBag.ListaMesas)
+                        {
+                            <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.TipoLugar #@item.Id</a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="lookup lookup-circle lookup-right">
+                    <input type="text" data-provide="media-search">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<section class="content">
+    <div class="row fx-element-overlay">
+        @foreach (var obj in Model)
+        {
+            <div class="col-lg-4">
+                <div class="box box-inverse bg-gradient-primary">
+                    <div class="box-body text-center">
+                        <h5 class="text-uppercase text-muted">Cuenta #@obj.Id</h5>
+                        <br>
+                        <h5 class="price">
+                            <sup>$</sup>@obj.total
+                            <span>&nbsp;</span>
+                        </h5>
+                        <hr>
+                        <p>Mesa <strong>#@obj.IdMesa</strong> con <strong>@obj.CantidadPersonas</strong> personas</p>
+                        <p>Apertura a las <strong>@obj.FechaApertura.ToLongTimeString()</strong> </p>
+                        <p><strong>Nota: </strong> @obj.Descripcion</p>
+                        <a class="btn btn-outline btn-white" href="FormCuenta?id=@obj.Id"><i class="fa fa-eye"></i> Ver</a>
+                        <a class="btn btn-outline btn-success" href="FormAgregarProducto?id=@obj.Id"><i class="fa fa-plus"></i> Producto</a>
+                        <a class="btn btn-outline btn-danger" href="FormPagar?id=@obj.Id"><i class="fa fa-money"></i> Liquidar</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Modal -->
+<div class="modal modal-fill fade" data-backdrop="false" id="modal-fill" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            @*<div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>*@
+            <div class="modal-body">
+                <div class="col-12 col-xl-12">
+                    <div class="box">
+                        <div class="box-header bg-success">
+                            <h4 class="box-title text-white">Abrir Cuenta</h4>
+                            <ul class="box-controls pull-right">
+                                <li class="dropdown">
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="box-body px-0 bg-success rounded-0" style="position: relative;">
+                            <div id="spark3" class="text-dark" style="min-height: 200px;"><div id="apexcharts7dt6htath" class="apexcharts-canvas apexcharts7dt6htath apexcharts-theme-light" style="width: 373px; height: 200px;"><svg id="SvgjsSvg1926" width="373" height="200" xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:svgjs="http://svgjs.com/svgjs" class="apexcharts-svg" xmlns:data="ApexChartsNS" transform="translate(0, 0)" style="background: transparent;"><g id="SvgjsG1928" class="apexcharts-inner apexcharts-graphical" transform="translate(0, 50)"><defs id="SvgjsDefs1927"><clipPath id="gridRectMask7dt6htath"><rect id="SvgjsRect1933" width="376" height="105" x="-4.5" y="-2.5" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><clipPath id="gridRectMarkerMask7dt6htath"><rect id="SvgjsRect1934" width="371" height="104" x="-2" y="-2" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fff"></rect></clipPath><filter id="SvgjsFilter1941" filterUnits="userSpaceOnUse" width="200%" height="200%" x="-50%" y="-50%"><feFlood id="SvgjsFeFlood1942" flood-color="#000000" flood-opacity="0.1" result="SvgjsFeFlood1942Out" in="SourceGraphic"></feFlood><feComposite id="SvgjsFeComposite1943" in="SvgjsFeFlood1942Out" in2="SourceAlpha" operator="in" result="SvgjsFeComposite1943Out"></feComposite><feOffset id="SvgjsFeOffset1944" dx="1" dy="5" result="SvgjsFeOffset1944Out" in="SvgjsFeComposite1943Out"></feOffset><feGaussianBlur id="SvgjsFeGaussianBlur1945" stdDeviation="5 " result="SvgjsFeGaussianBlur1945Out" in="SvgjsFeOffset1944Out"></feGaussianBlur><feMerge id="SvgjsFeMerge1946" result="SvgjsFeMerge1946Out" in="SourceGraphic"><feMergeNode id="SvgjsFeMergeNode1947" in="SvgjsFeGaussianBlur1945Out"></feMergeNode><feMergeNode id="SvgjsFeMergeNode1948" in="[object Arguments]"></feMergeNode></feMerge><feBlend id="SvgjsFeBlend1949" in="SourceGraphic" in2="SvgjsFeMerge1946Out" mode="normal" result="SvgjsFeBlend1949Out"></feBlend></filter></defs><line id="SvgjsLine1932" x1="0" y1="0" x2="0" y2="100" stroke="#b6b6b6" stroke-dasharray="3" class="apexcharts-xcrosshairs" x="0" y="0" width="1" height="100" fill="#b1b9c4" filter="none" fill-opacity="0.9" stroke-width="1"></line><g id="SvgjsG1950" class="apexcharts-xaxis" transform="translate(0, 0)"><g id="SvgjsG1951" class="apexcharts-xaxis-texts-g" transform="translate(0, -4)"></g></g><g id="SvgjsG1953" class="apexcharts-grid"><g id="SvgjsG1954" class="apexcharts-gridlines-horizontal" style="display: none;"><line id="SvgjsLine1956" x1="0" y1="0" x2="367" y2="0" stroke="#e0e0e0" stroke-dasharray="0" class="apexcharts-gridline"></line><line id="SvgjsLine1957" x1="0" y1="14.285714285714286" x2="367" y2="14.285714285714286" stroke="#e0e0e0" stroke-dasharray="0" class="apexcharts-gridline"></line><line id="SvgjsLine1958" x1="0" y1="28.571428571428573" x2="367" y2="28.571428571428573" stroke="#e0e0e0" stroke-dasharray="0" class="apexcharts-gridline"></line><line id="SvgjsLine1959" x1="0" y1="42.85714285714286" x2="367" y2="42.85714285714286" stroke="#e0e0e0" stroke-dasharray="0" class="apexcharts-gridline"></line><line id="SvgjsLine1960" x1="0" y1="57.142857142857146" x2="367" y2="57.142857142857146" stroke="#e0e0e0" stroke-dasharray="0" class="apexcharts-gridline"></line><line id="SvgjsLine1961" x1="0" y1="71.42857142857143" x2="367" y2="71.42857142857143" stroke="#e0e0e0" stroke-dasharray="0" class="apexcharts-gridline"></line><line id="SvgjsLine1962" x1="0" y1="85.71428571428572" x2="367" y2="85.71428571428572" stroke="#e0e0e0" stroke-dasharray="0" class="apexcharts-gridline"></line><line id="SvgjsLine1963" x1="0" y1="100.00000000000001" x2="367" y2="100.00000000000001" stroke="#e0e0e0" stroke-dasharray="0" class="apexcharts-gridline"></line></g><g id="SvgjsG1955" class="apexcharts-gridlines-vertical" style="display: none;"></g><line id="SvgjsLine1965" x1="0" y1="100" x2="367" y2="100" stroke="transparent" stroke-dasharray="0"></line><line id="SvgjsLine1964" x1="0" y1="1" x2="0" y2="100" stroke="transparent" stroke-dasharray="0"></line></g><g id="SvgjsG1936" class="apexcharts-line-series apexcharts-plot-series"><g id="SvgjsG1937" class="apexcharts-series" seriesName="seriesx1" data:longestSeries="true" rel="1" data:realIndex="0"><path id="SvgjsPath1940" d="M 0 64.28571428571428C 14.272222222222222 64.28571428571428 26.505555555555556 5.714285714285708 40.77777777777778 5.714285714285708C 55.05 5.714285714285708 67.28333333333333 41.42857142857142 81.55555555555556 41.42857142857142C 95.82777777777778 41.42857142857142 108.0611111111111 15.714285714285708 122.33333333333333 15.714285714285708C 136.60555555555555 15.714285714285708 148.8388888888889 64.28571428571428 163.11111111111111 64.28571428571428C 177.38333333333333 64.28571428571428 189.61666666666667 37.14285714285714 203.88888888888889 37.14285714285714C 218.1611111111111 37.14285714285714 230.39444444444445 82.85714285714286 244.66666666666666 82.85714285714286C 258.93888888888887 82.85714285714286 271.1722222222222 48.57142857142857 285.44444444444446 48.57142857142857C 299.7166666666667 48.57142857142857 311.95 87.14285714285714 326.22222222222223 87.14285714285714C 340.49444444444447 87.14285714285714 352.72777777777776 70 367 70" fill="none" fill-opacity="1" stroke="rgba(20,144,138,0.85)" stroke-opacity="1" stroke-linecap="butt" stroke-width="5" stroke-dasharray="0" class="apexcharts-line" index="0" clip-path="url(#gridRectMask7dt6htath)" filter="url(#SvgjsFilter1941)" pathTo="M 0 64.28571428571428C 14.272222222222222 64.28571428571428 26.505555555555556 5.714285714285708 40.77777777777778 5.714285714285708C 55.05 5.714285714285708 67.28333333333333 41.42857142857142 81.55555555555556 41.42857142857142C 95.82777777777778 41.42857142857142 108.0611111111111 15.714285714285708 122.33333333333333 15.714285714285708C 136.60555555555555 15.714285714285708 148.8388888888889 64.28571428571428 163.11111111111111 64.28571428571428C 177.38333333333333 64.28571428571428 189.61666666666667 37.14285714285714 203.88888888888889 37.14285714285714C 218.1611111111111 37.14285714285714 230.39444444444445 82.85714285714286 244.66666666666666 82.85714285714286C 258.93888888888887 82.85714285714286 271.1722222222222 48.57142857142857 285.44444444444446 48.57142857142857C 299.7166666666667 48.57142857142857 311.95 87.14285714285714 326.22222222222223 87.14285714285714C 340.49444444444447 87.14285714285714 352.72777777777776 70 367 70" pathFrom="M -1 100L -1 100L 40.77777777777778 100L 81.55555555555556 100L 122.33333333333333 100L 163.11111111111111 100L 203.88888888888889 100L 244.66666666666666 100L 285.44444444444446 100L 326.22222222222223 100L 367 100"></path><g id="SvgjsG1938" class="apexcharts-series-markers-wrap" data:realIndex="0"><g class="apexcharts-series-markers"><circle id="SvgjsCircle1971" r="0" cx="0" cy="0" class="apexcharts-marker w1aau1k1n no-pointer-events" stroke="#ffffff" fill="#14908a" fill-opacity="1" stroke-width="2" stroke-opacity="0.9" default-marker-size="0"></circle></g></g></g><g id="SvgjsG1939" class="apexcharts-datalabels" data:realIndex="0"></g></g><line id="SvgjsLine1966" x1="0" y1="0" x2="367" y2="0" stroke="#b6b6b6" stroke-dasharray="0" stroke-width="1" class="apexcharts-ycrosshairs"></line><line id="SvgjsLine1967" x1="0" y1="0" x2="367" y2="0" stroke-dasharray="0" stroke-width="0" class="apexcharts-ycrosshairs-hidden"></line><g id="SvgjsG1968" class="apexcharts-yaxis-annotations"></g><g id="SvgjsG1969" class="apexcharts-xaxis-annotations"></g><g id="SvgjsG1970" class="apexcharts-point-annotations"></g></g><rect id="SvgjsRect1931" width="0" height="0" x="0" y="0" rx="0" ry="0" opacity="1" stroke-width="0" stroke="none" stroke-dasharray="0" fill="#fefefe"></rect><g id="SvgjsG1952" class="apexcharts-yaxis" rel="0" transform="translate(-18, 0)"></g><g id="SvgjsG1929" class="apexcharts-annotations"></g></svg><div class="apexcharts-legend"></div><div class="apexcharts-tooltip apexcharts-theme-light"><div class="apexcharts-tooltip-series-group"><span class="apexcharts-tooltip-marker" style="background-color: rgb(20, 144, 138);"></span><div class="apexcharts-tooltip-text" style="font-family: Helvetica, Arial, sans-serif; font-size: 12px;"><div class="apexcharts-tooltip-y-group"><span class="apexcharts-tooltip-text-label"></span><span class="apexcharts-tooltip-text-value"></span></div><div class="apexcharts-tooltip-z-group"><span class="apexcharts-tooltip-text-z-label"></span><span class="apexcharts-tooltip-text-z-value"></span></div></div></div></div><div class="apexcharts-yaxistooltip apexcharts-yaxistooltip-0 apexcharts-yaxistooltip-left apexcharts-theme-light"><div class="apexcharts-yaxistooltip-text"></div></div></div></div>
+                            <div class="resize-triggers"><div class="expand-trigger"><div style="width: 374px; height: 243px;"></div></div><div class="contract-trigger"></div></div>
+                        </div>
+                        <div class="box-body up-mar60 pb-0">
+                            <div class="row">
+                                <div class="col-6">
+                                    <div class="bg-lightest px-30 py-40 rounded20 mb-20">
+                                        <span class="icon-Equalizer d-block fs-40"><span class="path1"></span><span class="path2"></span><span class="path3"></span><span class="path4"></span></span>
+                                        <div class="col-12">
+                                            <select class="form-select" id="idMesa">
+                                                <option disabled selected value="">Selecciona una mesa</option>
+                                                @foreach (var item in ViewBag.ListaMesas)
+                                                {
+                                                    <option value="@item.Id">#@item.Id @item.Descripcion</option>
+                                                }
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                    <div class="bg-lightest px-30 py-40 rounded20 mb-20">
+                                        <span class="icon-Add-user d-block fs-40"><span class="path1"></span><span class="path2"></span></span>
+                                        <div class="col-12">
+                                            <input type="number" class="form-control" id="cantidadPersonas" placeholder="Número de personas" />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-12">
+                                    <div class="bg-lightest px-30 py-40 rounded20 mb-20">
+                                        <span class="icon-Mail-opened d-block fs-40"><span class="path1"></span><span class="path2"></span></span>
+                                        <div class="col-12">
+                                            <textarea class="form-control" id="descripcion" placeholder="Ingresa descripción de clientes"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
+                <button id="btnAbrirCuenta" type="button" class="btn btn-primary float-end"><i class="fa fa-check"></i> Abrir Cuenta</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- /.modal -->
+@section scripts
+{
+    @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
+
+    <script>
+        //Envia a liquidar cuenta
+        $("#btnAbrirCuenta").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let mesa = document.getElementById("idMesa").value;
+            let descripcion = document.getElementById("descripcion").value;
+            let personas = document.getElementById("cantidadPersonas").value;
+
+            if (descripcion == "") {
+                swal({ title: "¡Atención!", text: "Ingresa una breve descripción.", type: "info" });
+                return false;
+            } else if (personas == "") {
+                swal({ title: "¡Atención!", text: "Ingresa la cantidad de personas.", type: "info" });
+                return false;
+            }else if (mesa == "") {
+                swal({ title: "¡Atención!", text: "El selecciona una mesa.", type: "info" });
+                return false;
+            }
+
+            var formData = {
+                CuentaActiva: true,
+                Descripcion: descripcion,
+                CantidadPersonas: personas,
+                IdMesa: mesa,
+                IdEmpleado: '@usuario.Id',
+            };
+
+            $.ajax({
+                url: "CreateCuenta",
+                data: formData,
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/Cuentas"; } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+    </script>
+}

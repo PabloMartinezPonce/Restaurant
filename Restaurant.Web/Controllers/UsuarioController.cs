@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Restaurante.Data.DBModels;
 
 namespace Restaurant.Web.Controllers
 {

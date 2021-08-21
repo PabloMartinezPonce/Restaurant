@@ -1,0 +1,251 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model Cuenta
+@{
+    ViewBag.Title = "Formulario Producto";
+}
+
+<section class="content">
+    <div class="row">
+        <div class="col-12 col-lg-8">
+
+            <div class="box">
+                <div class="box-header bg-success">
+                    <h4 class="box-title">Productos (@Model.RelCuentaProductos.Count) de Cuenta #@Model.Id </h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table product-overview">
+                            <thead>
+                                <tr>
+                                    <th>Imagen</th>
+                                    <th>Producto</th>
+                                    <th>Precio</th>
+                                    <th>Cantidad</th>
+                                    <th style="text-align:center">Total</th>
+                                    @*
+                                        <th style="text-align:center">Acci</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var obj in Model.RelCuentaProductos)
+                                {
+                                    <tr>
+                                        <td><img src="~/images/productos/@obj.IdProductoNavigation.RutaImagen" alt="" width="80"></td>
+                                        <td>
+                                            <h5>@obj.Nombre</h5>
+                                            <p>@obj.IdProductoNavigation.Descripcion</p>
+                                        </td>
+                                        <td>$@obj.Precio</td>
+                                        <td width="70">@obj.Cantidad</td>
+                                        <td width="100" align="center" class="fw-900">$@(Convert.ToDecimal(obj.Cantidad) * Convert.ToDecimal(obj.Precio)) </td>
+                                        @*
+                                            <td align="center"><a href="javascript:void(0)" class="btn btn-circle btn-danger btn-xs" title="" data-bs-toggle="tooltip" data-bs-original-title="Delete"><i class="ti-trash"></i></a></td>*@
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="col-12 col-lg-4">
+            <div class="box">
+                <div class="box-header bg-success">
+                    <h4 class="box-title">Subtotales</h4>
+                </div>
+
+                <div class="box-body">
+                    <div class="table-responsive">
+                        <table class="table simple mb-0">
+                            <tbody>
+                                <tr>
+                                    <td>Descuento/Promo</td>
+                                    <td class="text-end fw-700"><span class="text-danger me-15">%0</span> $0</td>
+                                </tr>
+                                <tr>
+                                    <td>Propina</td>
+                                    <td class="text-end fw-700" id="propina">$0</td>
+                                </tr>
+                                <tr>
+                                    <td>Mercado Pago</td>
+                                    <td class="text-end fw-700" id="interes">$0</td>
+                                </tr>
+                                <tr>
+                                    <td>Subtotal</td>
+                                    <td class="text-end fw-700">$@Model.total</td>
+                                </tr>
+                                <tr>
+                                    <th class="bt-1">Total</th>
+                                    <th class="bt-1 text-end fw-900 fs-18" id="total">$@Model.total</th>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <br />
+                    <div class="col-12">
+                        <div class="input-group w-p100">
+                            <button type="button" class="btn btn-default"><i class="fa fa-credit-card"></i></button>
+                            <select id="metodoPago" class="form-select" onchange="SumarInteres(this)">
+                                <option disabled value="" selected>Selecciona método de pago</option>
+                                <option value="Efectivo">Efectivo</option>
+                                <option value="Tarjeta">Tarjeta</option>
+                                <option value="Transferencia">Transferencia</option>
+                                <option value="No me quiere pagar">No me quiere pagar</option>
+                            </select>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-md-12">
+                        <div class="input-group w-p100">
+                            <button type="button" class="btn btn-default">$</button>
+                            <input id="propina" type="number" placeholder="Ingresa propina" class="form-control" onchange="SumarPropina(this)">
+                        </div>
+                    </div>
+                    <br />
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="input-group w-p100">
+                                <button type="button" class="btn btn-default">$</button>
+                                <input id="recibido" type="number" placeholder="Ingresa pago" class="form-control" onchange="CalcularCambio(this)">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="input-group w-p100">
+                                <button type="button" class="btn btn-default">$</button>
+                                <input id="cambio" type="number" placeholder="Efectivo de cambio" class="form-control">
+                            </div>
+                        </div>
+                    </div>
+
+
+                </div>
+                <div class="box-footer">
+                    <button id="btnEnviar" class="btn btn-success pull-right"><i class="fa fa fa-shopping-cart"></i> Pagar Cuenta</button>
+                    <a href="Cuentas" class="btn btn-default"><i class="fa fa-arrow-left"></i> Regresar </a>
+                </div>
+            </div>
+
+            <div class="col-md-12 col-sm-12">
+                <div class="box">
+                    <div class="box-body">
+                        <h4 class="box-title">Capura Calificación</h4>
+                        <p>Solicita al cliente una calificación del servicio del 1 al 5</p>
+                        <div id="score-rating" style="cursor: pointer;">
+                            <img alt="1" src="~/images/rating/star-on.png" title="bad">&nbsp;
+                            <img alt="2" src="~/images/rating/star-on.png" title="poor">&nbsp;
+                            <img alt="3" src="~/images/rating/star-on.png" title="regular">&nbsp;
+                            <img alt="4" src="~/images/rating/star-on.png" title="good">&nbsp;
+                            <img alt="5" src="~/images/rating/star-on.png" title="gorgeous">
+                            <input name="score" type="hidden" value="5">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
+@section scripts
+{
+    @*<script src="../Scripts/Productos.js"></script>*@
+    <script>
+        function SumarPropina(input) {
+            var propina = input.value;
+            document.getElementById("propina").innerText = "$" + propina;
+
+            SumarTotal();
+        }
+
+        function SumarInteres(input) {
+            var metodo = input.value;
+            if (metodo === "Tarjeta") {
+                var subtotal = parseFloat('@Model.total');
+                var interes = subtotal * 0.035;
+                document.getElementById("interes").innerText = "$" + interes.toFixed(2);
+            } else if (metodo === "No me quiere pagar") {
+                swal({ title: "¡Atención!", text: "Aquí tienes el número de la policia.", type: "warning" },
+                    function (isConfirm) { if (isConfirm) { location.href = 'tel:4959560302'; } });
+                document.getElementById("interes").innerText = "$" + 0;
+            } else {
+                document.getElementById("interes").innerText = "$" + 0;
+            }
+
+            SumarTotal();
+        }
+
+        function SumarTotal() {
+            var descuento = parseFloat(0);
+            var subtotal = parseFloat('@Model.total');
+            var propina = parseFloat(document.getElementById("propina").innerText.replace('$', ''));
+            var interes = parseFloat(document.getElementById("interes").innerText.replace('$', ''));
+            var total = subtotal + propina + interes + descuento;
+
+            document.getElementById("cambio").value = 0;
+            document.getElementById("recibido").value = 0;
+            document.getElementById("total").innerText = "$" + total.toFixed(2);
+        }
+
+        function CalcularCambio(input) {
+            var recibido = parseFloat(input.value);
+            var total = parseFloat(document.getElementById("total").innerText.replace('$', ''));
+            if (recibido < total) {
+                swal({ title: "¡Atención!", text: "El efectivo recibido es menor que el total.", type: "info" });
+            } else {
+                document.getElementById("cambio").value = (recibido - total).toFixed(2);
+            }
+        }
+
+         //Envia a liquidar cuenta
+        $("#btnEnviar").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let propina = document.getElementById("propina").innerText.replace('$', '');
+            let metodoPago = document.getElementById("metodoPago").value;
+
+            if (propina == "") {
+                swal({ title: "¡Atención!", text: "El ingresa una cantidad a la propina, si no hay puedes dejarla en 0.", type: "info" });
+                return false;
+            } else if (metodoPago == "") {
+                swal({ title: "¡Atención!", text: "El selecciona un método de pago.", type: "info" });
+                return false;
+            }
+
+            var formData = {
+                Propina: propina,
+                Descuento: 0,
+                Subtotal: @Model.total,
+                Total: parseFloat(document.getElementById("total").innerText.replace('$', '')),
+                Metodopago: metodoPago,
+                IdCuenta : '@Model.Id',
+                IdEmpleado : '@Model.IdEmpleado',
+            };
+
+            $.ajax({
+                url: "PagarCuenta",
+                data: { obj: formData, idMesa: @Model.IdMesa},
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/Cuentas"; } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+
+    </script>
+}

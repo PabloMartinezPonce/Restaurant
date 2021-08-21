@@ -1,0 +1,49 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model List<Mesa>
+@{
+    ViewBag.Title = "Mesas";
+}
+
+
+<section class="content">
+    <div class="row">
+        @foreach (var obj in Model)
+        {
+            <div class="col-4 col-xl-3">
+                <div class="box bg-danger bg-temple-dark">
+                    <div class="box-header no-border">
+                        <h4><i class="fa fa-map text-white"></i></h4>
+                        <ul class="box-controls pull-right">
+                            <li><a class="box-btn-close text-white" href="#"></a></li>
+                        </ul>
+                    </div>
+                    <div class="box-body mt-90">
+                        @if (obj.Ocupada.Value == false)
+                        {
+                            <span class="badge badge-success">Libre</span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-warning">Ocupada</span>
+                        }
+                        <h2 class="fw-200 mb-0">@obj.TipoLugar</h2>
+                        <p>@obj.Descripcion</p>
+                    </div>
+                </div>
+            </div>
+        }
+        @*<div class="grid-stack-item" data-gs-x="8" data-gs-y="0" data-gs-width="2" data-gs-height="2" data-gs-min-width="2" data-gs-no-resize="yes">
+                <div class="grid-stack-item-content"> <span class="fa fa-hand-o-up"></span> @obj.TipoLugar #@obj.Id </div>
+            </div>*@
+        @*<div class="grid-stack-item" data-gs-x="0" data-gs-y="0" data-gs-width="4" data-gs-height="2">
+                <div class="grid-stack-item-content">1</div>
+            </div>*@
+    </div>
+</section>
+
+@section scripts
+{
+    @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
+}

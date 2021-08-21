@@ -1,0 +1,333 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model List<Producto>
+@{
+    ViewBag.Title = "Productos";
+}
+<br />
+<div class="box">
+    <div class="box-body p-0">
+        <div class="flexbox align-items-center p-15">
+            <div class="flexbox align-items-center">
+                <div class="d-inline-block" style="float: right">
+                    <a href="FormProducto?id=0" class="btn btn-success btn-round checkbox-toggle"><i class="ion ion-plus"></i> Nuevo Producto</a>
+                </div>
+
+                <span class="divider-line mx-1"></span>
+
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por categoría</button>
+                    <div class="dropdown-menu">
+                        @foreach (var item in ViewBag.ListaCategorias)
+                        {
+                            <a href="../Producto/Productos?id=@item.Id&filtro=Categoria" class="dropdown-item"><span class="badge badge-ring badge-danger me-1"></span> @item.Nombre</a>
+                        }
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por complemento</button>
+                    <div class="dropdown-menu">
+                        @foreach (var item in ViewBag.ListaCatComplemento)
+                        {
+                            <a href="../Producto/Productos?id=@item.Id&filtro=Complemento" class="dropdown-item"><span class="badge badge-ring badge-danger me-1"></span> @item.Nombre</a>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div>
+                <div class="lookup lookup-circle lookup-right">
+                    <input type="text" data-provide="media-search">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /.box-body -->
+</div>
+
+<section class="content">
+    <div class="row">
+        @foreach (var obj in Model)
+        {
+            <div class="col-6 col-lg-4 col-xl-3">
+                <div class="box food-box">
+                    <div class="box-body text-center">
+                        <div class="menu-item"><img src="~/images/productos/@obj.RutaImagen" class="img-fluid w-p75" alt="" /></div>
+                        <div class="menu-details text-center">
+                            <h4 class="mt-20 mb-10">@obj.Nombre $@obj.PrecioVenta</h4>
+                            <p>@obj.Descripcion</p>
+                            <p> En Stock: @obj.Stock</p>
+                        </div>
+                        <div class="act-btn d-flex justify-content-between">
+                            <div class="text-center mx-5">
+                                <a href="FormProducto?id=@obj.Id" class="waves-effect waves-circle btn btn-circle btn-success btn-xs mb-5"><i class="fa fa-edit"></i></a>
+                                <small class="d-block">Editar</small>
+                            </div>
+                            <div class="text-center mx-5">
+                                <a href="javascript:CambiarEstatus(@obj.Id, '@obj.Activo');" class="waves-effect waves-circle btn btn-circle btn-primary btn-xs mb-5"><i class="fa fa-user-times"></i></a>
+                                <small class="d-block">@(obj.Activo != null ? "Inactivar" : "Activar")</small>
+                            </div>
+                            <div class="text-center mx-5">
+                                <a href="javascript:EliminarProducto(@obj.Id);" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs mb-5"><i class="fa fa-trash"></i></a>
+                                <small class="d-block">Elimnar</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@*<div class="container-fluid">
+        <div class="row justify-content-between mb-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <button onclick="CrearProductoModal()" style="" class="btn btn-danger btn-create" data-container="body">
+                            <i class="icon-plus"></i> Crear Nuevo Producto
+                        </button>
+                        <a href="/Menu/CategoriaProductos" style="" class="btn btn-info btn-create" data-container="body">
+                            <i class="icon-settings"></i> Administrar Categorías
+                        </a>
+                        <h4 class="card-title titulo"><i class="icon-home"></i> Administración de Productos</h4>
+                        <h6 class="card-subtitle subtitulo"> Crea, edita y elimina productos</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive m-t-40" style="margin-top:0px">
+                            <table id="dtProductos" class="table table-bordered">
+                                <thead class="tableHead">
+                                    <tr class="textCenter">
+                                        <th class="textCenter">ID</th>
+                                        <th class="textLeft">NOMBRE</th>
+                                        <th class="textLeft">PRECIO</th>
+                                        <th class="txtCenter">CATEGORIA</th>
+                                        <th class="textLeft">ESTATUS</th>
+                                        <th class="txtCenter">ACCIONES</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var usr in Model)
+                                    {
+                                        <tr class="textLeft">
+                                            <td class="textCenter" width="1%"> @usr.Id</td>
+                                            <td width="30%" class="textLeft"> @usr.Nombre</td>
+                                            <td width="25%"> @usr.PrecioCosto</td>
+                                            <td width="15%"> @usr.IdCategoria</td>
+                                            <td width="19%" class="txtCenter"> @usr.Activo</td>
+                                            <td width="10%" class="txtCenter">
+                                                <button onclick="EditarProductoModal(null, @usr.Id)" class="btn btn-circle btn-danger" data-toggle="tooltip" data-placement="top" title="Editar Producto" data-container="body">
+                                                    <i class="icon-note"></i>
+                                                </button>
+                                                <button onclick="EliminarProducto(@usr.Id)" class="btn btn-circle btn-danger" data-toggle="tooltip" data-placement="top" title="Eliminar Producto" data-container="body">
+                                                    <i class="icon-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>*@
+
+<!-- Large modal -->
+<div class="modal fade bd-as" id="modal-producto" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header tableHead">
+                <h5 class="modal-title titulo" id="modalTitle"><i class="icon-plus"></i> CREAR NUEVO PRODUCTO</h5>
+                <button type="button" class="close titulo" data-dismiss="modal" aria-label="Close">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body" style="margin:15px">
+                <form id="formProducto" class="form-material">
+                    <input type="hidden" name="id" id="id" />
+                    <fieldset id="fsProducto">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Nombre <span class="text-danger">*</span></label>
+                                    <input type="text" id="nombre" name="nombre" class="form-control" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Precio  <span class="text-danger">*</span></label>
+                                    <input type="number" id="precio" name="precio" class="form-control" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <div class="form-group">
+                                        <label class="bmd-label-floating">Descripcion<span class="text-danger">*</span></label>
+                                        <textarea class="form-control" id="descripcion" name="descripcion" rows="2" required></textarea>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                @*<div class="form-group">
+                                        <label class="bmd-label-floating">Captura la imagen</label>
+                                        <input class="form-control" type="file" id="imagen" name="imagen" />
+                                    </div>*@
+                                <div class="form-group">
+                                    <label>Carga la imagen de producto</label>
+                                    <div class="fileinput input-group fileinput-new" data-provides="fileinput">
+                                        <div class="form-control" data-trigger="fileinput">
+                                            <i class="fa fa-file fileinput-exists"></i>
+                                            <span class="fileinput-filename"></span>
+                                        </div>
+                                        <span class="input-group-addon btn btn-secondary btn-file">
+                                            <span class="fileinput-new">Selecciona archivo</span>
+                                            <span class="fileinput-exists">Cambiar</span>
+                                            <input type="hidden" value="" name="..."><input type="file" id="imagen" name="imagen">
+                                        </span>
+                                        <a href="#" class="input-group-addon btn btn-secondary fileinput-exists" data-dismiss="fileinput">Eliminar</a>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Categoría</label>
+                                    <select class="form-select" id="idCategoriaProducto" name="idCategoriaProducto">
+                                        @foreach (var item in ViewBag.ListaCategorias)
+                                        {
+                                            <option value="@item.Id">@item.Nombre</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="bmd-label-floating">Restaurante</label>
+                                    <select class="form-control" id="idRestaurante" name="idRestaurante">
+                                        @*@foreach (var item in ViewBag.ListaRestaurantes)
+                                            {
+                                                <option value="@item.id">@item.prestadorServicio</option>
+                                            }*@
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label for="chkToppings" class="col-sm-3 col-form-label col-form-label-sm">Tiene Complementos</label>
+                                    <div class="form-group row">
+                                        <div class="col-sm-6">
+                                            <input type="checkbox" class="js-switch js-check-change" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-sm-8">
+                                    <div class="form-group row" id="divTopping">
+                                        <p class="text-muted font-13"> Agrega <code> categorías de complementos </code> a este nuevo producto. </p>
+                                        <select class="select2 m-b-10 select2-multiple" style="width: 90%" multiple="multiple" data-placeholder="Categorías">
+                                            @foreach (var item in ViewBag.ListaCatComplemento)
+                                            {
+                                                <option value="@item.Id">@item.Nombre</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <label class="labelObligatorio"> Campos obligatorios <span class="text-danger">*</span></label>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-danger" id="idBtnProducto"><i class="fa fa-save"></i> Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts
+{
+    <script>
+        //Eliminar elemento
+        function EliminarProducto(id) {
+            swal({
+                title: '¿Esta seguro de eliminarlo?',
+                text: 'El registro se eliminará permanentemente.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: 'EliminarProducto',
+                            type: "POST",
+                            data: { 'id': id },
+                            success: function (data) {
+                                if (data.objectResponse) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                                } else {
+                                    swal({ title: "Error", text: data.message, type: "error" });
+                                }
+                            },
+                            error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, type: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+
+        //Cambiar estatus
+        function CambiarEstatus(id, estatus) {
+            swal({
+                title: '¿Esta seguro cambiar estatus?',
+                text: 'El registro se cambiará.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: 'CambiarEstatus',
+                            type: "POST",
+                            data: { 'Id': id, 'estatus': estatus },
+                            success: function (data) {
+                                if (data.objectResponse) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                                } else {
+                                    swal({ title: "Error", text: data.message, type: "error" });
+                                }
+                            },
+                            error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, type: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+    </script>
+    @*<script src="../Scripts/Productos.js"></script>*@
+}

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../images/favicon.ico">
+    <link rel="icon" href="~/images/logo/LogoArbol.png">
 
     <title>@ViewData["Title"] - Las Paseras</title>
 
@@ -21,6 +21,7 @@
 <body class="layout-top-nav dark-skin theme-primary fixed">
     @using System.Text.Json;
     @using Microsoft.AspNetCore.Http;
+    @using Restaurante.Data.DBModels;
     @inject IHttpContextAccessor HttpContextAccessor;
     @{
         var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
@@ -67,11 +68,11 @@
 
                     <div class="navbar-custom-menu r-side">
                         <ul class="nav navbar-nav">
-                            <li class="btn-group nav-item d-lg-inline-flex d-none">
-                                <a href="#" data-provide="fullscreen" class="waves-effect waves-light nav-link full-screen btn-info-light" title="Full Screen">
-                                    <i class="icon-Expand-arrows"><span class="path1"></span><span class="path2"></span></i>
-                                </a>
-                            </li>
+                            @*<li class="btn-group nav-item d-lg-inline-flex d-none">
+                                    <a href="#" data-provide="fullscreen" class="waves-effect waves-light nav-link full-screen btn-info-light" title="Full Screen">
+                                        <i class="icon-Expand-arrows"><span class="path1"></span><span class="path2"></span></i>
+                                    </a>
+                                </li>*@
                             <!-- Notifications -->
                             <li class="dropdown notifications-menu">
                                 <span class="label label-primary">5</span>
@@ -139,114 +140,10 @@
                                 </ul>
                             </li>
 
-                            <!-- Messages -->
                             <li class="dropdown messages-menu">
-                                <span class="label label-primary">5</span>
-                                <a href="#" class="dropdown-toggle btn-primary-light" data-bs-toggle="dropdown" title="Messages">
-                                    <i class="icon-Incoming-mail"><span class="path1"></span><span class="path2"></span></i>
-                                </a>
-                                <ul class="dropdown-menu animated bounceIn">
-
-                                    <li class="header">
-                                        <div class="p-20">
-                                            <div class="flexbox">
-                                                <div>
-                                                    <h4 class="mb-0 mt-0">Messages</h4>
-                                                </div>
-                                                <div>
-                                                    <a href="#" class="text-danger">Clear All</a>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <!-- inner menu: contains the actual data -->
-                                        <ul class="menu sm-scrol">
-                                            <li>
-                                                <!-- start message -->
-                                                <a href="#">
-                                                    <div class="pull-left">
-                                                        <img src="../images/user2-160x160.jpg" class="rounded-circle" alt="User Image">
-                                                    </div>
-                                                    <div class="mail-contnet">
-                                                        <h4>
-                                                            Lorem Ipsum
-                                                            <small><i class="fa fa-clock-o"></i> 15 mins</small>
-                                                        </h4>
-                                                        <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <!-- end message -->
-                                            <li>
-                                                <a href="#">
-                                                    <div class="pull-left">
-                                                        <img src="../images/user3-128x128.jpg" class="rounded-circle" alt="User Image">
-                                                    </div>
-                                                    <div class="mail-contnet">
-                                                        <h4>
-                                                            Nullam tempor
-                                                            <small><i class="fa fa-clock-o"></i> 4 hours</small>
-                                                        </h4>
-                                                        <span>Curabitur facilisis erat quis metus congue viverra.</span>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <div class="pull-left">
-                                                        <img src="../images/user4-128x128.jpg" class="rounded-circle" alt="User Image">
-                                                    </div>
-                                                    <div class="mail-contnet">
-                                                        <h4>
-                                                            Proin venenatis
-                                                            <small><i class="fa fa-clock-o"></i> Today</small>
-                                                        </h4>
-                                                        <span>Vestibulum nec ligula nec quam sodales rutrum sed luctus.</span>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <div class="pull-left">
-                                                        <img src="../images/user3-128x128.jpg" class="rounded-circle" alt="User Image">
-                                                    </div>
-                                                    <div class="mail-contnet">
-                                                        <h4>
-                                                            Praesent suscipit
-                                                            <small><i class="fa fa-clock-o"></i> Yesterday</small>
-                                                        </h4>
-                                                        <span>Curabitur quis risus aliquet, luctus arcu nec, venenatis neque.</span>
-                                                    </div>
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <div class="pull-left">
-                                                        <img src="../images/user4-128x128.jpg" class="rounded-circle" alt="User Image">
-                                                    </div>
-                                                    <div class="mail-contnet">
-                                                        <h4>
-                                                            Donec tempor
-                                                            <small><i class="fa fa-clock-o"></i> 2 days</small>
-                                                        </h4>
-                                                        <span>Praesent vitae tellus eget nibh lacinia pretium.</span>
-                                                    </div>
-
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li class="footer">
-                                        <a href="#">See all e-Mails</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <!-- Control Sidebar Toggle Button -->
-                            <li class="btn-group nav-item">
-                                <span class="label label-danger">5</span>
-                                <a href="#" data-toggle="control-sidebar" title="Setting" class="waves-effect waves-light nav-link full-screen btn-danger-light">
-                                    <i class="icon-Settings-2"></i>
+                                <span class="label label-danger"></span>
+                                <a onclick="Hablame()" href="javascript:void(0)" class="dropdown-toggle btn-danger-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="icon-Mic"><span class="path1"></span><span class="path2"></span></i>
                                 </a>
                             </li>
                             <!-- Right Sidebar Toggle Button -->
@@ -287,17 +184,24 @@
             <!-- Sample menu definition -->
             <ul id="main-menu" class="sm sm-blue">
                 <li><a href="../Login/Dashboard"><i class="icon-Home"><span class="path1"></span><span class="path2"></span></i>Dashboard</a></li>
-                <li><a href="../Usuario/Usuarios"><i class="iconsmind-Add-UserStar"><span class="path1"></span><span class="path2"></span></i>Usuarios</a></li>
-                <li><a href="../Login/Dashboard"><i class="icon-Home"><span class="path1"></span><span class="path2"></span></i>Productos</a></li>
-                <li><a href="../Login/Dashboard"><i class="icon-Home"><span class="path1"></span><span class="path2"></span></i>Proveedores</a></li>
-                <li><a href="../Login/Dashboard"><i class="icon-Home"><span class="path1"></span><span class="path2"></span></i>Mesas</a></li>
-
                 <li>
-                    <a href="#"><i class="icon-Clipboard-check"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Configuración</a>
+                    <a href="#"><i class="icon-Dinner"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Menú</a>
                     <ul>
-                        <li><a href="../Dashboard"><i class="icon-Home"><span class="path1"></span><span class="path2"></span></i>Categorías</a></li>
+                        <li><a href="../Producto/Productos"><i class="mdi mdi-food"><span class="path1"></span><span class="path2"></span></i>Productos</a></li>
+                        <li><a href="../Complemento/Complementos"><i class="mdi mdi-cookie"><span class="path1"></span><span class="path2"></span></i>Complementos</a></li>
+                        <li><a href="../Categoria/Categorias"><i class="mdi mdi-format-list-bulleted-type"><span class="path1"></span><span class="path2"></span></i>Categorías</a></li>
+                    </ul>
+
+                </li>
+                <li>
+                    <a href="#"><i class="mdi mdi-account-multiple"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Personas</a>
+                    <ul>
+                        <li><a href="../Usuario/Usuarios"><i class="iconsmind-Add-UserStar"><span class="path1"></span><span class="path2"></span></i>Staff</a></li>
+                        <li><a href="../Login/Dashboard"><i class="ti ti-truck"><span class="path1"></span><span class="path2"></span></i>Proveedores</a></li>
                     </ul>
                 </li>
+                <li><a href="../Cuenta/Cuentas"><i class="fa fa-sticky-note"><span class="path1"></span><span class="path2"></span></i>Cuentas</a></li>
+                <li><a href="../Mesa/Mesas"><i class="fa fa-th-large"><span class="path1"></span><span class="path2"></span></i>Mesas</a></li>
             </ul>
         </nav>
 
@@ -441,10 +345,10 @@
             <div class="pull-right d-none d-sm-inline-block">
                 <ul class="nav nav-primary nav-dotted nav-dot-separated justify-content-center justify-content-md-end">
                     <li class="nav-item">
-                        <a class="nav-link" href="javascript:void(0)">FAQ</a>
+                        <a class="nav-link" href="javascript:void(0)">Producto Registrado</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Purchase Now</a>
+                        <a class="nav-link" href="#">Kraken Soft</a>
                     </li>
                 </ul>
             </div>
@@ -717,8 +621,7 @@
         <div class="control-sidebar-bg"></div>
     </div>
     <!-- ./wrapper -->
-
-    <div id="chat-box-body">
+    <!--<div id="chat-box-body">
         <div id="chat-circle" class="waves-effect waves-circle btn btn-circle btn-sm btn-warning l-h-45">
             <div id="chat-overlay"></div>
             <span class="icon-Group-chat fs-18"><span class="path1"></span><span class="path2"></span></span>
@@ -821,8 +724,9 @@
                             Nice to meet you Anne.<br>How can i help you?
                         </div>
                     </div>
-                </div><!--chat-log -->
-            </div>
+                </div>-->
+    <!--chat-log -->
+    <!--</div>
             <div class="chat-input">
                 <form>
                     <input type="text" id="chat-input" placeholder="Send a message..." />
@@ -832,20 +736,191 @@
                 </form>
             </div>
         </div>
+    </div>-->
+
+
+    <button hidden id="btnSpeak"></button>
+    <!-- Pedido Manual -->
+    <div id="modalPedidoManual" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myLargeModalLabel">Large modal</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <h4>Overflowing text to show scroll behavior</h4>
+                    <div class="row col-md-12">
+                        @*<img id="img" src="~/Content/images/mapRestaurent.png" />*@
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
+    <!-- Cuenta -->
+    <div id="modalCuenta" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myLargeModalLabel">Cuenta Actualizada</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-xlg-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Cuenta de Mesa #9</h4>
+                                    <table id="dtCuenta" class="table browser m-t-30 no-border">
+                                        <thead style="text-align:center">
+                                            <tr>
+                                                <th></th>
+                                                <th></th>
+                                                <th></th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td></td>
+                                                <td></td>
+                                                <td></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p class="text-right" style="font-size:28px; color:white">
+                                        TOTAL: <strong>$138.00</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="modal-footer">
+                        @*<button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal">Salir</button>*@
+                        <button type="button" class="btn btn-danger waves-effect text-left" data-dismiss="modal"><i class="fa fa-money"></i> Pagar Cuenta</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Pedido Automatico -->
+    <div id="modalPedidoAuto" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myLargeModalLabel">Confirma nuevo pedido</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-lg-12 col-xlg-12">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title" id="txtPedido">¿Agregar 4 coronas a Mesa #9?</h4>
+                                    <table class="table browser m-t-30 no-border">
+                                        <tbody>
+                                            <tr>
+                                                <td id="txtImagen" style="width:40px"><img id="imgProducto" src="" width="70" alt=logo /></td>
+                                                <td id="txtProdcuto">4 Coronas</td>
+                                                <td id="txtPrecio" class="text-right" style="font-size:25px; color:white">$22</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <p id="txtTotal" class="text-right" style="font-size:28px; color:white">
+                                        TOTAL: <strong>$94.00</strong>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="formVenta">
+                        <input type="hidden" name="unidades" id="unidades" />
+                        <input type="hidden" name="precioVenta" id="precioVenta" />
+                        <input type="hidden" name="descuento" id="descuento" />
+                        <input type="hidden" name="idProducto" id="idProducto" />
+                        <input type="hidden" name="idCuenta" id="idCuenta" />
+                    </form>
+                    <button type="button" id="btnEnviarVenta" style="visibility:hidden;"></button>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger waves-effect text-left" onclick="EnviarVenta()"><i class="fa fa-plus"></i> Agregar pedido</button>
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </div>
+    <!-- NUEVO PRODUCTO A CUENTA - MODAL -->
+    <div class="modal fade bd-as" id="modal-cuentas" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle"><i class="icon-microphone" style="color:white"></i> Habla con rita, tu asistente personal.</h5>
+                    <button type="button" class="close txtWhite" data-dismiss="modal" aria-label="Close">
+                        <i class="icon-close"></i>
+                    </button>
+                </div>
+                <div class="modal-body" style="background-color: #212121; text-align: center">
+                    <h1 id="txtIdicacion">¡Di lo tuyo!</h1>
+                    <a id="btnSpeakON" href="#">
+                        <img src="~/assets/VozATexto/micRecording.gif" />
+                    </a>
+                    <a id="btnSpeakOFF" href="#">
+                        <img id="gifOFF" src="~/assets/VozATexto/micRecordingOFF.gif" />
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
     <!-- Page Content overlay -->
     <!-- Vendor JS -->
-    <script src="../js/vendors.min.js"></script>
-    <script src="../js/pages/chat-popup.js"></script>
-    <script src="../assets/vendor_components/apexcharts-bundle/dist/apexcharts.min.js"></script>
-    <script src="../assets/icons/feather-icons/feather.min.js"></script>
+    <script src="~/js/vendors.min.js"></script>
+    <script src="~/js/pages/chat-popup.js"></script>
+    <script src="~/assets/vendor_components/apexcharts-bundle/dist/apexcharts.min.js"></script>
+    <script src="~/assets/icons/feather-icons/feather.min.js"></script>
 
     <!-- Riday Admin App -->
-    <script src="../js/jquery.smartmenus.js"></script>
-    <script src="../js/menus.js"></script>
-    <script src="../js/template.js"></script>
+    <script src="~/js/jquery.smartmenus.js"></script>
+    <script src="~/js/menus.js"></script>
+    <script src="~/js/template.js"></script>
+
+    <!-- Messages -->
+    <script src="~/assets/vendor_components/sweetalert/sweetalert.min.js"></script>
+    <script src="~/assets/vendor_components/sweetalert/jquery.sweet-alert.custom.js"></script>
+
+    <!-- VALIDATOR -->
+    <script src="~/js/parsley.js"></script>
+
+    <!-- ELEMENTS FORM -->
+    @*<script src="~/assets/vendor_components/select2/dist/js/select2.full.js"></script>*@
+    <script src="~/assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
+    <script src="~/assets/vendor_components/dropzone/dropzone.js"></script>
+    <script src="~/assets/vendor_components/raty-master/lib/jquery.raty.js"></script>
+    <script src="~/js/pages/component-rating-init.js"></script>
+    <!-- ELEMENTS FORM -->
+    <script src="~/js/pages/list.js"></script>
+
+    <!-- This is COMANDAS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
+    <script src="~/assets/vendor_components/gridstack/lodash.js"></script>
+    <script src="~/assets/vendor_components/gridstack/gridstack.js"></script>
+    <script src="~/assets/vendor_components/gridstack/gridstack.jQueryUI.js"></script>
+    <script src="~/js/pages/gridstackjs.js"></script>
+    <!-- This is COMANDAS -->
+    <script src="~/assets/VozATexto/Rita.js"></script>
+    <script src="~/assets/VozATexto/script.js"></script>
+    <script type="text/javascript">
+                var nombre = '@usuario.Nombre';
+    </script>
+
     @RenderSection("Scripts", required: false)
+
 
 </body>
 </html>

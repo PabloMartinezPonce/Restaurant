@@ -1,6 +1,7 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Restaurante.Data.DBModels;
 
 #nullable disable
 
@@ -18,15 +19,19 @@ namespace Restaurant.Web
         }
 
         public virtual DbSet<Categoria> Categorias { get; set; }
+        public virtual DbSet<Complemento> Complementos { get; set; }
         public virtual DbSet<Configuracionsistema> Configuracionsistemas { get; set; }
         public virtual DbSet<Cuenta> Cuentas { get; set; }
         public virtual DbSet<Mesa> Mesas { get; set; }
         public virtual DbSet<Permiso> Permisos { get; set; }
         public virtual DbSet<Producto> Productos { get; set; }
         public virtual DbSet<Proveedore> Proveedores { get; set; }
+        public virtual DbSet<RelCuentaProducto> RelCuentaProductos { get; set; }
+        public virtual DbSet<RelProductoComplemento> RelProductoComplementos { get; set; }
         public virtual DbSet<RelRolesPermiso> RelRolesPermisos { get; set; }
         public virtual DbSet<Reportemovimiento> Reportemovimientos { get; set; }
         public virtual DbSet<Role> Roles { get; set; }
+        public virtual DbSet<Tipocomplemento> Tipocomplementos { get; set; }
         public virtual DbSet<Usuario> Usuarios { get; set; }
         public virtual DbSet<Venta> Ventas { get; set; }
 
@@ -34,7 +39,7 @@ namespace Restaurant.Web
         {
             if (!optionsBuilder.IsConfigured)
             {
-                optionsBuilder.UseMySql("server=localhost;database=restaurante;port=3306;user id=root;password=localhost123", new MySqlServerVersion(new Version(8, 0, 21)));
+                optionsBuilder.UseMySql("server=MYSQL5035.site4now.net;database=db_a78b82_lpb;port=3306;user id=a78b82_lpb;password=LPB2021.;SslMode=none", new MySqlServerVersion(new Version(8, 0, 21)));
             }
         }
 
@@ -44,7 +49,9 @@ namespace Restaurant.Web
             {
                 entity.ToTable("categorias");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(250)
@@ -53,13 +60,53 @@ namespace Restaurant.Web
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(150)
                     .HasColumnName("nombre");
+
+                entity.Property(e => e.RutaImagen)
+                    .HasMaxLength(150)
+                    .HasColumnName("rutaImagen");
+            });
+
+            modelBuilder.Entity<Complemento>(entity =>
+            {
+                entity.ToTable("complementos");
+
+                entity.HasIndex(e => e.IdTipoComplemento, "FK_TipoComplemento_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Activo).HasColumnName("activo");
+
+                entity.Property(e => e.IdTipoComplemento)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idTipoComplemento");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(100)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.Precio)
+                    .HasColumnType("decimal(10,2)")
+                    .HasColumnName("precio");
+
+                entity.Property(e => e.RutaImagen)
+                    .HasMaxLength(100)
+                    .HasColumnName("rutaImagen");
+
+                entity.HasOne(d => d.IdTipoComplementoNavigation)
+                    .WithMany(p => p.Complementos)
+                    .HasForeignKey(d => d.IdTipoComplemento)
+                    .HasConstraintName("FK_TipoComplemento");
             });
 
             modelBuilder.Entity<Configuracionsistema>(entity =>
             {
                 entity.ToTable("configuracionsistema");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(250)
@@ -78,11 +125,13 @@ namespace Restaurant.Web
             {
                 entity.ToTable("cuentas");
 
-                entity.HasIndex(e => e.IdEmpleado, "FK_Cuentas_Empleado");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
-                entity.HasIndex(e => e.IdMesa, "FK_Cuentas_Mesas");
-
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.CantidadPersonas)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("cantidadPersonas");
 
                 entity.Property(e => e.CuentaActiva)
                     .IsRequired()
@@ -93,51 +142,61 @@ namespace Restaurant.Web
                     .HasMaxLength(250)
                     .HasColumnName("descripcion");
 
-                entity.Property(e => e.FechaApertura)
-                    .HasColumnType("datetime(6)")
-                    .HasColumnName("fechaApertura");
+                entity.Property(e => e.FechaApertura).HasColumnName("fechaApertura");
 
-                entity.Property(e => e.FechaCierre)
-                    .HasColumnType("datetime(6)")
-                    .HasColumnName("fechaCierre");
+                entity.Property(e => e.FechaCierre).HasColumnName("fechaCierre");
 
-                entity.Property(e => e.IdEmpleado).HasColumnName("idEmpleado");
+                entity.Property(e => e.IdEmpleado)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idEmpleado");
 
-                entity.Property(e => e.IdMesa).HasColumnName("idMesa");
+                entity.Property(e => e.IdMesa)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idMesa");
 
-                entity.HasOne(d => d.IdEmpleadoNavigation)
-                    .WithMany(p => p.Cuenta)
-                    .HasForeignKey(d => d.IdEmpleado)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Cuentas_Empleado");
-
-                entity.HasOne(d => d.IdMesaNavigation)
-                    .WithMany(p => p.Cuenta)
-                    .HasForeignKey(d => d.IdMesa)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Cuentas_Mesas");
+                entity.Property(e => e.Propina)
+                    .HasColumnType("decimal(10,2)")
+                    .HasColumnName("propina");
             });
 
             modelBuilder.Entity<Mesa>(entity =>
             {
                 entity.ToTable("mesas");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(350)
                     .HasColumnName("descripcion");
 
-                entity.Property(e => e.Mesa1)
-                    .HasMaxLength(50)
-                    .HasColumnName("mesa");
+                entity.Property(e => e.Fechareservada).HasColumnName("fechareservada");
+
+                entity.Property(e => e.Ocupada)
+                    .HasColumnName("ocupada")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.Reservada)
+                    .HasColumnName("reservada")
+                    .HasDefaultValueSql("'0'");
+
+                entity.Property(e => e.RutaImagen)
+                    .HasMaxLength(100)
+                    .HasColumnName("rutaImagen");
+
+                entity.Property(e => e.TipoLugar)
+                    .HasMaxLength(45)
+                    .HasColumnName("tipoLugar");
             });
 
             modelBuilder.Entity<Permiso>(entity =>
             {
                 entity.ToTable("permisos");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(350)
@@ -156,9 +215,15 @@ namespace Restaurant.Web
 
                 entity.HasIndex(e => e.IdProveedor, "FK_Productos_Proveedores1");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Activo).HasColumnName("activo");
+
+                entity.Property(e => e.Cantidad)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("cantidad");
 
                 entity.Property(e => e.Codigo)
                     .HasMaxLength(50)
@@ -172,9 +237,13 @@ namespace Restaurant.Web
                     .HasColumnType("decimal(18,2)")
                     .HasColumnName("descuento");
 
-                entity.Property(e => e.IdCategoria).HasColumnName("idCategoria");
+                entity.Property(e => e.IdCategoria)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idCategoria");
 
-                entity.Property(e => e.IdProveedor).HasColumnName("idProveedor");
+                entity.Property(e => e.IdProveedor)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idProveedor");
 
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(150)
@@ -192,24 +261,22 @@ namespace Restaurant.Web
                     .HasMaxLength(150)
                     .HasColumnName("rutaImagen");
 
-                entity.Property(e => e.Stock).HasColumnName("stock");
+                entity.Property(e => e.Stock)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("stock");
 
-                entity.HasOne(d => d.IdCategoriaNavigation)
-                    .WithMany(p => p.Productos)
-                    .HasForeignKey(d => d.IdCategoria)
-                    .HasConstraintName("FK_Productos_Categorias1");
-
-                entity.HasOne(d => d.IdProveedorNavigation)
-                    .WithMany(p => p.Productos)
-                    .HasForeignKey(d => d.IdProveedor)
-                    .HasConstraintName("FK_Productos_Proveedores1");
+                entity.Property(e => e.Tipo)
+                    .HasMaxLength(50)
+                    .HasColumnName("tipo");
             });
 
             modelBuilder.Entity<Proveedore>(entity =>
             {
                 entity.ToTable("proveedores");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Compania)
                     .HasMaxLength(150)
@@ -232,6 +299,88 @@ namespace Restaurant.Web
                     .HasColumnName("telefono");
             });
 
+            modelBuilder.Entity<RelCuentaProducto>(entity =>
+            {
+                entity.ToTable("rel_cuenta_productos");
+
+                entity.HasIndex(e => e.IdCuenta, "FK_Cuenta_idx");
+
+                entity.HasIndex(e => e.IdProducto, "FK_Producto_idx");
+
+                entity.HasIndex(e => e.IdCuenta, "FK_Rel_Cuenta_idx");
+
+                entity.HasIndex(e => e.IdProducto, "FK_Rel_Producto_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Cantidad)
+                    .HasMaxLength(45)
+                    .HasColumnName("cantidad");
+
+                entity.Property(e => e.Descuento)
+                    .HasMaxLength(45)
+                    .HasColumnName("descuento");
+
+                entity.Property(e => e.IdCuenta)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idCuenta");
+
+                entity.Property(e => e.IdProducto)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idProducto");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(45)
+                    .HasColumnName("nombre");
+
+                entity.Property(e => e.Precio)
+                    .HasMaxLength(45)
+                    .HasColumnName("precio");
+
+                entity.HasOne(d => d.IdCuentaNavigation)
+                    .WithMany(p => p.RelCuentaProductos)
+                    .HasForeignKey(d => d.IdCuenta)
+                    .HasConstraintName("FK_Rel_Cuenta");
+
+                entity.HasOne(d => d.IdProductoNavigation)
+                    .WithMany(p => p.RelCuentaProductos)
+                    .HasForeignKey(d => d.IdProducto)
+                    .HasConstraintName("FK_Rel_Producto");
+            });
+
+            modelBuilder.Entity<RelProductoComplemento>(entity =>
+            {
+                entity.ToTable("rel_producto_complemento");
+
+                entity.HasIndex(e => e.IdComplemento, "FK_Complemento_idx");
+
+                entity.HasIndex(e => e.IdProducto, "FK_Producto_idx");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
+
+                entity.Property(e => e.IdComplemento)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idComplemento");
+
+                entity.Property(e => e.IdProducto)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idProducto");
+
+                entity.HasOne(d => d.IdComplementoNavigation)
+                    .WithMany(p => p.RelProductoComplementos)
+                    .HasForeignKey(d => d.IdComplemento)
+                    .HasConstraintName("FK_Complemento");
+
+                entity.HasOne(d => d.IdProductoNavigation)
+                    .WithMany(p => p.RelProductoComplementos)
+                    .HasForeignKey(d => d.IdProducto)
+                    .HasConstraintName("FK_Producto");
+            });
+
             modelBuilder.Entity<RelRolesPermiso>(entity =>
             {
                 entity.HasKey(e => new { e.IdRol, e.IdPermiso })
@@ -239,38 +388,29 @@ namespace Restaurant.Web
 
                 entity.ToTable("rel_roles_permisos");
 
-                entity.HasIndex(e => e.IdPermiso, "FK_Rel_Roles_Permisos_Permisos");
+                entity.Property(e => e.IdRol)
+                    .HasColumnType("int(11)")
+                    .ValueGeneratedOnAdd()
+                    .HasColumnName("idRol");
 
-                entity.Property(e => e.IdRol).HasColumnName("idRol");
-
-                entity.Property(e => e.IdPermiso).HasColumnName("idPermiso");
-
-                entity.HasOne(d => d.IdPermisoNavigation)
-                    .WithMany(p => p.RelRolesPermisos)
-                    .HasForeignKey(d => d.IdPermiso)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Rel_Roles_Permisos_Permisos");
-
-                entity.HasOne(d => d.IdRolNavigation)
-                    .WithMany(p => p.RelRolesPermisos)
-                    .HasForeignKey(d => d.IdRol)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Rel_Roles_Permisos_Roles");
+                entity.Property(e => e.IdPermiso)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idPermiso");
             });
 
             modelBuilder.Entity<Reportemovimiento>(entity =>
             {
                 entity.ToTable("reportemovimientos");
 
-                entity.HasIndex(e => e.IdUsuario, "FK_ReporteMovimientos_Usuarios");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Fecha).HasColumnName("fecha");
 
-                entity.Property(e => e.Fecha)
-                    .HasColumnType("datetime(6)")
-                    .HasColumnName("fecha");
-
-                entity.Property(e => e.IdUsuario).HasColumnName("idUsuario");
+                entity.Property(e => e.IdUsuario)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idUsuario");
 
                 entity.Property(e => e.Modulo)
                     .HasMaxLength(50)
@@ -291,19 +431,15 @@ namespace Restaurant.Web
                 entity.Property(e => e.ValorAnterior)
                     .HasMaxLength(0)
                     .HasColumnName("valorAnterior");
-
-                entity.HasOne(d => d.IdUsuarioNavigation)
-                    .WithMany(p => p.Reportemovimientos)
-                    .HasForeignKey(d => d.IdUsuario)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_ReporteMovimientos_Usuarios");
             });
 
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("roles");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Descripcion)
                     .HasMaxLength(350)
@@ -316,13 +452,32 @@ namespace Restaurant.Web
                     .HasColumnName("rol");
             });
 
+            modelBuilder.Entity<Tipocomplemento>(entity =>
+            {
+                entity.ToTable("tipocomplemento");
+
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
+
+                entity.Property(e => e.Activo)
+                    .HasColumnName("activo")
+                    .HasDefaultValueSql("'1'");
+
+                entity.Property(e => e.Nombre)
+                    .HasMaxLength(75)
+                    .HasColumnName("nombre");
+            });
+
             modelBuilder.Entity<Usuario>(entity =>
             {
                 entity.ToTable("usuarios");
 
                 entity.HasIndex(e => e.IdRol, "FK_Usuarios_Roles");
 
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Apellido)
                     .HasMaxLength(150)
@@ -346,7 +501,9 @@ namespace Restaurant.Web
 
                 entity.Property(e => e.Estatus).HasColumnName("estatus");
 
-                entity.Property(e => e.IdRol).HasColumnName("idRol");
+                entity.Property(e => e.IdRol)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idRol");
 
                 entity.Property(e => e.Nombre)
                     .HasMaxLength(150)
@@ -375,39 +532,43 @@ namespace Restaurant.Web
             {
                 entity.ToTable("ventas");
 
-                entity.HasIndex(e => e.IdCuenta, "FK_Ventas_Cuentas");
+                entity.HasIndex(e => e.IdCuenta, "FK_Venta_Cuenta_idx");
 
-                entity.HasIndex(e => e.IdProducto, "FK_Ventas_Productos");
-
-                entity.Property(e => e.Id).HasColumnName("id");
+                entity.Property(e => e.Id)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("id");
 
                 entity.Property(e => e.Descuento)
-                    .HasColumnType("decimal(18,2)")
+                    .HasColumnType("decimal(10,2)")
                     .HasColumnName("descuento");
 
-                entity.Property(e => e.EstaPagado).HasColumnName("estaPagado");
+                entity.Property(e => e.Fecha).HasColumnName("fecha");
 
-                entity.Property(e => e.IdCuenta).HasColumnName("idCuenta");
+                entity.Property(e => e.IdCuenta)
+                    .HasColumnType("int(11)")
+                    .HasColumnName("idCuenta");
 
-                entity.Property(e => e.IdProducto).HasColumnName("idProducto");
+                entity.Property(e => e.Metodopago)
+                    .HasMaxLength(80)
+                    .HasColumnName("metodopago");
 
-                entity.Property(e => e.PrecioVenta)
-                    .HasColumnType("decimal(18,2)")
-                    .HasColumnName("precioVenta");
+                entity.Property(e => e.Propina)
+                    .HasColumnType("decimal(10,2)")
+                    .HasColumnName("propina");
 
-                entity.Property(e => e.Unidades).HasColumnName("unidades");
+                entity.Property(e => e.Subtotal)
+                    .HasColumnType("decimal(10,2)")
+                    .HasColumnName("subtotal");
+
+                entity.Property(e => e.Total)
+                    .HasColumnType("decimal(10,2)")
+                    .HasColumnName("total");
 
                 entity.HasOne(d => d.IdCuentaNavigation)
                     .WithMany(p => p.Venta)
                     .HasForeignKey(d => d.IdCuenta)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Ventas_Cuentas");
-
-                entity.HasOne(d => d.IdProductoNavigation)
-                    .WithMany(p => p.Venta)
-                    .HasForeignKey(d => d.IdProducto)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Ventas_Productos");
+                    .HasConstraintName("FK_Venta_Cuenta");
             });
 
             OnModelCreatingPartial(modelBuilder);

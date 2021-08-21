@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace Restaurant.Web
+namespace Restaurante.Data.DBModels
 {
     public partial class Reportemovimiento
     {
@@ -15,7 +15,5 @@ namespace Restaurant.Web
         public string ValorActual { get; set; }
         public DateTime Fecha { get; set; }
         public int IdUsuario { get; set; }
-
-        public virtual Usuario IdUsuarioNavigation { get; set; }
     }
 }

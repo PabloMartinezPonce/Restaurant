@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Restaurant.Web;
 using Restaurante.Model;
+using Restaurante.Data.DBModels;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;

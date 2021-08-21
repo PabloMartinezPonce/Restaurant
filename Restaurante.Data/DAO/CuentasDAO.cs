@@ -4,12 +4,18 @@ using System;
 using Restaurant.Web;
 using Microsoft.EntityFrameworkCore;
 using Restaurante.Model;
+using Restaurante.Data.DBModels;
+using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Restaurante.Data.DAO
 {
     public class CuentasDAO
     {
         #region CRUD Entidad Cuenta
+
+        MesasDAO daoMesa = new MesasDAO();
+        ProductosDAO daoPro = new ProductosDAO();
 
         public ResponseModel GetCuentaByIdMesa(Cuenta cuenta)
         {
@@ -18,7 +24,7 @@ namespace Restaurante.Data.DAO
                 var venta = new Venta();
                 using (var db = new restauranteContext())
                 {
-                   //Obtiene Cuenta
+                    //Obtiene Cuenta
                     var qCuenta = from cta in db.Cuentas.AsNoTracking()
                                   where cta.IdMesa == cuenta.IdMesa && cta.CuentaActiva == true
                                   select new Cuenta
@@ -28,42 +34,42 @@ namespace Restaurante.Data.DAO
                     var cuentas = qCuenta.ToList();
 
                     //Obtiene Producto
-                    var qProducto = from pto in db.Productos.AsNoTracking()
-                                    where pto.Nombre.Contains(cuenta.NombreProducto)
-                                    select new Producto
-                                    {
-                                        Id = pto.Id,
-                                        PrecioVenta = pto.PrecioVenta
-                                    };
-                    var productos = qProducto.ToList();
+                    //var qProducto = from pto in db.Productos.AsNoTracking()
+                    //                where pto.Nombre.Contains(cuenta.NombreProducto)
+                    //                select new Producto
+                    //                {
+                    //                    Id = pto.Id,
+                    //                    PrecioVenta = pto.PrecioVenta
+                    //                };
+                    //var productos = qProducto.ToList();
 
-                    if (productos.Count() >= 1)
-                    {
-                        venta.IdProducto = productos.First().Id;
-                        venta.PrecioVenta = productos.First().PrecioVenta;
-                        venta.Unidades = cuenta.UnidadesProducto;
+                    //if (productos.Count() >= 1)
+                    //{
+                    //    venta.IdProducto = productos.First().Id;
+                    //    venta.PrecioVenta = productos.First().PrecioVenta;
+                    //    venta.Unidades = cuenta.Unidades;
 
-                        if (cuentas.Count() >= 1)
-                        {
-                            venta.IdCuenta = cuentas.First().Id;
-                        }
-                        else
-                        {
-                            var _cuenta = new Cuenta
-                            {
-                                CuentaActiva = true,
-                                FechaApertura = DateTime.Now,
-                                FechaCierre = DateTime.Now,
-                                IdMesa = cuenta.IdMesa,
-                                IdEmpleado = cuenta.IdEmpleado,
-                            };
-                            venta.IdCuenta = Create(_cuenta).objectResponse;
-                        }
-                    }
-                    else
-                    {
-                        venta = null;
-                    }
+                    //    if (cuentas.Count() >= 1)
+                    //    {
+                    //        venta.IdCuenta = cuentas.First().Id;
+                    //    }
+                    //    else
+                    //    {
+                    //        var _cuenta = new Cuenta
+                    //        {
+                    //            CuentaActiva = true,
+                    //            FechaApertura = DateTime.Now,
+                    //            FechaCierre = DateTime.Now,
+                    //            IdMesa = cuenta.IdMesa,
+                    //            IdEmpleado = cuenta.IdEmpleado,
+                    //        };
+                    //        venta.IdCuenta = Create(_cuenta).objectResponse;
+                    //    }
+                    //}
+                    //else
+                    //{
+                    //    venta = null;
+                    //}
 
                     if (venta != null)
                         return new ResponseModel { responseCode = 200, objectResponse = venta, message = "Success" };
@@ -77,17 +83,86 @@ namespace Restaurante.Data.DAO
             }
         }
 
-        public ResponseModel Create(Cuenta cuentas)
+        public async Task<ResponseModel> Create(Cuenta cuentas)
         {
             try
             {
                 using (var db = new restauranteContext())
                 {
+                    cuentas.CuentaActiva = true;
+                    cuentas.FechaApertura = DateTime.Now;
+
                     db.Cuentas.Add(cuentas);
                     var resU = db.SaveChanges();
 
                     if (resU > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = cuentas.Id, message = "Success" };
+                    {
+                        await daoMesa.StatusOcupada(new Mesa { Id = cuentas.IdMesa, Ocupada = true });
+                        return new ResponseModel { responseCode = 200, objectResponse = cuentas.Id, message = "Nueva cuenta abierta." };
+                    }
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo abrir la cuenta." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> AddProducto(RelCuentaProducto producto)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var result = await daoPro.GetById(producto.IdProducto.Value);
+                    Producto productoBD = result.objectResponse;
+                    producto.Precio = productoBD.PrecioVenta.ToString();
+                    producto.Nombre = productoBD.Nombre;
+                    producto.Descuento = productoBD.Descuento.ToString();
+
+                    db.RelCuentaProductos.Add(producto);
+                    var resU = db.SaveChanges();
+
+                    if (resU > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = resU, message = "Producto Agregado." };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se pudo agregar el producto a la cuenta." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> CreatePayment(Venta venta, int idMesa)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    venta.Fecha = DateTime.Now;
+                    db.Ventas.Add(venta);
+                    var resU = db.SaveChanges();
+
+                    if (resU > 0)
+                    {
+                        string error = string.Empty;
+                        try
+                        {
+                            var result = await GetById(venta.IdCuenta);
+                            Cuenta cuenta = result.objectResponse;
+                            foreach (var producto in cuenta.RelCuentaProductos)
+                                await daoPro.ControlStock(producto.Id);
+                        }
+                        catch (Exception ex) { error = error + " ControlStock: " + ex.Message; }
+                        await StatusCuenta(venta.IdCuenta);
+
+                        await daoMesa.StatusOcupada(new Mesa { Id = idMesa, Ocupada = false });
+                        return new ResponseModel { responseCode = 200, objectResponse = resU, message = "Venta regitrada exitosamente." + "\n" + error };
+                    }
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se encontraron ventas." };
                 }
@@ -95,6 +170,121 @@ namespace Restaurante.Data.DAO
             catch (SqlException ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> StatusCuenta(int idCuenta)
+        {
+            try
+            {
+                using (var con = new restauranteContext())
+                {
+                    var regitro = con.Cuentas.Where(u => u.Id == idCuenta).First<Cuenta>();
+                    regitro.CuentaActiva = false;
+
+                    var result = await con.SaveChangesAsync();
+
+                    if (result > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "La venta ha sido registrada" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La mesa no pudo ser guardada." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> GetAll()
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var Cuentas = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking().Where(cu => cu.CuentaActiva.Value == true).ToListAsync();
+
+                    foreach (var cuenta in Cuentas)
+                    {
+                        decimal total = 0;
+                        foreach (var productos in cuenta.RelCuentaProductos)
+                        {
+                            var subtotal = Convert.ToDecimal(productos.Precio) * Convert.ToInt32(productos.Cantidad);
+                            total = total + subtotal;
+
+                            productos.IdProductoNavigation =
+                                     (from usr in db.Productos.AsNoTracking()
+                                      where usr.Id == productos.IdProducto
+                                      select new Producto
+                                      {
+                                          Id = usr.Id,
+                                          Nombre = usr.Nombre,
+                                          Cantidad = usr.Cantidad,
+                                          RutaImagen = usr.RutaImagen,
+                                          PrecioVenta = usr.PrecioVenta,
+                                          PrecioCosto = usr.PrecioCosto,
+                                          Descripcion = usr.Descripcion,
+                                      }).First();
+                        }
+                        cuenta.total = total;
+                    }
+
+                    if (Cuentas.Count() >= 1)
+                        return new ResponseModel { responseCode = 200, objectResponse = Cuentas, message = "Success" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Categoria>(), message = "No se encontraron cuentas." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = new List<Categoria>(), message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> GetById(int id)
+        {
+            try
+            {
+                Cuenta cuenta = new Cuenta();
+                using (var db = new restauranteContext())
+                {
+                    cuenta = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking().Where(usr => usr.Id == id).FirstAsync();
+                    decimal total = 0;
+                    foreach (var productos in cuenta.RelCuentaProductos)
+                    {
+                        var subtotal = Convert.ToDecimal(productos.Precio) * Convert.ToInt32(productos.Cantidad);
+                        total = total + subtotal;
+
+                        productos.IdProductoNavigation =
+                                 (from usr in db.Productos.AsNoTracking()
+                                  where usr.Id == productos.IdProducto
+                                  select new Producto
+                                  {
+                                      Id = usr.Id,
+                                      Nombre = usr.Nombre,
+                                      Cantidad = usr.Cantidad,
+                                      RutaImagen = usr.RutaImagen,
+                                      PrecioVenta = usr.PrecioVenta,
+                                      PrecioCosto = usr.PrecioCosto,
+                                      Descripcion = usr.Descripcion,
+                                  }).First();
+                    }
+                    cuenta.total = total;
+                }
+
+                if (cuenta.Id > 0)
+                    return new ResponseModel { responseCode = 200, objectResponse = cuenta, message = "Success" };
+                else
+                    return new ResponseModel { responseCode = 404, objectResponse = new Categoria(), message = "No se encontraron cuentas." };
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel
+                {
+                    responseCode = 500,
+                    objectResponse = new Categoria(),
+                    message = ex.Message
+                };
             }
         }
 

@@ -3,16 +3,10 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace Restaurant.Web
+namespace Restaurante.Data.DBModels
 {
     public partial class Usuario
     {
-        public Usuario()
-        {
-            Cuenta = new HashSet<Cuenta>();
-            Reportemovimientos = new HashSet<Reportemovimiento>();
-        }
-
         public int Id { get; set; }
         public string Nombre { get; set; }
         public string Apellido { get; set; }
@@ -27,7 +21,5 @@ namespace Restaurant.Web
         public int? IdRol { get; set; }
 
         public virtual Role IdRolNavigation { get; set; }
-        public virtual ICollection<Cuenta> Cuenta { get; set; }
-        public virtual ICollection<Reportemovimiento> Reportemovimientos { get; set; }
     }
 }

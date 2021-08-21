@@ -1,0 +1,57 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model List<Categoria>
+@{
+    ViewBag.Title = "Categorías";
+}
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Categorías</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Listado de categorías</li>
+                        <li class="breadcrumb-item active" aria-current="page">Categorías</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="row">
+        @foreach (var obj in Model)
+        {
+            <div class="col-6 col-lg-4 col-xl-3">
+                <div class="box overflow-h">
+                    <div class="box-body p-0">
+                        <div>
+                            <img class="rounded img-fluid" src="~/images/food/@obj.RutaImagen" alt="">
+                        </div>
+                    </div>
+                    <div class="box-body">
+                        <div class="info-content">
+                            <h4 class="mb-10 mt-0">@obj.Descripcion</h4>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <h4 class="mb-0 text-primary">@obj.Nombre</h4>
+                                <div class="d-flex align-items-center">
+                                    <span class="fs-18 mx-10 text-primary icon-Wine"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                                    <h5 class="text-black mb-0">12 Item</h5>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+@section scripts
+{
+    @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
+}

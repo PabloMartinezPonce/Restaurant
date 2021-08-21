@@ -1,92 +1,210 @@
 ﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
 @using System.Text.Json;
 @model List<Usuario>
 @{
     ViewBag.Title = "Usuarios";
 }
-
-<div class="row page-titles mx-0">
-    <div class="col-sm-6 p-md-0">
-        <div class="breadcrumb-range-picker">
-            <span><i class="icon-calender"></i></span>
-            <span class="ml-1">
-                LISTADO DE USUARIOS
-            </span>
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Staff</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Listado de colaboradores</li>
+                        <li class="breadcrumb-item active" aria-current="page">Usuarios</li>
+                    </ol>
+                </nav>
+            </div>
         </div>
-    </div>
-    <div class="col-sm-6 p-md-0 justify-content-sm-end mt-2 mt-sm-0 d-flex">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="javascript:void(0)">Inicio</a></li>
-            <li class="breadcrumb-item active"><a href="javascript:void(0)">Lista Usuarios</a></li>
-        </ol>
+
     </div>
 </div>
 
-<div class="container-fluid">
-    <div class="row justify-content-between mb-3">
-        <div class="col-md-12">
-            <div class="card">
-                <div class="card-header card-header-danger">
-                    <p class="card-category">
-                        <h4 class="card-title ">Listado de Usuarios</h4>
-                        Usuarios registrados en el sistema
-                        <button type="button" class="btn btn-rounded btn-danger" data-toggle="modal" data-target=".bd-as" style="float:right; margin-right:25px; top:-20px">
-                            <i class="icon-plus"></i> <strong>REGISTRAR USUARIO</strong>
-                        </button>
-                    </p>
+<section class="content">
+    <div class="row">
+        <div class="col-lg-9 col-md-8">
+            <div class="box">
+                <div class="media-list media-list-divided media-list-hover">
+                    @foreach (var usr in Model)
+                    {
+                        @if (usr.IdRol == 3 || usr.IdRol == 4)
+                        {
+                            <div class="media align-items-center">
+                                <span class="badge badge-dot badge-danger"></span>
+                                <a class="avatar avatar-lg status-success" href="#">
+                                    <img src="../images/avatar/3.jpg" alt="...">
+                                </a>
+
+                                <div class="media-body">
+                                    <p>
+                                        <a href="#"><strong>@usr.Nombre @usr.Apellido</strong></a>
+                                        <small class="sidetitle">Online</small>
+                                    </p>
+                                    <p>@usr.IdRolNavigation.Rol</p>
+
+                                    <nav class="nav mt-2">
+                                        <a class="nav-link" href="#"><i class="fa fa-facebook"></i></a>
+                                        <a class="nav-link" href="#"><i class="fa fa-twitter"></i></a>
+                                        <a class="nav-link" href="#"><i class="fa fa-github"></i></a>
+                                        <a class="nav-link" href="#"><i class="fa fa-linkedin"></i></a>
+                                    </nav>
+                                </div>
+
+                                <div class="media-right gap-items">
+                                    <a class="media-action lead" href="#" data-bs-toggle="tooltip" title="Orders"><i class="ti-shopping-cart"></i></a>
+                                    <a class="media-action lead" href="#" data-bs-toggle="tooltip" title="Receipts"><i class="ti-receipt"></i></a>
+
+                                    <div class="btn-group">
+                                        <a class="media-action lead" href="#" data-bs-toggle="dropdown"><i class="ion-android-more-vertical"></i></a>
+                                        <div class="dropdown-menu">
+                                            <a class="dropdown-item" href="#"><i class="fa fa-fw fa-user"></i> Profile</a>
+                                            <a class="dropdown-item" href="#"><i class="fa fa-fw fa-comments"></i> Messages</a>
+                                            <a class="dropdown-item" href="#"><i class="fa fa-fw fa-phone"></i> Call</a>
+                                            <div class="dropdown-divider"></div>
+                                            <a class="dropdown-item" href="#"><i class="fa fa-fw fa-remove"></i> Remove</a>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        }
+                    }
                 </div>
-                <div class="card-body">
-                    <div class="table-responsive m-t-40">
-                        <table id="dtUsuarios" class="table table-bordered table-striped">
-                            <thead class="text-danger textAlign">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Usuario</th>
-                                    <th>Rol</th>
-                                    <th>Teléfono</th>
-                                    <th class="txtCenter">Acciones</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var usr in Model)
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-4">
+            <div class="box no-border">
+                <div class="box-header">
+                    <h4 class="box-title">Opciones de Usuario</h4>
+                </div>
+                <div class="box-body">
+                    <a class="btn btn-outline btn-success mb-5 d-flex justify-content-between" href="javascript:void(0)">Activos <span class="pull-right">103</span></a>
+                    <a class="btn btn-outline btn-danger mb-5 d-flex justify-content-between" href="javascript:void(0)">Inactivos <span class="pull-right">19</span></a>
+                    @*<a class="btn btn-outline btn-info mb-5 d-flex justify-content-between" href="javascript:void(0)">Available <span class="pull-right">623</span></a>
+                    <a class="btn btn-outline btn-primary mb-5 d-flex justify-content-between" href="javascript:void(0)">Private <span class="pull-right">53</span></a>*@
+                    <a class="btn btn-info mt-10 d-flex justify-content-between" href="javascript:void(0)">All Contacts <span class="pull-right">123</span></a>
+                    <a href="javascript:void(0)" class="btn btn-success mt-10 d-block text-center"><i class="fa fa-plus"></i> Agregar Nuevo Usuario</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-12">
+            <h4 class="mt-30">Super Usuarios</h4>
+            <hr>
+        </div>
+        @foreach (var usr in Model)
+        {
+            @if (usr.IdRol == 1 || usr.IdRol == 2)
+            {
+                <div class="col-12 col-lg-3">
+                    <div class="box ribbon-box">
+                        @if (usr.IdRol == 1)
+                        {
+                            <div class="ribbon-two ribbon-two-primary"><span>@usr.IdRolNavigation.Rol</span></div>
+                        }
+                        else
+                        {
+                            <div class="ribbon-two ribbon-two-success"><span>@usr.IdRolNavigation.Rol</span></div>
+                        }
+                        <div class="box-header no-border p-0">
+                            <a href="#">
+                                @if (usr.IdRol == 1)
                                 {
-                                    <tr class="textAlign">
-                                        <td> @usr.Id</td>
-                                        <td> @usr.Nombre @usr.Apellido</td>
-                                        <td> @usr.NombreUsuario</td>
-                                        <td> @usr.IdRolNavigation.Rol</td>
-                                        <td> @usr.Telefono</td>
-                                        <td width="20%" class="txtCenter">
-                                            @if (usr.Estatus.Value)
-                                            {
-                                                <button onclick="ModificarEstatus('@usr.NombreUsuario', true, '@usr.Nombre')" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Desactivar Usuario" data-container="body">
-                                                    <i class="icon-check"></i>
-                                                </button>
-                                            }
-                                            else
-                                            {
-                                                <button onclick="ModificarEstatus('@usr.NombreUsuario', false, '@usr.Nombre')" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Activar Usuario" data-container="body">
-                                                    <i class="icon-close"></i>
-                                                </button>
-                                            }
-                                            <button onclick="EditarUsuarioModal(@(JsonSerializer.Serialize(usr)), @usr.Id)" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Editar Usuario" data-container="body">
-                                                <i class="icon-note"></i>
-                                            </button>
-                                            <button onclick="EliminarUsuario(@usr.Id)" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Eliminar Usuario" data-container="body">
-                                                <i class="icon-trash"></i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                    <img class="img-fluid" src="../images/avatar/375x200/4.jpg" alt="">
                                 }
-                            </tbody>
-                        </table>
+                                else if (usr.IdRol == 2)    
+                                {
+                                    <img class="img-fluid" src="../images/avatar/375x200/1.jpg" alt="">
+                                }
+                            </a>
+                        </div>
+                        <div class="box-body">
+                            <div class="user-contact list-inline text-center">
+                                <a href="#" class="btn btn-circle mb-5 btn-facebook"><i class="fa fa-facebook"></i></a>
+                                <a href="tel:@usr.Telefono" class="btn btn-circle mb-5 btn-twitter"><i class="fa fa-phone"></i></a>
+                                <a href="#" class="btn btn-circle mb-5 btn-warning"><i class="fa fa-envelope"></i></a>
+                            </div>
+                            <div class="text-center">
+                                <h3 class="my-10"><a href="#">@usr.Nombre @usr.Apellido</a></h3>
+                                <h6 class="user-info mt-0 mb-10 text-fade">@usr.IdRolNavigation.Rol</h6>
+                                <p class="text-fade w-p85 mx-auto">@usr.Direccion </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+    </div>
+</section>
+
+
+@*<div class="container-fluid">
+        <div class="row justify-content-between mb-3">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-header card-header-danger">
+                        <p class="card-category">
+                            <h4 class="card-title ">Listado de Usuarios</h4>
+                            Usuarios registrados en el sistema
+                            <button type="button" class="btn btn-rounded btn-danger" data-toggle="modal" data-target=".bd-as" style="float:right; margin-right:25px; top:-20px">
+                                <i class="icon-plus"></i> <strong>REGISTRAR USUARIO</strong>
+                            </button>
+                        </p>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive m-t-40">
+                            <table id="dtUsuarios" class="table table-bordered table-striped">
+                                <thead class="text-danger textAlign">
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Nombre</th>
+                                        <th>Usuario</th>
+                                        <th>Rol</th>
+                                        <th>Teléfono</th>
+                                        <th class="txtCenter">Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var usr in Model)
+                                    {
+                                        <tr class="textAlign">
+                                            <td> @usr.Id</td>
+                                            <td> @usr.Nombre @usr.Apellido</td>
+                                            <td> @usr.NombreUsuario</td>
+                                            <td> @usr.IdRolNavigation.Rol</td>
+                                            <td> @usr.Telefono</td>
+                                            <td width="20%" class="txtCenter">
+                                                @if (usr.Estatus.Value)
+                                                {
+                                                    <button onclick="ModificarEstatus('@usr.NombreUsuario', true, '@usr.Nombre')" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Desactivar Usuario" data-container="body">
+                                                        <i class="icon-check"></i>
+                                                    </button>
+                                                }
+                                                else
+                                                {
+                                                    <button onclick="ModificarEstatus('@usr.NombreUsuario', false, '@usr.Nombre')" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Activar Usuario" data-container="body">
+                                                        <i class="icon-close"></i>
+                                                    </button>
+                                                }
+                                                <button onclick="EditarUsuarioModal(null, @usr.Id)" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Editar Usuario" data-container="body">
+                                                    <i class="icon-note"></i>
+                                                </button>
+                                                <button onclick="EliminarUsuario(@usr.Id)" class="btn btn-danger btn-circle btn-lg" data-toggle="tooltip" data-placement="top" title="Eliminar Usuario" data-container="body">
+                                                    <i class="icon-trash"></i>
+                                                </button>
+                                            </td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </div>*@
 
 <!-- Large modal -->
 <div class="modal fade bd-as" id="modal-usuario" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">

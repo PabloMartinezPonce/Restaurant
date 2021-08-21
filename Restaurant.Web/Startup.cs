@@ -20,7 +20,7 @@ namespace Restaurant.Web
         }
 
         public IConfiguration Configuration { get; }
-
+        //Scaffold-DbContext "server=MYSQL5035.site4now.net;database=db_a78b82_lpb;port=3306;user id=a78b82_lpb;password=LPB2021.;SslMode=none" MySql.EntityFrameworkCore -OutputDir ..\Restaurante.Data\DBModels -f
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -33,6 +33,10 @@ namespace Restaurant.Web
             //var sqlConnectionConfiguration = new SqlConfiguration(Configuration.GetConnectionString("SqlConnection"));
             //ENTITY
             //services.AddDbContext<restauranteContext>(options => options.UseMySql(Configuration.GetConnectionString("restauranteContext"), null));
+            //services.AddDbContext<restauranteContext>(options =>
+            //{
+            //    options.UseMySql(Configuration.GetConnectionString("SqlConnection"), new MySqlServerVersion(new Version(8, 0, 21)));
+            //});
 
             //SESSION
             services.AddHttpContextAccessor();

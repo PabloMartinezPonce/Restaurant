@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using Restaurante.Data.DBModels;
 
 namespace Restaurante.Data.DAO
 {
@@ -97,6 +98,26 @@ namespace Restaurante.Data.DAO
             }
         }
 
+        public async Task<ResponseModel> GetUserByRol(int idRol)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var usuarios = await db.Usuarios.AsNoTracking().Where(e => e.IdRol == idRol).ToListAsync();
+
+                    if (usuarios.Count > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = usuarios, message = "Success" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Usuario>(), message = "El usuario no existe." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                throw ex;
+            }
+        }
+
         public async Task<ResponseModel> CreateUser(Usuario usuario)
         {
             try
@@ -161,6 +182,28 @@ namespace Restaurante.Data.DAO
                     var result = await db.SaveChangesAsync();
                     if (result > 0)
                         return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = null, message = "El usuario no existe." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> UpdateImage(int id, string fileName)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var usr = db.Productos.Where(u => u.Id == id).First<Producto>();
+                    usr.RutaImagen = fileName.Trim();
+
+                    var result = await db.SaveChangesAsync();
+                    if (result > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = usr, message = "Éxito" };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El usuario no existe." };
                 }

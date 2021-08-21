@@ -1,0 +1,167 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model Producto
+@{
+    ViewBag.Title = "Formulario Producto";
+}
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Productos</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Listado de productos</li>
+                        <li class="breadcrumb-item active" aria-current="page">Productos</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    @if (Model.Id != 0)
+                    {
+                        <img width="70" src="~/images/productos/@Model.RutaImagen" />
+                        <h4 class="box-title">Edición de producto '@Model.Nombre'</h4>
+                    }
+                    else
+                    {
+                        <h4 class="box-title">Creación de nuevo @Model.Nombre</h4>
+                    }
+                </div>
+                <div class="box-body">
+                    <form action="CrearProducto" id="formProducto">
+                        <input name="Id" value="@Model.Id" type="hidden" />
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Nombre del producto</label>
+                                        <input type="text" class="form-control" placeholder="Nombre del producto" value="@Model.Nombre" name="Nombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Código</label>
+                                        <input type="text" class="form-control" placeholder="Ingresa código" value="@Model.Codigo" name="Codigo" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Stock</label>
+                                        <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Stock" name="Stock" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/row-->
+                            <!--/row-->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Categoría</label>
+                                        <select class="form-select" id="idCategoria" name="idCategoria" required>
+                                            @foreach (var item in ViewBag.ListaCategorias)
+                                            {
+                                                <option value="@item.Id">@item.Nombre</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Complementos</label>
+                                        <select class="form-select" id="idProveedor" name="idProveedor">
+                                            @foreach (var item in ViewBag.ListaProveedores)
+                                            {
+                                                <option value="@item.Id">@item.Compania</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Estatus</label>
+                                        <div class="radio-list">
+                                            <label class="radio-inline p-0 me-10">
+                                                <div class="radio radio-info">
+                                                    <input type="radio" name="activo" id="radio1" value="@Model.Activo">
+                                                    <label for="radio1">Activo</label>
+                                                </div>
+                                            </label>
+                                            <label class="radio-inline">
+                                                <div class="radio radio-info">
+                                                    <input type="radio" name="radio" id="radio2" value="option2">
+                                                    <label for="radio2">Inactivo</label>
+                                                </div>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                            </div>
+                            <!--/row-->
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Precio compra</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-money"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioCosto" name="PrecioCosto" id="PrecioCosto">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Precio venta</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-money"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioVenta" name="PrecioVenta" id="PrecioVenta">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Descuento</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-cut"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa descuento" value="@Model.Descuento" name="Descuento" id="Descuento">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Descripción de producto</label>
+                                        <textarea class="form-control p-15" rows="2" name="Descripcion" id="Descripcion">@Model.Descripcion</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--/row-->
+                        </div>
+                        <div class="form-actions mt-10">
+                            <a href="/Producto/Productos" class="btn btn-danger">Cancelar</a>
+                            <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section scripts
+{
+    <script src="../Scripts/Productos.js"></script>
+}

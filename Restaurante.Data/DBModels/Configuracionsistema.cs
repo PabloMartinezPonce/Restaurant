@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace Restaurant.Web
+namespace Restaurante.Data.DBModels
 {
     public partial class Configuracionsistema
     {
