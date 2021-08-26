@@ -22,6 +22,8 @@ namespace Restaurante.Data.DBModels
         public bool? Activo { get; set; }
         public decimal? Descuento { get; set; }
         public string Descripcion { get; set; }
+        public string Complementos { get; set; }
+        public string ComplementosSelect { get; set; }
         public string RutaImagen { get; set; }
         public string Tipo { get; set; }
         public int? Cantidad { get; set; }

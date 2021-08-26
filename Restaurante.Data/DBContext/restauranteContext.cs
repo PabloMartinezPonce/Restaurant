@@ -233,6 +233,14 @@ namespace Restaurant.Web
                     .HasMaxLength(250)
                     .HasColumnName("descripcion");
 
+                entity.Property(e => e.Complementos)
+                    .HasMaxLength(2000)
+                    .HasColumnName("complementos");
+
+                entity.Property(e => e.ComplementosSelect)
+                    .HasMaxLength(2000)
+                    .HasColumnName("complementosSelect");
+
                 entity.Property(e => e.Descuento)
                     .HasColumnType("decimal(18,2)")
                     .HasColumnName("descuento");

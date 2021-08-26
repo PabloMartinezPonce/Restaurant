@@ -138,6 +138,81 @@ namespace Restaurant.Web.Controllers
             }
         }
 
+        [HttpPost]
+        public async Task<ResponseModel> CreateCuentaAssistent(Cuenta obj)
+        {
+            try
+            {
+                var result = new ResponseModel();
+                var resultExist = await _daoMsa.GetById(obj.IdMesa);
+                Mesa table = resultExist.objectResponse;
+
+                if (table.Ocupada.Value)
+                    result = new ResponseModel { responseCode = 400, message = "Ya existe una cuenta abierta para la mesa " + obj.IdMesa, objectResponse = false };
+                else
+                    result = await _dao.Create(obj);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return CommonTxt.GetResponseError(ex);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ResponseModel> AddProductAssistent(RelCuentaProducto producto)
+        {
+            try
+            {
+                var exist = await _dao.Exist(producto.IdCuenta.Value);
+                if (exist)
+                {
+                    var resultPro = await _daoPro.GetByName(producto.Nombre);
+                    Producto productoBD = resultPro.objectResponse;
+                    producto.Precio = productoBD.PrecioVenta.ToString();
+                    producto.Nombre = productoBD.Nombre;
+                    producto.Descuento = productoBD.Descuento.ToString();
+                    var result = await _dao.AddProducto(producto);
+
+                    return result;
+                }
+                else
+                    return CommonTxt.GetNewResponse(404, "La cuenta no existe, porfavor crea una nueva cuenta.", false);
+            }
+            catch (Exception ex)
+            {
+                return CommonTxt.GetResponseError(ex);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ResponseModel> AddProductsAssistent(List<RelCuentaProducto> productos)
+        {
+            try
+            {
+                var exist = await _dao.Exist(productos[0].IdCuenta.Value);
+                if (exist)
+                {
+                    foreach (var producto in productos)
+                    {
+                        var resultPro = await _daoPro.GetByName(producto.Nombre);
+                        Producto productoBD = resultPro.objectResponse;
+                        producto.Precio = productoBD.PrecioVenta.ToString();
+                        producto.Nombre = productoBD.Nombre;
+                        producto.Descuento = productoBD.Descuento.ToString();
+                        var result = await _dao.AddProducto(producto);
+                    }
+                    return CommonTxt.GetNewResponse(200, "Se han agregado " + productos.Count + " productos a la cuenta " + productos[0].IdCuenta.Value, true);
+                }
+                else
+                    return CommonTxt.GetNewResponse(404, "La cuenta no existe, porfavor crea una nueva cuenta.", false);
+            }
+            catch (Exception ex)
+            {
+                return CommonTxt.GetResponseError(ex);
+            }
+        }
 
         [HttpPost]
         public async Task<ResponseModel> AddProduct(RelCuentaProducto producto)

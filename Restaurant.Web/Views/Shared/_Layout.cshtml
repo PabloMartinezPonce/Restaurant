@@ -11,17 +11,18 @@
     <title>@ViewData["Title"] - Las Paseras</title>
 
     <!-- Vendors Style-->
-    <link rel="stylesheet" href="../css/vendors_css.css">
+    <link rel="stylesheet" href="~/css/vendors_css.css">
 
     <!-- Style-->
-    <link rel="stylesheet" href="../css/horizontal-menu.css">
-    <link rel="stylesheet" href="../css/style.css">
-    <link rel="stylesheet" href="../css/skin_color.css">
+    <link rel="stylesheet" href="~/css/horizontal-menu.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/skin_color.css">
 </head>
 <body class="layout-top-nav dark-skin theme-primary fixed">
     @using System.Text.Json;
     @using Microsoft.AspNetCore.Http;
     @using Restaurante.Data.DBModels;
+    @using Restaurant.Model;
     @inject IHttpContextAccessor HttpContextAccessor;
     @{
         var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
@@ -155,7 +156,7 @@
                             <!-- User Account-->
                             <li class="dropdown user user-menu">
                                 <a href="#" class="dropdown-toggle p-0 text-dark hover-primary ms-md-30 ms-10" data-bs-toggle="dropdown" title="User">
-                                    <span class="ps-30 d-md-inline-block d-none">Hola,</span> <strong class="d-md-inline-block d-none">@usuario.Nombre</strong><img src="../images/avatar/avatar-11.png" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
+                                    <span class="ps-30 d-md-inline-block d-none">Hola,</span> <strong class="d-md-inline-block d-none">@usuario.Nombre</strong><img id="imgUser" src="" class="user-image rounded-circle avatar bg-white mx-10" alt="User Image">
                                 </a>
                                 <ul class="dropdown-menu animated flipInX">
                                     <li class="user-body">
@@ -365,7 +366,7 @@
                     </li>
                 </ul>
             </div>
-            Las Paseras Restaurante Bar @DateTime.Now.Year.
+            Las Paseras Restaurante Bar @GlobalConfig.GetMexDate().Year.
         </footer>
         <!-- Control Sidebar -->
         <aside class="control-sidebar">
@@ -752,7 +753,7 @@
     </div>-->
 
 
-    <button hidden id="btnSpeak"></button>
+    <a hidden id="btnSpeak"></a>
     <!-- Pedido Manual -->
     <div id="modalPedidoManual" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" aria-hidden="true" style="display: none;">
         <div class="modal-dialog modal-lg">
@@ -931,7 +932,9 @@
     <script src="~/assets/VozATexto/Rita.js"></script>
     <script src="~/assets/VozATexto/script.js"></script>
     <script type="text/javascript">
-                var nombre = '@usuario.Nombre';
+        var nombre = '@usuario.Nombre';
+        var idUsuarioLogged = '@usuario.Id';
+        document.getElementById("imgUser").src = '@usuario.Sexo' == "False" ? "../images/avatar/avatar-6.png" : "../images/avatar/avatar-16.png";
     </script>
 
     @RenderSection("Scripts", required: false)

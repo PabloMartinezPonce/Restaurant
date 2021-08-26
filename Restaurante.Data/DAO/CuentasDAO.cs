@@ -7,6 +7,7 @@ using Restaurante.Model;
 using Restaurante.Data.DBModels;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using Restaurant.Model;
 
 namespace Restaurante.Data.DAO
 {
@@ -16,72 +17,6 @@ namespace Restaurante.Data.DAO
 
         MesasDAO daoMesa = new MesasDAO();
         ProductosDAO daoPro = new ProductosDAO();
-
-        public ResponseModel GetCuentaByIdMesa(Cuenta cuenta)
-        {
-            try
-            {
-                var venta = new Venta();
-                using (var db = new restauranteContext())
-                {
-                    //Obtiene Cuenta
-                    var qCuenta = from cta in db.Cuentas.AsNoTracking()
-                                  where cta.IdMesa == cuenta.IdMesa && cta.CuentaActiva == true
-                                  select new Cuenta
-                                  {
-                                      Id = cta.Id
-                                  };
-                    var cuentas = qCuenta.ToList();
-
-                    //Obtiene Producto
-                    //var qProducto = from pto in db.Productos.AsNoTracking()
-                    //                where pto.Nombre.Contains(cuenta.NombreProducto)
-                    //                select new Producto
-                    //                {
-                    //                    Id = pto.Id,
-                    //                    PrecioVenta = pto.PrecioVenta
-                    //                };
-                    //var productos = qProducto.ToList();
-
-                    //if (productos.Count() >= 1)
-                    //{
-                    //    venta.IdProducto = productos.First().Id;
-                    //    venta.PrecioVenta = productos.First().PrecioVenta;
-                    //    venta.Unidades = cuenta.Unidades;
-
-                    //    if (cuentas.Count() >= 1)
-                    //    {
-                    //        venta.IdCuenta = cuentas.First().Id;
-                    //    }
-                    //    else
-                    //    {
-                    //        var _cuenta = new Cuenta
-                    //        {
-                    //            CuentaActiva = true,
-                    //            FechaApertura = DateTime.Now,
-                    //            FechaCierre = DateTime.Now,
-                    //            IdMesa = cuenta.IdMesa,
-                    //            IdEmpleado = cuenta.IdEmpleado,
-                    //        };
-                    //        venta.IdCuenta = Create(_cuenta).objectResponse;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    venta = null;
-                    //}
-
-                    if (venta != null)
-                        return new ResponseModel { responseCode = 200, objectResponse = venta, message = "Success" };
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se encontraron ventas." };
-                }
-            }
-            catch (SqlException ex)
-            {
-                return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
-            }
-        }
 
         public async Task<ResponseModel> GetCuentaByIdEmpleado(int IdEmpleado)
         {
@@ -136,7 +71,34 @@ namespace Restaurante.Data.DAO
                 using (var db = new restauranteContext())
                 {
                     cuentas.CuentaActiva = true;
-                    cuentas.FechaApertura = DateTime.Now;
+                    cuentas.FechaApertura = GlobalConfig.GetMexDate();
+
+                    db.Cuentas.Add(cuentas);
+                    var resU = db.SaveChanges();
+
+                    if (resU > 0)
+                    {
+                        await daoMesa.StatusOcupada(new Mesa { Id = cuentas.IdMesa, Ocupada = true });
+                        return new ResponseModel { responseCode = 200, objectResponse = cuentas.Id, message = "Nueva cuenta abierta." };
+                    }
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo abrir la cuenta." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> CreateAssistant(Cuenta cuentas)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    cuentas.CuentaActiva = true;
+                    cuentas.FechaApertura = GlobalConfig.GetMexDate();
 
                     db.Cuentas.Add(cuentas);
                     var resU = db.SaveChanges();
@@ -189,7 +151,7 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
-                    venta.Fecha = DateTime.Now;
+                    venta.Fecha = GlobalConfig.GetMexDate();
                     db.Ventas.Add(venta);
                     var resU = db.SaveChanges();
 
@@ -333,6 +295,27 @@ namespace Restaurante.Data.DAO
                     objectResponse = new Categoria(),
                     message = ex.Message
                 };
+            }
+        }
+
+        public async Task<bool> Exist(int id)
+        {
+            try
+            {
+                Cuenta cuenta = new Cuenta();
+                using (var db = new restauranteContext())
+                {
+                    cuenta = await db.Cuentas.AsNoTracking().Where(usr => usr.Id == id).FirstAsync();
+                }
+
+                if (cuenta.Id > 0)
+                    return true;
+                else
+                    return false;
+            }
+            catch (SqlException)
+            {
+                return false;
             }
         }
 

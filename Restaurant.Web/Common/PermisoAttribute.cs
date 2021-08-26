@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Routing;
 using Restaurant.Web.Controllers;
+using Restaurante.Data.DBModels;
 using Restaurante.Model;
 using System;
 using System.Linq;
@@ -23,10 +24,9 @@ namespace Restaurante.Web.Common
         {
             try
             {
-                //var stringSession = HttpContextAccessor.HttpContext.Session.GetString("UserSession");
                 base.OnActionExecuting(filterContext);
-                //var usuario = JsonSerializer.Deserialize<UsuarioDTO>(stringSession);
-                var usuario = new UsuarioDTO();
+                var strSession = filterContext.HttpContext.Session.GetString("UserSession");
+                var usuario = JsonSerializer.Deserialize<Usuario>(strSession);
                 if (usuario == null)
                 {
                     filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new

@@ -38,34 +38,31 @@
                                     <p class="mb-0">Ingresa tus credenciales.</p>
                                 </div>
                                 <div class="p-40">
-                                    <form action="index.html" method="post">
-                                        <div class="form-group">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text bg-transparent"><i class="ti-user"></i></span>
-                                                <input type="text" class="form-control ps-15 bg-transparent" name="usuario" required placeholder="Nombre de Usuario">
-                                            </div>
+                                    <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text bg-transparent"><i class="ti-user"></i></span>
+                                            <input type="text" class="form-control ps-15 bg-transparent" name="usuario" required placeholder="Nombre de Usuario">
                                         </div>
-                                        <div class="form-group">
-                                            <div class="input-group mb-3">
-                                                <span class="input-group-text  bg-transparent"><i class="ti-lock"></i></span>
-                                                <input name="contrasena" type="password" class="form-control ps-15 bg-transparent" required placeholder="Contraseña">
-                                            </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text  bg-transparent"><i class="ti-lock"></i></span>
+                                            <input name="contrasena" type="password" class="form-control ps-15 bg-transparent" required placeholder="Contraseña">
                                         </div>
-                                        <div class="row">
-                                            <div class="col-12 text-center">
-                                                <button class="btn btn-danger mt-10" type="submit">
-                                                    <div id="ingresar">
-                                                        <i class="icon-login"></i> INGRESAR
-                                                    </div>
-                                                    <div id="loading">
-                                                        <span style="font-size: 50px" class="spinner-grow spinner-grow-md" role="status" aria-hidden="true"></span>
-                                                        @*CARGANDO...*@
-                                                    </div>
-                                                </button>
-                                                @*<button type="submit" class="btn btn-danger mt-10">INGRESAR</button>*@
-                                            </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <button class="btn btn-danger mt-10" type="submit">
+                                                <div id="ingresar">
+                                                    <i class="icon-login"></i> INGRESAR
+                                                </div>
+                                                <div id="loading">
+                                                    <span style="font-size: 50px" class="spinner-grow spinner-grow-md" role="status" aria-hidden="true"></span>
+                                                    @*CARGANDO...*@
+                                                </div>
+                                            </button>
                                         </div>
-                                    </form>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -104,6 +101,9 @@
                             console.log(data);
                             var obj = JSON.parse(data);
                             if (obj.objectResponse) {
+                                window.localStorage.setItem('username', obj.objectResponse.NombreUsuario);
+                                window.localStorage.setItem('name', obj.objectResponse.Nombre);
+                                window.localStorage.setItem('sexo', obj.objectResponse.Sexo);
                                 document.location.href = "@Url.Content("~/Login/Dashboard")"
                             } else {
                                 $.toast({

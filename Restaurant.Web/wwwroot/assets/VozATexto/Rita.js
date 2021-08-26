@@ -73,10 +73,14 @@ function Hablar(texto) {
         frase = "Selecciona una mesa";
         $('#modalPedidoManual').modal('show');
         //$('#modalPedidoManual').modal({ backdrop: 'static', keyboard: false });
-    } else if (texto.includes("mesa")) {
+    } else if (texto.toLowerCase().includes("abrir cuenta") || texto.toLowerCase().includes("abre cuenta") || texto.toLowerCase().includes("nueva cuenta")) {
+        AbrirCuenta();
+        return false;
+    } else if (texto.includes("agregar") && texto.includes("cuenta")) {
         AgregarProducto();
         return false;
-    } else if (texto.includes("creador") || texto.includes("creó")) {
+    }
+    else if (texto.includes("creador") || texto.includes("creó")) {
         frase = "El ingeniero Pablo Martínez, es un papucho, su cara parece tallada por los mismos ángeles.";
     } else if (texto.toLowerCase().includes("siri") || texto.toLowerCase().includes("cortana")) {
         frase = "No sea mamón " + nombre + ", me llamo Rita";
@@ -141,17 +145,42 @@ $("#btnSpeakON").click(function () {
     MicroOff();
 });
 
-function AgregarProducto() {
+function GetData() {
     let items = fraseUsuario.split(" ");
     let cantidad = GetNumber(items[0]);
     let producto = GetProduct(items);
     let index = items.indexOf('mesa') + 1;
     let idMesa = GetNumber(items[index]);
+}
 
-    console.log("cantidad: " + cantidad + " producto: " + producto + " idMesa: " + idMesa);
+function AbrirCuenta() {
+    let mesa = "mesa";
+    let textMesa = fraseUsuario.slice(fraseUsuario.indexOf(mesa) + mesa.length);
+    let IdMesa = GetNumber(textMesa.trim());
 
-    if (cantidad != undefined && producto != undefined && idMesa != undefined) {
-        ValidarPedido(idMesa, cantidad.toString(), producto);
+    if (IdMesa != undefined) {
+        event.stopPropagation();
+        event.preventDefault();
+        $.ajax({
+            url: '../../Cuenta/CreateCuentaAssistent',
+            type: "POST",
+            data: { 'IdMesa': parseInt(IdMesa), 'IdEmpleado': parseInt(idUsuarioLogged) },
+            success: function (data) {
+                if (data.responseCode == 200) {
+                    frase = data.message;
+                    window.location.href = "/Cuenta/FormAgregarProducto?id=" + data.objectResponse;
+                } else {
+                    frase = data.message;
+                }
+            },
+            error: function (err) {
+                frase = formatoIncorrecto;
+            }
+        }).done(function (data) {
+            //AlertExpiration(data);
+            console.log("Indentifiqué: " + fraseUsuario);
+            $("#btnSpeak").click();
+        });
     }
     else {
         frase = formatoIncorrecto;
@@ -179,35 +208,36 @@ function EnviarVenta() {
 }
 
 //ValidarPedido antes de mostrarlo
-function ValidarPedido(idMesa, unidades, producto) {
+function ValidarPedido(idCuenta, unidades, producto) {
     event.stopPropagation();
     event.preventDefault();
+
+    let items = fraseUsuario.split(" ");
+    let cantidad = GetNumber(items[0]);
+    let producto = GetProduct(items);
+    let index = items.indexOf('cuenta') + 1;
+    let idMesa = GetNumber(items[index]);
+
+    //Get Cuenta
+    let textMesa = fraseUsuario.slice(fraseUsuario.indexOf("cuenta") + "cuenta".length);
+    let idCuenta = GetNumber(textMesa.trim());
+    //Get producto
+    let textMesa = fraseUsuario.slice(fraseUsuario.indexOf("cuenta") + "cuenta".length);
+    let idCuenta = GetNumber(textMesa.trim());
+    if (fraseUsuario.includes("con")) {
+        //Get Cuenta
+        let txtComplemento = fraseUsuario.slice(fraseUsuario.indexOf("con") + "con".length);
+        let complemento = GetNumber(textMesa.trim());
+    }
+
     $.ajax({
         url: '../../Cuenta/ValidaPedido',
         type: "POST",
-        data: { 'idMesa': parseInt(idMesa), 'unidades': parseInt(unidades), 'producto': producto.slice(0, -1) },
+        data: { 'IdCuenta': parseInt(idCuenta), 'Cantidad': parseInt(cantidad), 'Nombre': producto },
         success: function (data) {
             if (data.responseCode == 200) {
                 //Obtener precio de producto y calcular total
-                $('#modal-cuentas').modal('toggle');
-                $('#modalPedidoManual').modal('show');
-                //$('#modalPedidoAuto').modal({ backdrop: 'static', keyboard: false });
-
-                let total = parseFloat(data.objectResponse.precioVenta) * parseFloat(unidades);
-
-                document.getElementById("txtPrecio").innerHTML = "$" + data.objectResponse.precioVenta;
-                document.getElementById("txtTotal").innerHTML = "Total:  $" + total;
-                document.getElementById("txtPedido").innerHTML = unidades + " " + producto + " para la mesa #" + idMesa;
-                document.getElementById("txtProdcuto").innerHTML = unidades + " " + producto;
-                //document.getElementById("imgProducto").src = "~/Content/images/productos/" + rutaImagen;
                 frase = "Revisa el pedido, " + unidades + producto + " para la mesa número " + idMesa;
-
-                // Fill Venta Form
-                document.getElementById("unidades").value = unidades;
-                document.getElementById("precioVenta").value = data.objectResponse.precioVenta;
-                document.getElementById("descuento").value = 0;
-                document.getElementById("idProducto").value = data.objectResponse.idProducto;
-                document.getElementById("idCuenta").value = data.objectResponse.idCuenta;
             } else {
                 frase = formatoIncorrecto;
             }
@@ -338,6 +368,7 @@ function GetDayPhrase() {
 
 function GetNumber(txtNumber) {
     switch (txtNumber.toLowerCase()) {
+        case 'un':
         case 'uno':
         case 'una':
         case 'unos':

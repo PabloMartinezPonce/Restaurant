@@ -5,6 +5,15 @@
 @{
     ViewBag.Title = "Formulario Producto";
 }
+<style>
+    .wrapperSelect {
+        /*max-width: 100px;*/
+       /* max-height: 300px;*/
+        z-index: 1000000000;
+        height: 500px;
+        /*display: block;*/
+    }
+</style>
 <div class="content-header">
     <div class="d-flex align-items-center">
         <div class="me-auto">
@@ -29,12 +38,12 @@
                 <div class="box-header with-border">
                     @if (Model.Id != 0)
                     {
-                    <img width="70" src="~/images/productos/@Model.RutaImagen" />
-                    <h4 class="box-title">Edición de producto '@Model.Nombre'</h4>
+                        <img width="70" src="~/images/productos/@Model.RutaImagen" />
+                        <h4 class="box-title">Edición de producto '@Model.Nombre'</h4>
                     }
                     else
                     {
-                    <h4 class="box-title">Creación de nuevo @Model.Nombre</h4>
+                        <h4 class="box-title">Creación de nuevo @Model.Nombre</h4>
                     }
                 </div>
                 <div class="box-body">
@@ -48,15 +57,7 @@
                             </div>
                         </div>
                         <input type="hidden" name="id" value="@Model.Id" />
-                        @*<br />
-                            <span style="color:green">@Html.Raw(ViewBag.Message)</span>*@
                     </form>
-                    @*<form class="dropzone" method="post" enctype="multipart/form-data" asp-controller="Producto" asp-action="Productos">
-                            <div class="fallback">
-                                <input type="file" name="postedFile" />
-                            </div>
-                            <input type="hidden" name="id" value="@Model.Id" />
-                        </form>*@
                     <br />
                     <form id="formProducto">
                         <input id="Id" name="Id" value="@Model.Id" type="hidden" />
@@ -68,13 +69,39 @@
                                         <input type="text" class="form-control" placeholder="Nombre del producto" value="@Model.Nombre" name="Nombre" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="fw-700 fs-16 form-label">Código</label>
                                         <input type="text" class="form-control" placeholder="Ingresa código" value="@Model.Codigo" name="Codigo" required>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Tipo</label>
+                                        <select type="text" class="form-select" value="@Model.Tipo" name="Tipo" required>
+                                            @if (Model.Tipo == "unidad")
+                                            {
+                                                <option selected value="unidad">unidad</option>
+                                                <option value="gramos">gramos</option>
+                                                <option value="litros">litros</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="unidad">unidad</option>
+                                                <option selected value="gramos">gramos</option>
+                                                <option value="litros">litros</option>
+                                            }
+
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Cantidad</label>
+                                        <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Cantidad" name="Cantidad" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
                                     <div class="form-group">
                                         <label class="fw-700 fs-16 form-label">Stock</label>
                                         <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Stock" name="Stock" required>
@@ -90,7 +117,14 @@
                                         <select class="form-select" id="idCategoria" name="idCategoria" required>
                                             @foreach (var item in ViewBag.ListaCategorias)
                                             {
-                                            <option value="@item.Id">@item.Nombre</option>
+                                                if (Model.IdCategoria == item.Id)
+                                                {
+                                                    <option selected value="@item.Id">@item.Nombre</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Id">@item.Nombre</option>
+                                                }
                                             }
                                         </select>
                                     </div>
@@ -101,23 +135,29 @@
                                         <select class="form-select" id="idProveedor" name="idProveedor">
                                             @foreach (var item in ViewBag.ListaProveedores)
                                             {
-                                            <option value="@item.Id">@item.Compania</option>
+                                                <option value="@item.Id">@item.Compania</option>
                                             }
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
+                                <div class="col-md-4 wrapperSelect">
                                     <h5 class="my-10">Complementos</h5>
-                                    <select class="selectpicker" name="complementos" multiple>
+                                    <select class="selectpicker" id="complementos" multiple>
                                         @foreach (var list in ViewBag.ListaComplementos)
                                         {
-                                        <optgroup label="@list[0].IdTipoComplementoNavigation.Nombre">
-                                            @foreach (var item in list)
+                                            @*<optgroup label="@list[0].IdTipoComplementoNavigation.Nombre">*@
+                                                @foreach (var item in list)
                                                 {
-                                            <option value="@item.Id">@item.Nombre</option>
+                                                    <option value='{"Id":@item.Id, "RutaImagen":"Complemento", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
                                                 }
-                                        </optgroup>
+                                            @*</optgroup>*@
                                         }
+                                        @*<optgroup label="Cervezas">*@
+                                            @foreach (var item in ViewBag.ListaProductos)
+                                            {
+                                                <option value='{"Id":@item.Id, "RutaImagen":"Producto", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
+                                            }
+                                        @*</optgroup>*@
                                     </select>
                                 </div>
                                 <!--/span-->
@@ -167,7 +207,7 @@
                         </div>
                         <div class="form-actions mt-10">
                             <a href="/Producto/Productos" class="btn btn-danger">Cancelar</a>
-                            <button type="button" id="idBtnProducto" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</button>
+                            <a id="idBtnProducto" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</a>
                         </div>
                     </form>
                 </div>
@@ -193,7 +233,9 @@
             if (!valid) {
                 return false;
             }
-            var formData = $form.serialize();
+            var list = $('#complementos').val().join(',');
+            var formData = $form.serialize() + "&ComplementosSelect=[" + list + "]";
+            console.log(formData);
 
             $.ajax({
                 url: url,

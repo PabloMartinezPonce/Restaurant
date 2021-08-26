@@ -14,15 +14,15 @@
         <div class="flexbox align-items-center p-15">
             <div class="flexbox align-items-center">
                 <div class="custom-control custom-checkbox ps-0">
-                    <button type="button" class="btn btn-success btn-round" data-bs-toggle="modal" data-bs-target="#modal-fill">
+                    <a class="btn btn-success btn-round" data-bs-toggle="modal" data-bs-target="#modal-fill">
                         <i class="ion ion-plus"></i> Nueva Cuenta
-                    </button>
+                    </a>
                 </div>
 
                 <span class="divider-line mx-1"></span>
 
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesero</button>
+                    <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesero</a>
                     <div class="dropdown-menu">
                         @foreach (var item in ViewBag.ListaEmpleados)
                         {
@@ -31,7 +31,7 @@
                     </div>
                 </div>
                 <div class="dropdown">
-                    <button class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesa</button>
+                    <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesa</a>
                     <div class="dropdown-menu">
                         @foreach (var item in ViewBag.ListaMesas)
                         {
@@ -83,9 +83,6 @@
 <div class="modal modal-fill fade" data-backdrop="false" id="modal-fill" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            @*<div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>*@
             <div class="modal-body">
                 <div class="col-12 col-xl-12">
                     <div class="box">
@@ -93,7 +90,7 @@
                             <h4 class="box-title text-white">Abrir Cuenta</h4>
                             <ul class="box-controls pull-right">
                                 <li class="dropdown">
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                    <a class="btn-close" data-bs-dismiss="modal" aria-label="Close"></a>
                                 </li>
                             </ul>
                         </div>
@@ -139,8 +136,8 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                <button id="btnAbrirCuenta" type="button" class="btn btn-primary float-end"><i class="fa fa-check"></i> Abrir Cuenta</button>
+                <a class="btn btn-danger" data-bs-dismiss="modal">Cancelar</a>
+                <a id="btnAbrirCuenta" class="btn btn-primary float-end"><i class="fa fa-check"></i> Abrir Cuenta</a>
             </div>
         </div>
     </div>

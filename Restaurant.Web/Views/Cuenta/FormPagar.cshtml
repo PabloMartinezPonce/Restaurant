@@ -89,20 +89,20 @@
                     <br />
                     <div class="col-12">
                         <div class="input-group w-p100">
-                            <button type="button" class="btn btn-default"><i class="fa fa-credit-card"></i></button>
+                            <a class="btn btn-default"><i class="fa fa-credit-card"></i></a>
                             <select id="metodoPago" class="form-select" onchange="SumarInteres(this)">
                                 <option disabled value="" selected>Selecciona método de pago</option>
                                 <option value="Efectivo">Efectivo</option>
                                 <option value="Tarjeta">Tarjeta</option>
                                 <option value="Transferencia">Transferencia</option>
-                                <option value="No me quiere pagar">No me quiere pagar</option>
+                                @*<option value="No me quiere pagar">No me quiere pagar</option>*@
                             </select>
                         </div>
                     </div>
                     <br />
                     <div class="col-md-12">
                         <div class="input-group w-p100">
-                            <button type="button" class="btn btn-default">$</button>
+                            <a class="btn btn-default">$</a>
                             <input id="propina" type="number" placeholder="Ingresa propina" class="form-control" onchange="SumarPropina(this)">
                         </div>
                     </div>
@@ -110,13 +110,13 @@
                     <div class="row">
                         <div class="col-md-6">
                             <div class="input-group w-p100">
-                                <button type="button" class="btn btn-default">$</button>
+                                <a class="btn btn-default">$</a>
                                 <input id="recibido" type="number" placeholder="Ingresa pago" class="form-control" onchange="CalcularCambio(this)">
                             </div>
                         </div>
                         <div class="col-md-6">
                             <div class="input-group w-p100">
-                                <button type="button" class="btn btn-default">$</button>
+                                <a class="btn btn-default">$</a>
                                 <input id="cambio" type="number" placeholder="Efectivo de cambio" class="form-control">
                             </div>
                         </div>
@@ -125,9 +125,9 @@
 
                 </div>
                 <div class="box-footer">
-                    <button id="btnEnviar" class="btn btn-success pull-right"><i class="fa fa fa-shopping-cart"></i> Pagar Cuenta</button>
+                    <a id="btnEnviar" class="btn btn-success pull-right"><i class="fa fa fa-shopping-cart"></i> Pagar Cuenta</a>
                     <a href="Cuentas" class="btn btn-default"><i class="fa fa-arrow-left"></i> Regresar </a>
-                    <button onclick="$('#modalReceipt').modal('show')" class="btn btn-secondary"><i class="fa fa fa-print"></i> Ticket</button>
+                    <a onclick="$('#modalReceipt').modal('show')" class="btn btn-secondary text-black-50"><i class="fa fa fa-print"></i> Ticket</a>
                 </div>
             </div>
 
@@ -179,7 +179,7 @@
                     function (isConfirm) { if (isConfirm) { location.href = 'tel:4959560302'; } });
                 document.getElementById("interes").innerText = "$" + 0;
             } else {
-                document.getElementById("interes").innerText = metodo;
+                document.getElementById("interes").innerText = "$0";
             }
 
             document.getElementById("ticketMetodo").innerText = "Método Pago: " + metodo;

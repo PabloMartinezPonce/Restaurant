@@ -1,6 +1,7 @@
 ﻿@using System.Text.Json;
 @using Microsoft.AspNetCore.Http;
 @using Restaurante.Data.DBModels;
+@using Restaurant.Model;
 @inject IHttpContextAccessor HttpContextAccessor;
 @model Cuenta
 @{
@@ -29,7 +30,7 @@
                     <div id="mid">
                         <div class="info">
                             <p class="h3Ti" id="ticketMetodo">Pago en efectivo</p>
-                            <p class="h3Ti">@DateTime.Now.ToShortDateString() @DateTime.Now.ToShortTimeString()</p>
+                            <p class="h3Ti">@GlobalConfig.GetMexDate().ToShortDateString() @GlobalConfig.GetMexDate().ToShortTimeString()</p>
                         </div>
                     </div><!--End Invoice Mid-->
                     <br />
@@ -79,31 +80,20 @@
                                 <span>******************************</span>
                             </p>
                         </div>
-
+                    <br />
                     </div><!--End InvoiceBot-->
                 </div><!--End Invoice-->
 
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancelar</button>
-                <button onclick="window.print();" class="btn btn-secondary"><i class="fa fa-print"></i> Imprimir</button>
+                <a class="btn btn-danger" data-bs-dismiss="modal">Cancelar</a>
+                <a onclick="window.print();" class="btn btn-secondary"><i class="fa fa-print"></i> Imprimir</a>
             </div>
         </div>
     </div>
 </div>
 
-
 @section scripts
 {
     @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
-
-    <script>
-        onclick
-        //Envia a liquidar cuenta
-        function PrintTicket() {
-            var c = document.getElementById('the_canvas_element_id');
-            var t = c.getContext('2d');
-            window.open('', document.getElementById('the_canvas_element_id').toDataURL());
-        }
-    </script>
 }

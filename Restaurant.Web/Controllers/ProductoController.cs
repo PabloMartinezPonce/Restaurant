@@ -73,6 +73,9 @@ namespace Restaurant.Web.Controllers
                 var resultPro = await _daoPro.GetAllProveedores();
                 ViewBag.ListaProveedores = resultPro.objectResponse;
 
+                var resultPC = await _dao.GetAsComplement();
+                ViewBag.ListaProductos = resultPC.objectResponse;
+
                 var resultCom = await _daoCom.GetAllTipos();
                 List<Complemento> list = resultCom.objectResponse;
                 ViewBag.ListaComplementos = list

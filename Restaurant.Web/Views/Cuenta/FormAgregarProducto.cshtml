@@ -27,12 +27,28 @@
                                     <h6><a href="#">@item.Nombre</a></h6>
                                     <small class="text-fader">@item.Descripcion</small>
                                 </div>
-
+                                @{
+                                    List<Complemento> listaCompl = new List<Complemento>();
+                                    var noHayComplemento = string.IsNullOrEmpty(item.ComplementosSelect);
+                                    if (!noHayComplemento)
+                                    {
+                                        listaCompl = JsonSerializer.Deserialize<List<Complemento>>(item.ComplementosSelect);
+                                    }
+                                }
                                 <div class="media-right">
                                     <input type="number" class="form-control" value="1" id="@item.Nombre" style="text-align:center;" />
+                                    @if (!noHayComplemento)
+                                    {
+                                        <select class="form-select" id="Select@item.Nombre">
+                                            @foreach (var compl in listaCompl)
+                                            {
+                                                <option value="@compl.Nombre"> @compl.Nombre</option>
+                                            }
+                                        </select>
+                                    }
                                 </div>
                                 <div class="media-right">
-                                    <a class="btn btn-info btn-sm" href="javascript:AgregarProducto(@item.Id, @item.Nombre);">Agregar</a>
+                                    <a class="btn btn-info btn-sm" href="javascript:AgregarProducto(@item.Id, '@item.Nombre');"><i class="fa fa-plus fa-2x"></i></a>
                                 </div>
                             </div>
                         }
@@ -40,7 +56,7 @@
                     </div>
                 </div>
                 <div class="text-center bt-1 border-light p-10">
-                    <a class="text-uppercase d-block fs-12" href="#">Buscar</a>
+                    <a class="btn btn-success btn-sm"><i class="fa fa-send"></i> Confirmar productos</a>
                 </div>
             </div>
         </div>
@@ -97,7 +113,7 @@
     <script>
         //Envia a liquidar cuenta
         function AgregarProducto(idProducto, nombre) {
-            let cantidad = document.getElementById(nombre.id).value;
+            let cantidad = document.getElementById(nombre).value;
 
             if (cantidad == "" || cantidad == "0") {
                 swal({ title: "¡Atención!", text: "Selecciona una cantidad para el producto " + nombre, type: "info" });

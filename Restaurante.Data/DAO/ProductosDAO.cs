@@ -33,6 +33,31 @@ namespace Restaurante.Data.DAO
             }
         }
 
+        public async Task<ResponseModel> GetAsComplement()
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var productos = await db.Productos.Where(x => x.IdCategoria == 5)
+                    .Select(pro => new Producto
+                    {
+                        Id = pro.Id,
+                        Nombre = pro.Nombre,
+                    }).ToListAsync();
+
+                    if (productos.Count() >= 1)
+                        return new ResponseModel { responseCode = 200, objectResponse = productos, message = "Success" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = new Producto(), message = "No se encontraron usuarios." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = new Producto(), message = ex.Message };
+            }
+        }
+
         public async Task<ResponseModel> GetByFilter(int id, string filter)
         {
             try
@@ -63,10 +88,10 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
-                    var productos = await db.Productos.AsNoTracking().Where(e => e.Id == id).ToListAsync();
+                    var producto = await db.Productos.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync<Producto>();
 
-                    if (productos.Count > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = productos.First(), message = "Success" };
+                    if (producto != null)
+                        return new ResponseModel { responseCode = 200, objectResponse = producto, message = "Success" };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = new Producto(), message = "El producto no existe." };
                 }
@@ -83,10 +108,10 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
-                    var productos = await db.Productos.AsNoTracking().Where(e => e.Nombre == nombre).ToListAsync();
+                    var productos = await db.Productos.AsNoTracking().Where(e => e.Nombre == nombre).FirstOrDefaultAsync<Producto>();
 
-                    if (productos.Count > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = productos.First(), message = "Success" };
+                    if (productos != null)
+                        return new ResponseModel { responseCode = 200, objectResponse = productos, message = "Success" };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El producto no existe." };
                 }
@@ -128,6 +153,7 @@ namespace Restaurante.Data.DAO
                     if (!string.IsNullOrEmpty(regitroView.Nombre)) regitro.Nombre = regitroView.Nombre;
                     if (!string.IsNullOrEmpty(regitroView.Codigo)) regitro.Codigo = regitroView.Codigo;
                     if (!string.IsNullOrEmpty(regitroView.Descripcion)) regitro.Descripcion = regitroView.Descripcion;
+                    if (!string.IsNullOrEmpty(regitroView.ComplementosSelect)) regitro.ComplementosSelect = regitroView.ComplementosSelect;
                     if (regitroView.PrecioCosto != 0) regitro.PrecioCosto = regitroView.PrecioCosto;
                     if (regitroView.PrecioVenta != 0) regitro.PrecioVenta = regitroView.PrecioVenta;
                     if (regitroView.Stock != 0) regitro.Stock = regitroView.Stock;

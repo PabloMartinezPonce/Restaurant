@@ -39,10 +39,10 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
-                    var mesas = await db.Mesas.AsNoTracking().Where(e => e.Id == id).ToListAsync();
+                    var mesa = await db.Mesas.FindAsync(id);
 
-                    if (mesas.Count() >= 1)
-                        return new ResponseModel { responseCode = 200, objectResponse = mesas.First(), message = "Success" };
+                    if (mesa != null)
+                        return new ResponseModel { responseCode = 200, objectResponse = mesa, message = "Success" };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = new Mesa(), message = "No se encontraron mesas." };
                 }

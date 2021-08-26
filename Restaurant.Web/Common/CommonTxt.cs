@@ -33,6 +33,16 @@ namespace Restaurant.Web.Common
                 message = GetMessage(ex),
             };
         }
+
+        public static ResponseModel GetNewResponse(int code, string message, dynamic response)
+        {
+            return new ResponseModel()
+            {
+                responseCode = code,
+                objectResponse = response,
+                message = message,
+            };
+        }
         #endregion
 
     }

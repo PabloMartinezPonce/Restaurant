@@ -1,45 +1,151 @@
 ﻿@{
     ViewBag.Title = "Acceso Denegado";
     Layout = null;
-}<!DOCTYPE html>
-<html lang="en">
+}
 
+<!DOCTYPE html>
+<html lang="en">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <!-- Tell the browser to be responsive to screen width -->
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <!-- Favicon icon -->
-    <link rel="icon" type="image/png" sizes="16x16" href="~/Content/assets/images/favicon.png">
-    <title>Acceso Denegado</title>
-    <!-- Bootstrap Core CSS -->
-    <link href="~/Content/assets/plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS -->
-    <link href="~/Content/assets/css/style.css" rel="stylesheet">
-    <!-- You can change the theme colors from here -->
-    <link href="~/Content/assets/css/colors/blue-dark.css" id="theme" rel="stylesheet">
-    <![endif]-->
+    <link rel="icon" href="~/images/logo/LogoArbol.png">
+
+    <title>Identificate - Las Paseras</title>
+
+    <!-- Vendors Style-->
+    <link rel="stylesheet" href="~/css/vendors_css.css">
+
+    <!-- Style-->
+    <link rel="stylesheet" href="~/css/horizontal-menu.css">
+    <link rel="stylesheet" href="~/css/horizontal-menu.css">
+    <link rel="stylesheet" href="~/css/style.css">
+    <link rel="stylesheet" href="~/css/skin_color.css">
+
 </head>
+<body class="hold-transition theme-primary bg-img" style="background-image: url(../images/auth-bg/bg-1.jpg)">
 
-<body class="fix-header card-no-border">
-    <section id="wrapper" class="error-page">
-        <div class="error-box">
-            <div class="error-body text-center">
-                <h1 style="color: white">¡ACCESO DENEGADO!</h1>
-                <h3 style="color: darkred" class="text-uppercase"><strong>TU SESION HA EXPIRADO O NO TIENES PERMISO DE REALIZAR ESTA ACCION.</strong></h3>
-                <a style="color: white" href="../../" class="btn btn-danger btn-rounded waves-effect waves-light m-b-40"><i class="fa fa-backward"></i> Regresar a Inicio</a>
+    <div class="container h-p100">
+        <div class="row align-items-center justify-content-md-center h-p100">
+
+            <div class="col-12">
+                <div class="row justify-content-center g-0">
+                    <div class="col-lg-5 col-md-5 col-12">
+                        <div class="bg-white rounded10 shadow-lg">
+                            <div class="content-top-agile p-20">
+                                <img id="imgUser" src="" alt="User Image" class="rounded-circle">
+                                <h3 class="mb-0" id="txtName"></h3>
+                            </div>
+                            <div class="p-40">
+                                <form id="loginForm">
+                                    <div class="form-group">
+                                        <div class="input-group mb-3">
+                                            <span class="input-group-text bg-transparent"><i class="ti-lock"></i></span>
+                                            <input type="text" class="form-control ps-15 bg-transparent" id="usuario" name="usuario" required placeholder="Nombre de Usuario">
+                                            <input name="contrasena" type="password" class="form-control ps-15 bg-transparent" required placeholder="Contraseña">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-12 text-center">
+                                            <button class="btn btn-danger mt-10" type="submit">
+                                                <div id="ingresar">
+                                                    <i class="icon-login"></i> INGRESAR
+                                                </div>
+                                                <div id="loading">
+                                                    <span style="font-size: 50px" class="spinner-grow spinner-grow-md" role="status" aria-hidden="true"></span>
+                                                    @*CARGANDO...*@
+                                                </div>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+                                <br />
+                                <br />
+                                <div class="text-center">
+                                    <p class="mb-5">Ingresa tu contraseña para recuperar tu sesión</p>
+                                </div>
+
+                                <div class="text-center">
+                                    <p class="mt-15 mb-0">Or <a style="cursor:pointer" href="/Login" class="text-warning"><b>Ingresa</b></a> con diferente usuario</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <footer style="color: white" class="footer text-center">© 2020 Las Paseras.</footer>
-        </div>
-    </section>
-    <script src="~/Content/assets/plugins/jquery/jquery.min.js"></script>
-    <!-- Bootstrap tether Core JavaScript -->
-    <script src="~/Content/assets/plugins/bootstrap/js/popper.min.js"></script>
-    <script src="~/Content/assets/plugins/bootstrap/js/bootstrap.min.js"></script>
-    <!--Wave Effects -->
-    <script src="~/Content/assets/js/waves.js"></script>
-</body>
 
+        </div>
+    </div>
+
+    <!-- Vendor JS -->
+    <script src="~/js/vendors.min.js"></script>
+    <script src="~/js/pages/chat-popup.js"></script>
+    <script src="~/assets/vendor_components/apexcharts-bundle/dist/apexcharts.min.js"></script>
+    <script src="~/assets/icons/feather-icons/feather.min.js"></script>
+    <!-- Toast -->
+    <script src="~/assets/vendor_components/jquery-toast-plugin-master/src/jquery.toast.js"></script>
+    <script src="~/js/pages/toastr.js"></script>
+    <script src="~/js/pages/notification.js"></script>
+
+    <script>
+        document.getElementById("txtName").innerText = window.localStorage.getItem('name');
+        document.getElementById("usuario").value = window.localStorage.getItem('username');
+        document.getElementById("imgUser").src = window.localStorage.getItem('sexo') == "false" ? "../images/avatar/3.jpg" : "../images/avatar/2.jpg";
+    </script>
+
+    <script>
+            $(document).ready(function () {
+                $('#loginForm').submit(function (e) {
+                    e.preventDefault();
+
+                   var url = "@Url.Content("~/Login/ValidateLogin")"
+                    parametros = $(this).serialize();
+                    Loading(true);
+
+                    $.ajax({
+                        url: "Login/ValidateLogin",
+                        data: parametros,
+                        type: 'POST',
+                        dataType: "json",
+                        contentType: "application/json; charset=utf-8",
+                        success: function (data) {
+                            var obj = JSON.parse(data);
+                            if (obj.objectResponse) {
+                                window.localStorage.setItem('username', obj.objectResponse.NombreUsuario);
+                                window.localStorage.setItem('name', obj.objectResponse.Nombre);
+                                window.localStorage.setItem('sexo', obj.objectResponse.Sexo);
+                                document.location.href = "@Url.Content("~/Login/Dashboard")"
+                            } else {
+                                $.toast({
+                                    heading: 'Error al iniciar sesión',
+                                    text: obj.message,
+                                    position: 'top-center',
+                                    loaderBg: '#ff6849',
+                                    icon: 'error',
+                                    hideAfter: 9000,
+                                    stack: 6
+                                });
+                            }
+                        }
+                    }).done(function (data) {
+                        Loading(false);
+                    });;
+                });
+            });
+
+            function Loading(mostrar) {
+                if (mostrar) {
+                    $('#loading').show();
+                    $('#ingresar').hide();
+                }
+                else {
+                    $('#loading').hide();
+                    $('#ingresar').show();
+                }
+            }
+            Loading(false);
+    </script>
+</body>
 </html>
