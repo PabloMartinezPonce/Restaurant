@@ -242,12 +242,12 @@ namespace Restaurante.Data.DAO
                     if (Cuentas.Count() >= 1)
                         return new ResponseModel { responseCode = 200, objectResponse = Cuentas, message = "Success" };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = new List<Categoria>(), message = "No se encontraron cuentas." };
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontraron cuentas." };
                 }
             }
             catch (SqlException ex)
             {
-                return new ResponseModel { responseCode = 500, objectResponse = new List<Categoria>(), message = ex.Message };
+                return new ResponseModel { responseCode = 500, objectResponse = new List<Cuenta>(), message = ex.Message };
             }
         }
 

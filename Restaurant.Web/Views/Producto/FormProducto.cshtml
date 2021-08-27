@@ -8,7 +8,7 @@
 <style>
     .wrapperSelect {
         /*max-width: 100px;*/
-       /* max-height: 300px;*/
+        /* max-height: 300px;*/
         z-index: 1000000000;
         height: 500px;
         /*display: block;*/
@@ -140,24 +140,37 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4 wrapperSelect">
+                                @*<div class="col-md-4 wrapperSelect">
                                     <h5 class="my-10">Complementos</h5>
                                     <select class="selectpicker" id="complementos" multiple>
                                         @foreach (var list in ViewBag.ListaComplementos)
                                         {
-                                            @*<optgroup label="@list[0].IdTipoComplementoNavigation.Nombre">*@
-                                                @foreach (var item in list)
-                                                {
-                                                    <option value='{"Id":@item.Id, "RutaImagen":"Complemento", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
-                                                }
-                                            @*</optgroup>*@
-                                        }
-                                        @*<optgroup label="Cervezas">*@
-                                            @foreach (var item in ViewBag.ListaProductos)
+                                            <optgroup label="@list[0].IdTipoComplementoNavigation.Nombre">
+                                            @foreach (var item in list)
                                             {
-                                                <option value='{"Id":@item.Id, "RutaImagen":"Producto", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
+                                                <option value='{"Id":@item.Id, "RutaImagen":"Complemento", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
                                             }
-                                        @*</optgroup>*@
+                                            </optgroup>
+                                        }
+                                        <optgroup label="Cervezas">
+                                        @foreach (var item in ViewBag.ListaProductos)
+                                        {
+                                            <option value='{"Id":@item.Id, "RutaImagen":"Producto", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
+                                        }
+                                        </optgroup>
+                                    </select>
+                                </div>*@
+
+                                <div class="col-md-4 wrapperSelect">
+                                    <h5 class="my-10">Complementos</h5>
+                                    <select class="selectpicker" id="complementos">
+                                        @foreach (var list in ViewBag.ListaComplementos)
+                                        {
+                                            @foreach (var item in list)
+                                            {
+                                                <option value='@item.Id'>@item.Nombre</option>
+                                            }
+                                        }
                                     </select>
                                 </div>
                                 <!--/span-->

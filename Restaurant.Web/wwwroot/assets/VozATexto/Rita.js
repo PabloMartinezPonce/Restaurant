@@ -208,26 +208,31 @@ function EnviarVenta() {
 }
 
 //ValidarPedido antes de mostrarlo
-function ValidarPedido(idCuenta, unidades, producto) {
+function AgregarProducto() {
     event.stopPropagation();
     event.preventDefault();
 
     let items = fraseUsuario.split(" ");
-    let cantidad = GetNumber(items[0]);
+    let cantidad = GetNumber(items[1]);
     let producto = GetProduct(items);
     let index = items.indexOf('cuenta') + 1;
-    let idMesa = GetNumber(items[index]);
+    let idCuenta = GetNumber(items[index]);
 
-    //Get Cuenta
-    let textMesa = fraseUsuario.slice(fraseUsuario.indexOf("cuenta") + "cuenta".length);
-    let idCuenta = GetNumber(textMesa.trim());
-    //Get producto
-    let textMesa = fraseUsuario.slice(fraseUsuario.indexOf("cuenta") + "cuenta".length);
-    let idCuenta = GetNumber(textMesa.trim());
     if (fraseUsuario.includes("con")) {
         //Get Cuenta
-        let txtComplemento = fraseUsuario.slice(fraseUsuario.indexOf("con") + "con".length);
-        let complemento = GetNumber(textMesa.trim());
+        let index2 = items.indexOf('con') + 1;
+        let complemento = GetNumber(items[index2]);
+        console.log(cantidad + " " + producto + " a cuenta " + idCuenta + " con cerveza " + complemento);
+    } else {
+        console.log(cantidad + " " + producto + " a cuenta " + idCuenta);
+    }
+    if (fraseUsuario.includes("de")) {
+        //Get Cuenta
+        let index3 = items.indexOf('de') + 1;
+        let tamaño = GetNumber(items[index3]);
+        console.log(cantidad + " " + producto + " a cuenta " + idCuenta + " con cerveza " + tamaño);
+    } else {
+        console.log(cantidad + " " + producto + " a cuenta " + idCuenta);
     }
 
     $.ajax({
@@ -237,7 +242,7 @@ function ValidarPedido(idCuenta, unidades, producto) {
         success: function (data) {
             if (data.responseCode == 200) {
                 //Obtener precio de producto y calcular total
-                frase = "Revisa el pedido, " + unidades + producto + " para la mesa número " + idMesa;
+                frase = "Revisa el pedido, " + cantidad + producto + " para la mesa número " + idCuenta;
             } else {
                 frase = formatoIncorrecto;
             }
@@ -306,23 +311,19 @@ $("#btnEnviarVenta").click(function (event) {
 
 function GetProduct(items) {
     var producto;
-    producto = items[1];
-    if (items[2] != "mesa" && items[2] != "para" && items[2] != "la" && items[2] != "a" && items[2] != "en") {
-        producto = producto + " " + items[2];
-    } else {
-        return producto;
-    }
-    if (items[3] != "mesa" && items[3] != "para" && items[3] != "la" && items[3] != "a" && items[3] != "en") {
+    producto = items[2];
+
+    if (items[3] != "cuenta" && items[3] != "para" && items[3] != "la" && items[3] != "a" && items[3] != "en") {
         producto = producto + " " + items[3];
     } else {
         return producto;
     }
-    if (items[4] != "mesa" && items[4] != "para" && items[4] != "la" && items[4] != "a" && items[4] != "en") {
+    if (items[4] != "cuenta" && items[4] != "para" && items[4] != "la" && items[4] != "a" && items[4] != "en") {
         producto = producto + " " + items[4];
     } else {
         return producto;
     }
-    if (items[5] != "mesa" && items[5] != "para" && items[5] != "la" && items[5] != "a" && items[5] != "en") {
+    if (items[5] != "cuenta" && items[5] != "para" && items[5] != "la" && items[5] != "a" && items[5] != "en") {
         producto = producto + " " + items[5];
     } else {
         return producto;

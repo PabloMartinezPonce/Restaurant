@@ -5,7 +5,7 @@
 @{
     ViewBag.Title = "Detalle de Cuenta";
 }
-
+<br />
 <section class="content">
     <div class="row">
 
@@ -56,7 +56,7 @@
                     </div>
                 </div>
                 <div class="text-center bt-1 border-light p-10">
-                    <a class="btn btn-success btn-sm"><i class="fa fa-send"></i> Confirmar productos</a>
+                    <a class="btn btn-outline btn-success" href="FormPagar?id=@Model.Id"><i class="fa fa-money"></i> Liquidar</a>
                 </div>
             </div>
         </div>
@@ -128,7 +128,7 @@
                 success: function (data) {
                     if (data.responseCode == 200) {
                         swal({ title: 'Éxito', text: data.message, type: "success", },
-                            function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                            function (isConfirm) { if (isConfirm) {  } });
                     } else {
                         swal({ title: "Error", text: data.message, icon: "error" });
                     }
