@@ -18,7 +18,7 @@ namespace Restaurante.Data.DBModels
         public string Telefono { get; set; }
         public string Descripcion { get; set; }
         public string RutaFoto { get; set; }
-        public bool? Sexo { get; set; }
+        public bool Sexo { get; set; }
         public int? IdRol { get; set; }
 
         public virtual Role IdRolNavigation { get; set; }

@@ -22,23 +22,30 @@
                 <span class="divider-line mx-1"></span>
 
                 <div class="dropdown">
-                    <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesero</a>
+                    <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por estatus</a>
                     <div class="dropdown-menu">
-                        @foreach (var item in ViewBag.ListaEmpleados)
-                        {
-                            <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.Nombre</a>
-                        }
+                        <a class="dropdown-item" href="@Url.Action("Cuentas", "Cuenta", new {idEmpleado = 0, estaActiva = true })"><span class="badge badge-ring badge-danger me-1"></span> Cuenta Activa</a>
+                        <a class="dropdown-item" href="@Url.Action("Cuentas", "Cuenta", new {idEmpleado = 0, estaActiva = false })"><span class="badge badge-ring badge-danger me-1"></span> Cuenta Inactiva</a>
                     </div>
                 </div>
-                <div class="dropdown">
-                    <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesa</a>
-                    <div class="dropdown-menu">
-                        @foreach (var item in ViewBag.ListaMesas)
-                        {
-                            <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.TipoLugar #@item.Id</a>
-                        }
-                    </div>
-                </div>
+                @*<div class="dropdown">
+                        <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesero</a>
+                        <div class="dropdown-menu">
+                            @foreach (var item in ViewBag.ListaEmpleados)
+                            {
+                                <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.Nombre</a>
+                            }
+                        </div>
+                    </div>*@
+                @*<div class="dropdown">
+                        <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesa</a>
+                        <div class="dropdown-menu">
+                            @foreach (var item in ViewBag.ListaMesas)
+                            {
+                                <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.TipoLugar #@item.Id</a>
+                            }
+                        </div>
+                    </div>*@
             </div>
 
             <div>
@@ -51,33 +58,62 @@
     <!-- /.box-body -->
 </div>
 
-<section class="content">
-    <div class="row fx-element-overlay">
-        @foreach (var obj in Model)
-        {
-            <div class="col-lg-4">
-                <div class="box box-inverse bg-gradient-primary">
-                    <div class="box-body ribbon-box text-center">
-                        <div class="ribbon ribbon-success">@obj.NombreEmpleado</div>
-                        <h5 class="text-uppercase text-muted">Cuenta #@obj.Id</h5>
-                        <br>
-                        <h5 class="price">
-                            <sup>$</sup>@obj.total
-                            <span>&nbsp;</span>
-                        </h5>
-                        <hr>
-                        <p>Mesa <strong>#@obj.IdMesa</strong> con <strong>@obj.CantidadPersonas</strong> personas</p>
-                        <p>Apertura a las <strong>@obj.FechaApertura.ToLongTimeString()</strong> </p>
-                        <p><strong>Nota: </strong> @obj.Descripcion</p>
-                        <a class="btn btn-outline btn-white" href="FormCuenta?id=@obj.Id"><i class="fa fa-eye"></i> Ver</a>
-                        <a class="btn btn-outline btn-success" href="FormAgregarProducto?id=@obj.Id"><i class="fa fa-plus"></i> Producto</a>
-                        <a class="btn btn-outline btn-danger" href="FormPagar?id=@obj.Id"><i class="fa fa-money"></i> Liquidar</a>
+@if (Model.Count > 0)
+{
+    <section class="content">
+        <div class="row fx-element-overlay">
+            @foreach (var obj in Model)
+            {
+                <div class="col-lg-4">
+                    <div class="box box-inverse bg-gradient-primary">
+                        <div class="box-body ribbon-box text-center">
+                            <div class="ribbon ribbon-success">@obj.NombreEmpleado</div>
+                            <h5 class="text-uppercase text-muted">Cuenta #@obj.Id</h5>
+                            <br>
+                            <h5 class="price">
+                                <sup>$</sup>@obj.total
+                                <span>&nbsp;</span>
+                            </h5>
+                            <hr>
+                            <p>Mesa <strong>#@obj.IdMesa</strong> con <strong>@obj.CantidadPersonas</strong> personas</p>
+                            <p>Apertura a las <strong>@obj.FechaApertura.ToLongTimeString()</strong> </p>
+                            <p><strong>Nota: </strong> @obj.Descripcion</p>
+                            @if (obj.CuentaActiva.Value)
+                            {
+                                <a class="btn btn-outline btn-danger" href="javascript:CancelarCuenta(@obj.Id);" title="Cancelar"><i class="fa fa-times"></i> </a>
+                            }
+                            <a class="btn btn-outline btn-info" href="FormCuenta?id=@obj.Id" title="Ver"><i class="fa fa-eye"></i> </a>
+                            @if (obj.CuentaActiva.Value)
+                            {
+                                <a class="btn btn-outline btn-warning" href="FormAgregarProducto?id=@obj.Id" title="Administrar Cuenta"><i class="mdi mdi-food"></i> </a>
+                            }
+                            @if (obj.CuentaActiva.Value)
+                            {
+                                <a class="btn btn-outline btn-success" href="FormPagar?id=@obj.Id" title="Liquidar"><i class="fa fa-money"></i> </a>
+                            }
+                        </div>
                     </div>
                 </div>
+            }
+        </div>
+    </section>
+}
+else
+{
+    <div class="col-xl-6">
+        <div class="box">
+            <div class="box-body d-flex p-0">
+                <div class="flex-grow-1 bg-gradient-secondary-dark p-30 flex-grow-1 bg-img" style="background-position: calc(100% + 0.5rem) bottom; background-size: auto 100%; background-image: url(../images/svg-icon/color-svg/custom-13.svg)">
+                    <h4 class="fw-500">Aún no hay cuentas.</h4>
+                    <p class="my-10 fs-16">
+                        Selecciona el botón "Nueva Cuenta"<br /> para crear el primer pedido del día.
+                    </p>
+                    @*<a href="#" class="btn btn-danger-light">Read More</a>*@
+                </div>
             </div>
-        }
+        </div>
     </div>
-</section>
+}
 
 <!-- Modal -->
 <div class="modal modal-fill fade" data-backdrop="false" id="modal-fill" tabindex="-1">
@@ -108,7 +144,7 @@
                                                 <option disabled selected value="">Selecciona una mesa</option>
                                                 @foreach (var item in ViewBag.ListaMesas)
                                                 {
-                                                    <option value="@item.Id">#@item.Id @item.Descripcion</option>
+                                                    <option value="@item.Id">#@item.TipoLugar - @item.Descripcion</option>
                                                 }
                                             </select>
                                         </div>
@@ -118,7 +154,7 @@
                                     <div class="bg-lightest px-30 py-40 rounded20 mb-20">
                                         <span class="icon-Add-user d-block fs-40"><span class="path1"></span><span class="path2"></span></span>
                                         <div class="col-12">
-                                            <input type="number" class="form-control" id="cantidadPersonas" placeholder="Número de personas" />
+                                            <input type="number" class="form-control" id="cantidadPersonas" maxlength="4" min="1" max="50" placeholder="Número de personas" />
                                         </div>
                                     </div>
                                 </div>
@@ -157,14 +193,15 @@
             let descripcion = document.getElementById("descripcion").value;
             let personas = document.getElementById("cantidadPersonas").value;
 
-            if (descripcion == "") {
-                swal({ title: "¡Atención!", text: "Ingresa una breve descripción.", type: "info" });
-                return false;
-            } else if (personas == "") {
-                swal({ title: "¡Atención!", text: "Ingresa la cantidad de personas.", type: "info" });
-                return false;
-            }else if (mesa == "") {
-                swal({ title: "¡Atención!", text: "El selecciona una mesa.", type: "info" });
+            //if (descripcion == "") {
+            //    swal({ title: "¡Atención!", text: "Ingresa una breve descripción.", type: "info" });
+            //    return false;
+            //} else if (personas == "") {
+            //    swal({ title: "¡Atención!", text: "Ingresa la cantidad de personas.", type: "info" });
+            //    return false;
+            //}else
+            if (mesa == "") {
+                swal({ title: "¡Atención!", text: "Por favor, selecciona una mesa.", type: "info" });
                 return false;
             }
 
@@ -184,7 +221,7 @@
                 success: function (data) {
                     if (data.responseCode == 200) {
                         swal({ title: 'Éxito', text: data.message, type: "success", },
-                            function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/Cuentas"; } });
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/FormAgregarProducto?id=" + data.objectResponse; } });
                     } else {
                         swal({ title: "Error", text: data.message, icon: "error" });
                     }
@@ -195,5 +232,41 @@
                 //AlertExpiration(data);
             });
         });
+
+         //Cancelar cuenta
+        function CancelarCuenta(idCuenta) {
+            swal({
+                title: '¿Esta seguro de canlear la cuenta?',
+                text: 'La cuenta no se mostrará más.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+            $.ajax({
+                url: "CancelarCuenta",
+                data: { id: idCuenta },
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/Cuentas"; } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+                    }
+                })
+        };
     </script>
 }

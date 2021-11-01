@@ -1,10 +1,11 @@
 ﻿@using System.Text.Json;
 @using Microsoft.AspNetCore.Http;
+@using Restaurante.Data.DBModels;
+@using Restaurant.Model;
 @inject IHttpContextAccessor HttpContextAccessor;
 @{
     ViewBag.Title = "Inicio";
-    var usuario = JsonSerializer.Deserialize<UsuarioDTO>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
-}
+    var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));}
 
 <!-- Content Header (Page header) -->
 <div class="content-header">
@@ -23,9 +24,326 @@
 
     </div>
 </div>
+@*<section class="content">
+    @if (usuario.IdRol == 1 || usuario.IdRol == 2)
+    {
+        <div class="row">
+            <div class="col-xxxl-12 col-12">
+                <div class="box">
+                    <div class="box-body">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <h4 class="box-title mb-0">Datos de venta</h4>
+                                <p class="mb-0 text-mute">Información de ventas por dia</p>
+                            </div>
+                            <div class="text-end">
+                                <h3 class="box-title mb-0 fw-500">$154.00</h3>
+                                <p class="mb-0"><span class="text-success">+ 1.5%</span> que la semana pasada</p>
+                            </div>
+                        </div>
+                        <div id="chart" class="mt-20"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-xxxl-6 col-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h4 class="box-title">Lo Más Pedido</h4>
+                    </div>
+                    <div class="box-body">
+                        <div class="d-md-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-start align-items-center mb-20 mb-md-0">
+                                <div>
+                                    <p class="mb-0 fs-18 text-mute">#1</p>
+                                </div>
+                                <div class="text-start">
+                                    <img src="../images/food/biryanis.jpg" class="rounded10 w-80 mx-15" alt="" />
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-500">Biryanis Pulav</h5>
+                                    <p class="mb-0">$12.00 <span class="text-success">Main Course</span></p>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-md-end align-items-center">
+                                <div class="text-end mx-15">
+                                    <span class="fs-50 text-success icon-Chart-line"><span class="path1"></span><span class="path2"></span></span>
+                                </div>
+                                <div class="text-start w-90">
+                                    <h3 class="box-title mb-0 fw-500">158</h3>
+                                    <p class="mb-0">Sales (20%)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-md-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-start align-items-center mb-20 mb-md-0">
+                                <div>
+                                    <p class="mb-0 fs-18 text-mute">#2</p>
+                                </div>
+                                <div class="text-start">
+                                    <img src="../images/food/burgers.jpg" class="rounded10 w-80 mx-15" alt="" />
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-500">Burgers</h5>
+                                    <p class="mb-0">$42.00 <span class="text-success">Snakes</span></p>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-md-end align-items-center">
+                                <div class="text-end mx-15">
+                                    <span class="fs-50 text-primary icon-Chart-line1"><span class="path1"></span><span class="path2"></span></span>
+                                </div>
+                                <div class="text-start w-90">
+                                    <h3 class="box-title mb-0 fw-500">18</h3>
+                                    <p class="mb-0">Sales (-0.5%)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-md-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-start align-items-center mb-20 mb-md-0">
+                                <div>
+                                    <p class="mb-0 fs-18 text-mute">#3</p>
+                                </div>
+                                <div class="text-start">
+                                    <img src="../images/food/dals.jpg" class="rounded10 w-80 mx-15" alt="" />
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-500">Dal Palak Recipe</h5>
+                                    <p class="mb-0">$60.00 <span class="text-success">Main Course</span></p>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-md-end align-items-center">
+                                <div class="text-end mx-15">
+                                    <span class="fs-50 text-success icon-Chart-line"><span class="path1"></span><span class="path2"></span></span>
+                                </div>
+                                <div class="text-start w-90">
+                                    <h3 class="box-title mb-0 fw-500">258</h3>
+                                    <p class="mb-0">Sales (15%)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-md-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-start align-items-center mb-20 mb-md-0">
+                                <div>
+                                    <p class="mb-0 fs-18 text-mute">#4</p>
+                                </div>
+                                <div class="text-start">
+                                    <img src="../images/food/noodles.jpg" class="rounded10 w-80 mx-15" alt="" />
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-500">Pan Noodles</h5>
+                                    <p class="mb-0">$112.00 <span class="text-success">Staters</span></p>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-md-end align-items-center">
+                                <div class="text-end mx-15">
+                                    <span class="fs-50 text-primary icon-Chart-line1"><span class="path1"></span><span class="path2"></span></span>
+                                </div>
+                                <div class="text-start w-90">
+                                    <h3 class="box-title mb-0 fw-500">58</h3>
+                                    <p class="mb-0">Sales (-10%)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="d-md-flex justify-content-between align-items-center">
+                            <div class="d-flex justify-content-start align-items-center mb-20 mb-md-0">
+                                <div>
+                                    <p class="mb-0 fs-18 text-mute">#5</p>
+                                </div>
+                                <div class="text-start">
+                                    <img src="../images/food/main.jpg" class="rounded10 w-80 mx-15" alt="" />
+                                </div>
+                                <div>
+                                    <h5 class="mb-0 fw-500">Vegetable Jalfrezi</h5>
+                                    <p class="mb-0">$120.00 <span class="text-success">Main Course</span></p>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-md-end align-items-center">
+                                <div class="text-end mx-15">
+                                    <span class="fs-50 text-success icon-Chart-line"><span class="path1"></span><span class="path2"></span></span>
+                                </div>
+                                <div class="text-start w-90">
+                                    <h3 class="box-title mb-0 fw-500">215</h3>
+                                    <p class="mb-0">Sales (21%)</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-xxxl-6 col-12">
+                <div class="box">
+                    <div class="box-header">
+                        <h4 class="box-title">Nuestros Productos</h4>
+                    </div>
+                    <div class="box-body">
+                        <div class="owl-carousel">
+                            <div class="item">
+                                <div class="pe-20">
+                                    <img src="../images/food/biryanis.jpg" class="img-fluid rounded15 mb-15" alt="" />
+                                    <h5>Biryanis Pulav</h5>
+                                    <div class="mb-15 d-flex text-warning align-items-center">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-half-empty"></i>
+                                        <span class="text-fade ms-10">(150 Review)</span>
+                                    </div>
+                                    <a href="#" class="waves-effect waves-light btn btn-sm btn-info-light"><i class="fa fa-heart me-10"></i> 12k Like it</a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="pe-20">
+                                    <img src="../images/food/burgers.jpg" class="img-fluid rounded15 mb-15" alt="" />
+                                    <h5>king Burgers</h5>
+                                    <div class="mb-15 d-flex text-warning align-items-center">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-half-empty"></i>
+                                        <span class="text-fade ms-10">(150 Review)</span>
+                                    </div>
+                                    <a href="#" class="waves-effect waves-light btn btn-sm btn-info-light"><i class="fa fa-heart me-10"></i> 12k Like it</a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="pe-20">
+                                    <img src="../images/food/dals.jpg" class="img-fluid rounded15 mb-15" alt="" />
+                                    <h5>Dal Palak Recipe</h5>
+                                    <div class="mb-15 d-flex text-warning align-items-center">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-half-empty"></i>
+                                        <span class="text-fade ms-10">(150 Review)</span>
+                                    </div>
+                                    <a href="#" class="waves-effect waves-light btn btn-sm btn-info-light"><i class="fa fa-heart me-10"></i> 12k Like it</a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="pe-20">
+                                    <img src="../images/food/noodles.jpg" class="img-fluid rounded15 mb-15" alt="" />
+                                    <h5>Pan Noodles</h5>
+                                    <div class="mb-15 d-flex text-warning align-items-center">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-half-empty"></i>
+                                        <span class="text-fade ms-10">(150 Review)</span>
+                                    </div>
+                                    <a href="#" class="waves-effect waves-light btn btn-sm btn-info-light"><i class="fa fa-heart me-10"></i> 12k Like it</a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="pe-20">
+                                    <img src="../images/food/main.jpg" class="img-fluid rounded15 mb-15" alt="" />
+                                    <h5>Vegetable Jalfrezi</h5>
+                                    <div class="mb-15 d-flex text-warning align-items-center">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-half-empty"></i>
+                                        <span class="text-fade ms-10">(150 Review)</span>
+                                    </div>
+                                    <a href="#" class="waves-effect waves-light btn btn-sm btn-info-light"><i class="fa fa-heart me-10"></i> 12k Like it</a>
+                                </div>
+                            </div>
+                            <div class="item">
+                                <div class="pe-20">
+                                    <img src="../images/food/subziyan.jpg" class="img-fluid rounded15 mb-15" alt="" />
+                                    <h5>Aloo Tamatar Ki Sabzi</h5>
+                                    <div class="mb-15 d-flex text-warning align-items-center">
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star"></i>
+                                        <i class="fa fa-star-half-empty"></i>
+                                        <span class="text-fade ms-10">(150 Review)</span>
+                                    </div>
+                                    <a href="#" class="waves-effect waves-light btn btn-sm btn-info-light"><i class="fa fa-heart me-10"></i> 12k Like it</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</section>*@
 
 @section scripts
     {
-    @*<script src="~/Content/plugins/webspeechdemo/VozSpeech.js"></script>*@
-    @*<script src="~/Content/Scripts/Dashboard.js"></script>*@
+    <script>
+
+        var options = {
+            series: [{
+                name: 'Revenue',
+                data: [31, 50, 28, 70, 45, 90, 140]
+            }],
+            chart: {
+                height: 178,
+                type: 'area',
+                zoom: {
+                    enabled: false
+                },
+            },
+            colors: ["#4c95dd"],
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                curve: 'smooth'
+            },
+            xaxis: {
+                categories: ["Mon", "Tue", "Wed", "Thu", "Fri", "Set", "Sun"]
+            },
+            tooltip: {
+                y: {
+                    formatter: function (val) {
+                        return "$" + val + " thousands"
+                    }
+                },
+            },
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+
+        $('.owl-carousel').owlCarousel({
+            loop: true,
+            margin: 0,
+            responsiveClass: true,
+            autoplay: true,
+            dots: false,
+            nav: false,
+            responsive: {
+                0: {
+                    items: 1,
+                },
+                768: {
+                    items: 2,
+                },
+                1024: {
+                    items: 4,
+                },
+                1600: {
+                    items: 5,
+                },
+                2000: {
+                    items: 5,
+                }
+            }
+        });
+    </script>
 }

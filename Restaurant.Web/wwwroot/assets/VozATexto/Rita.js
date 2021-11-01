@@ -79,43 +79,43 @@ function Hablar(texto) {
     } else if (texto.includes("agregar") && texto.includes("cuenta")) {
         AgregarProducto();
         return false;
-    }
-    else if (texto.includes("creador") || texto.includes("creó")) {
-        frase = "El ingeniero Pablo Martínez, es un papucho, su cara parece tallada por los mismos ángeles.";
-    } else if (texto.toLowerCase().includes("siri") || texto.toLowerCase().includes("cortana")) {
-        frase = "No sea mamón " + nombre + ", me llamo Rita";
-    } else if (texto.includes("quién eres") || texto.includes("te llamas")) {
-        frase = "Hola " + nombre + ", mi nombre es Rita Miller y soy la asistente personal del bar las paseras.";
-    } else if (texto.includes("eres real")) {
-        frase = "Obvio microbio, saca las frías o que?.";
-    } else if (texto.includes("Saca las cheves")) {
-        frase = "Ya me volví niño ueno uei.";
-    } else if (texto.includes("Hola")) {
-        frase = "Hola " + nombre + ", como va todo?.";
-    } else if (texto.includes("ventas")) {
-        frase = "2 3, ahí van más o menillos, pero velo por ti mismo. Te redirecciono a tus ventas.";
-    } else if (texto.includes("canta")) {
-        frase = "taaamaaaarindooooo, 1 2 y 3 tamarindo 1 2 y 3 tamarindo.";
-    } else if (texto.includes("Chema o Cristian") || texto.includes("Cristian o Chema") || texto.includes("Chema y Cristian") || texto.includes("Cristian y Chema")) {
-        frase = "Christian picha cervezas a cualquier morra, es un power ranger, y chema siempre se clava el cambio, valen madre los dos.";
-    } else if (texto.includes("Buenos días")) {
-        frase = "Buenos días " + nombre + ", uachen el paisaje jomis.";
-    } else if (texto.includes("te gusta el campo")) {
-        frase = "Me gusta el campo esseee, me voy a hacer un chanque de poca madre, con albercas cercas de estacas blancas y todo. jeeey " + nombre + " está de aquellas tu mamacita, mua.";
-    } else if (texto.includes("mejor bar")) {
-        frase = "Obviamente el bar las paseras, somos los nuevos dueños del rancho, los vatos locos ya marcharon.";
-    } else if (texto.includes("te gusta tu trabajo") || texto.includes("que se siente ser asistente")) {
-        frase = "Pues ahí más o menillos. Sabes por que me gusta ser asistente personal, pa darle una feria a mi jefe y una feria pa mi viejo, y pal comprar vicio claro, pa comprar un vino, un toquecito de mota, el chemo y unas chevecitas. y el foquín.";
-    } else if (texto.includes("cuántos años tienes")) {
-        frase = "Ya tengo muchos años de asistente, no toda mi vida pero ya tengo años. O sea que no tengo toda mi vida pero ya tengo años, yo";
-    } else if (texto.includes("nueva tecnología")) {
-        frase = "¿Como de la nueva?, es que no entiendo.";
-    } else if (texto.includes("manda saludos")) {
-        frase = "jeeei. whaaats up jomis";
-    } else if (texto.includes("Qué día es hoy")) {
-        frase = GetDayPhrase();
-    } else if (texto.includes("Carlos")) {
-        frase = "¿Quien será?, ¡Oh! Carlos la vaca"
+    //}
+    //else if (texto.includes("creador") || texto.includes("creó")) {
+    //    frase = "El ingeniero Pablo Martínez, es un papucho, su cara parece tallada por los mismos ángeles.";
+    //} else if (texto.toLowerCase().includes("siri") || texto.toLowerCase().includes("cortana")) {
+    //    frase = "No sea mamón " + nombre + ", me llamo Rita";
+    //} else if (texto.includes("quién eres") || texto.includes("te llamas")) {
+    //    frase = "Hola " + nombre + ", mi nombre es Rita Miller y soy la asistente personal del bar las paseras.";
+    //} else if (texto.includes("eres real")) {
+    //    frase = "Obvio microbio, saca las frías o que?.";
+    //} else if (texto.includes("Saca las cheves")) {
+    //    frase = "Ya me volví niño ueno uei.";
+    //} else if (texto.includes("Hola")) {
+    //    frase = "Hola " + nombre + ", como va todo?.";
+    //} else if (texto.includes("ventas")) {
+    //    frase = "2 3, ahí van más o menillos, pero velo por ti mismo. Te redirecciono a tus ventas.";
+    //} else if (texto.includes("canta")) {
+    //    frase = "taaamaaaarindooooo, 1 2 y 3 tamarindo 1 2 y 3 tamarindo.";
+    //} else if (texto.includes("Chema o Cristian") || texto.includes("Cristian o Chema") || texto.includes("Chema y Cristian") || texto.includes("Cristian y Chema")) {
+    //    frase = "Christian picha cervezas a cualquier morra, es un power ranger, y chema siempre se clava el cambio, valen madre los dos.";
+    //} else if (texto.includes("Buenos días")) {
+    //    frase = "Buenos días " + nombre + ", uachen el paisaje jomis.";
+    //} else if (texto.includes("te gusta el campo")) {
+    //    frase = "Me gusta el campo esseee, me voy a hacer un chanque de poca madre, con albercas cercas de estacas blancas y todo. jeeey " + nombre + " está de aquellas tu mamacita, mua.";
+    //} else if (texto.includes("mejor bar")) {
+    //    frase = "Obviamente el bar las paseras, somos los nuevos dueños del rancho, los vatos locos ya marcharon.";
+    //} else if (texto.includes("te gusta tu trabajo") || texto.includes("que se siente ser asistente")) {
+    //    frase = "Pues ahí más o menillos. Sabes por que me gusta ser asistente personal, pa darle una feria a mi jefe y una feria pa mi viejo, y pal comprar vicio claro, pa comprar un vino, un toquecito de mota, el chemo y unas chevecitas. y el foquín.";
+    //} else if (texto.includes("cuántos años tienes")) {
+    //    frase = "Ya tengo muchos años de asistente, no toda mi vida pero ya tengo años. O sea que no tengo toda mi vida pero ya tengo años, yo";
+    //} else if (texto.includes("nueva tecnología")) {
+    //    frase = "¿Como de la nueva?, es que no entiendo.";
+    //} else if (texto.includes("manda saludos")) {
+    //    frase = "jeeei. whaaats up jomis";
+    //} else if (texto.includes("Qué día es hoy")) {
+    //    frase = GetDayPhrase();
+    //} else if (texto.includes("Carlos")) {
+    //    frase = "¿Quien será?, ¡Oh! Carlos la vaca"
     } else {
         frase = "No entendí " + nombre + ". por favor dilo de nuevo";
     }

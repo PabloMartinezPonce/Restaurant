@@ -7,6 +7,7 @@
 @{
     ViewBag.Title = "Cuentas";
     var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+    var listaProductos = Model.RelCuentaProductos.GroupBy(u => u.IdProducto).Select(grp => grp.ToList()).ToList();
 }
 
 <!-- CSS -->
@@ -19,81 +20,82 @@
 
             <div class="modal-body">
                 <div class="print-container" id="invoice-POS">
+                    <br />
 
-                    <center id="top">
-                        <div class="logo"></div>
+                    @*<center id="top">
+                        <div class="logo">
+                            <img id="PrintLogo" src="~/images/logo/LogoArbol.png" />
+                        </div>
                         <div class="info">
                             <p class="h2Ti">Las Paseras Bar</p>
-                        </div><!--End Info-->
-                    </center><!--End InvoiceTop-->
-
-                    <div id="mid">
-                        <div class="info">
-                            <p class="h3Ti" id="ticketMetodo">Pago en efectivo</p>
-                            <p class="h3Ti">@GlobalConfig.GetMexDate().ToShortDateString() @GlobalConfig.GetMexDate().ToShortTimeString()</p>
                         </div>
-                    </div><!--End Invoice Mid-->
-                    <br />
+                    </center>*@
+
+                    <!--<div id="mid">
+                        <div class="info">-->
+                            @*<p class="h3Ti" id="ticketMetodo"></p>*@
+                            <!--<p class="h3Ti">@GlobalConfig.GetMexDate().ToShortDateString() @GlobalConfig.GetMexDate().ToShortTimeString()</p>
+                        </div>
+                    </div>-->
+                    @*<br />*@
                     <div id="bot">
-                        <div id="table">
+                        <div id="table" style="width:100%">
                             <table>
                                 <tr class="tabletitle">
-                                    <td class="item"><p class="h2Ti">PRODUCTO</p></td>
+                                    <td class="item"><p class="h2Ti">NOMBRE PRODUCTO</p></td>
                                     <td class="Hours"><p class="h2Ti">#</p></td>
                                     <td class="Rate"><p class="h2Ti">PRECIO</p></td>
                                 </tr>
-                                @foreach (var obj in Model.RelCuentaProductos)
+                                @foreach (var obj in listaProductos)
                                 {
-                                    <tr class="service">
-                                        <td class="tableitem"><p class="itemtext">@obj.Nombre</p></td>
-                                        <td class="tableitem"><p class="itemtext">@obj.Cantidad</p></td>
-                                        <td class="tableitem"><p class="itemtext">$@obj.Precio</p></td>
-                                    </tr>
+                                    var cantidad = 0;
+                                    foreach (var item in obj)
+                                    {
+                                        cantidad = cantidad + Convert.ToInt32(item.Cantidad);
+                                    }
+                                <tr class="service">
+                                    <td style="width:60%" class="tableitem"><p class="itemtext">@obj[0].Nombre</p></td>
+                                    <td style="width:10%" class="tableitem"><p class="itemtext">@cantidad</p></td>
+                                    <td style="width:30%" class="tableitem"><p class="itemtext">$@obj[0].Precio</p></td>
+                                </tr>
                                 }
                                 <tr>
                                     <td colspan="3" class="lineTxt">________________________________</td>
-                                    @*<td colspan="3">******************************</td>*@
                                 </tr>
                                 <tr class="h2Ti">
                                     <td class="Rate"><p class="totalText">TOTAL</p></td>
                                     <td class="payment" colspan="2"><p class="totalCantidad">$@Model.total</p></td>
                                 </tr>
                                 <tr class="h2Ti">
-                                    <td class="Rate"><p class="h3Ti">Comisión</p></td>
+                                    <td class="Rate"><p class="h3Ti">Comisión Clip</p></td>
                                     <td class="payment"><p class="h3Ti" id="ticketInteres">$0</p></td>
                                     <td></td>
                                 </tr>
-
                                 <tr class="h2Ti">
                                     <td class="Rate"><p class="h3Ti">Propina</p></td>
                                     <td class="payment" colspan="2"><p class="h3Ti" id="ticketPropina">$0</p></td>
                                 </tr>
-
-
                             </table>
                         </div><!--End Table-->
-
-                        <div id="legalcopy">
+                        <!--<div id="legalcopy">
                             <p class="legal">
-                                <span>******************************</span>
-                                <strong>¡Gracias por tu visita!</strong> <br />Te atendió @usuario.Nombre
-                                <span>******************************</span>
-                            </p>
-                        </div>
-                    <br />
+                                <span class="lineTxt">________________________________</span>
+                                <strong>¡Gracias por tu visita! :D</strong>-->
+                        @*<br />Te atendió @usuario.Nombre*@
+                        @*<span>******************************</span>*@
+                        <!--</p>
+                        </div>-->
+                        <br />
                     </div><!--End InvoiceBot-->
+                    @*<br />
+                        <br />*@
                 </div><!--End Invoice-->
 
             </div>
             <div class="modal-footer">
                 <a class="btn btn-danger" data-bs-dismiss="modal">Cancelar</a>
-                <a onclick="window.print();" class="btn btn-secondary"><i class="fa fa-print"></i> Imprimir</a>
+                <a onclick="window.print();" class="btn btn-success"><i class="fa fa-print"></i> Imprimir</a>
             </div>
         </div>
     </div>
 </div>
-
-@section scripts
-{
-    @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
-}

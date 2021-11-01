@@ -1,14 +1,23 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
+@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
+@using Restaurante.Data.DBModels;
+@using Restaurant.Model;
+@inject IHttpContextAccessor HttpContextAccessor;
+@{
+    var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+    var config = JsonSerializer.Deserialize<List<Configuracionsistema>>(HttpContextAccessor.HttpContext.Session.GetString("ConfigSession"));
+}
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="~/images/logo/LogoArbol.png">
+    <link rel="icon" href="~/images/logo/@config[2].Valor">
 
-    <title>@ViewData["Title"] - Las Paseras</title>
+    <title>@ViewData["Title"] - @config[1].Valor </title>
 
     <!-- Vendors Style-->
     <link rel="stylesheet" href="~/css/vendors_css.css">
@@ -18,29 +27,26 @@
     <link rel="stylesheet" href="~/css/style.css">
     <link rel="stylesheet" href="~/css/skin_color.css">
 </head>
-<body class="layout-top-nav dark-skin theme-primary fixed">
-    @using System.Text.Json;
-    @using Microsoft.AspNetCore.Http;
-    @using Restaurante.Data.DBModels;
-    @using Restaurant.Model;
-    @inject IHttpContextAccessor HttpContextAccessor;
-    @{
-        var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
-    }
+<body class="layout-top-nav @config[0].Valor theme-primary fixed">
     <div class="wrapper">
         <div id="loader"></div>
-
         <header class="main-header">
             <div class="inside-header">
                 <div class="d-flex align-items-center logo-box justify-content-start">
                     <!-- Logo -->
-                    <a href="index.html" class="logo">
+                    <a href="javascript:;" class="logo">
                         <!-- logo-->
                         <div class="logo-lg">
-                            <span class="light-logo"><img src="../images/logo-dark-text.png" alt="logo"></span>
+                            <span class="light-logo">
+                                <img src="~/images/logo/@config[2].Valor" alt="logo" style="width:15%">
+                                <img src="~/images/logo/@config[6].Valor" alt="logo" style="width:50%">
+                            </span>
                             <span class="dark-logo">
-                                <img src="~/images/logo/LogoArbol.png" alt="logo" style="width:25%">
-                                <img src="~/images/logo/logo-text.png" alt="logo" style="width:50%">
+                                <img src="~/images/logo/@config[2].Valor" alt="logo" style="width:15%">
+                                @if (!string.IsNullOrEmpty(config[3].Valor))
+                                {
+                                    <img src="~/images/logo/@config[3].Valor" alt="logo" style="width:50%">
+                                }
                             </span>
                         </div>
                     </a>
@@ -54,12 +60,12 @@
                                 <div class="app-menu">
                                     <div class="search-bx mx-5">
                                         <form>
-                                            <div class="input-group">
-                                                <input type="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
-                                                <div class="input-group-append">
-                                                    <button class="btn" type="submit" id="button-addon3"><i class="ti-search"></i></button>
-                                                </div>
-                                            </div>
+                                            @*<div class="input-group">
+                                                    <input type="search" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="button-addon2">
+                                                    <div class="input-group-append">
+                                                        <button class="btn" type="submit" id="button-addon3"><i class="ti-search"></i></button>
+                                                    </div>
+                                                </div>*@
                                         </form>
                                     </div>
                                 </div>
@@ -76,7 +82,7 @@
                                 </li>*@
                             <!-- Notifications -->
                             <li class="dropdown notifications-menu">
-                                <span class="label label-primary">5</span>
+                                @*<span class="label label-primary">5</span>*@
                                 <a href="#" class="waves-effect waves-light dropdown-toggle btn-primary-light" data-bs-toggle="dropdown" title="Notifications">
                                     <i class="icon-Notifications"><span class="path1"></span><span class="path2"></span></i>
                                 </a>
@@ -86,10 +92,10 @@
                                         <div class="p-20">
                                             <div class="flexbox">
                                                 <div>
-                                                    <h4 class="mb-0 mt-0">Notifications</h4>
+                                                    <h4 class="mb-0 mt-0">Comandos</h4>
                                                 </div>
                                                 <div>
-                                                    <a href="#" class="text-danger">Clear All</a>
+                                                    @*<a href="#" class="text-danger">Clear All</a>*@
                                                 </div>
                                             </div>
                                         </div>
@@ -100,37 +106,27 @@
                                         <ul class="menu sm-scrol">
                                             <li>
                                                 <a href="#">
-                                                    <i class="fa fa-users text-info"></i> Curabitur id eros quis nunc suscipit blandit.
+                                                    <i class="fa fa-users text-info"></i> ¿Como crear un nuevo producto?
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#">
-                                                    <i class="fa fa-warning text-warning"></i> Duis malesuada justo eu sapien elementum, in semper diam posuere.
+                                                    <i class="fa fa-warning text-warning"></i> Abre cuenta de mesa 10
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#">
-                                                    <i class="fa fa-users text-danger"></i> Donec at nisi sit amet tortor commodo porttitor pretium a erat.
+                                                    <i class="fa fa-users text-danger"></i> Ver usuarios
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#">
-                                                    <i class="fa fa-shopping-cart text-success"></i> In gravida mauris et nisi
+                                                    <i class="fa fa-shopping-cart text-success"></i> Cerrar sesión
                                                 </a>
                                             </li>
                                             <li>
                                                 <a href="#">
-                                                    <i class="fa fa-user text-danger"></i> Praesent eu lacus in libero dictum fermentum.
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <i class="fa fa-user text-primary"></i> Nunc fringilla lorem
-                                                </a>
-                                            </li>
-                                            <li>
-                                                <a href="#">
-                                                    <i class="fa fa-user text-success"></i> Nullam euismod dolor ut quam interdum, at scelerisque ipsum imperdiet.
+                                                    <i class="fa fa-user text-danger"></i> Muestrame estadisticas
                                                 </a>
                                             </li>
                                         </ul>
@@ -148,11 +144,11 @@
                                 </a>
                             </li>
                             <!-- Right Sidebar Toggle Button -->
-                            <li class="btn-group nav-item">
-                                <a href="#" class="push-btn right-bar-btn waves-effect waves-light nav-link full-screen btn-info-light">
-                                    <span class="icon-Layout-left-panel-1"><span class="path1"></span><span class="path2"></span></span>
-                                </a>
-                            </li>
+                            @*<li class="btn-group nav-item">
+                                    <a href="#" class="push-btn right-bar-btn waves-effect waves-light nav-link full-screen btn-info-light">
+                                        <span class="icon-Layout-left-panel-1"><span class="path1"></span><span class="path2"></span></span>
+                                    </a>
+                                </li>*@
                             <!-- User Account-->
                             <li class="dropdown user user-menu">
                                 <a href="#" class="dropdown-toggle p-0 text-dark hover-primary ms-md-30 ms-10" data-bs-toggle="dropdown" title="User">
@@ -160,8 +156,18 @@
                                 </a>
                                 <ul class="dropdown-menu animated flipInX">
                                     <li class="user-body">
-                                        <a class="dropdown-item" href="/Usuario/MiPerfil"><i class="ti-user text-muted me-2"></i> Mi Perfil</a>
-                                        <a class="dropdown-item" href="/Usuario/Staff"><i class="ti-wallet text-muted me-2"></i> Ver Staff</a>
+                                        @*<a class="dropdown-item" href="/Usuario/Usuarios"><i class="ti-user text-muted me-2"></i> Mi Perfil</a>*@
+                                        <a class="dropdown-item" href="/Usuario/Usuarios"><i class="ti-wallet text-muted me-2"></i> Ver Staff</a>
+                                        <a class="dropdown-item" href="/Configuracion/Configuraciones"><i class="ti-settings text-muted me-2"></i> Configurar Sistema</a>
+                                        @*<a class="dropdown-item" href="/Usuario/DarkMode?active=@(string.IsNullOrEmpty(config[0].Valor) ? true : false)">
+                                                <input type="checkbox" id="basic_checkbox_1" @(config[0].Valor == "dark-skin" ? "checked" : "") />
+                                                <label for="basic_checkbox_1">Modo Oscuro</label>
+                                            </a>*@
+                                        <div class="dropdown-divider"></div>
+                                        <span class="ps-30 d-md-inline-block d-none">Modo Oscuro</span>
+                                        <a onclick="ModoOscuro('@config[0].Valor')" class="btn btn-lg btn-toggle @(config[0].Valor == "dark-skin" ? "active" : "")" data-bs-toggle="button" aria-pressed="true" autocomplete="off">
+                                            <div class="handle"></div>
+                                        </a>
                                         <div class="dropdown-divider"></div>
                                         <a class="dropdown-item" href="@Url.Action("LogOff", "Login")"><i class="ti-lock text-muted me-2"></i> Cerrar Sesión</a>
                                     </li>
@@ -191,9 +197,10 @@
                     <li>
                         <a href="#"><i class="icon-Dinner"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Menú</a>
                         <ul>
+                            <li><a href="../Categoria/Categorias"><i class="mdi mdi-format-list-bulleted-type"><span class="path1"></span><span class="path2"></span></i>Categorías</a></li>
                             <li><a href="../Producto/Productos"><i class="mdi mdi-food"><span class="path1"></span><span class="path2"></span></i>Productos</a></li>
                             <li><a href="../Complemento/Complementos"><i class="mdi mdi-cookie"><span class="path1"></span><span class="path2"></span></i>Complementos</a></li>
-                            <li><a href="../Categoria/Categorias"><i class="mdi mdi-format-list-bulleted-type"><span class="path1"></span><span class="path2"></span></i>Categorías</a></li>
+                            <li><a href="../Ingrediente/Ingredientes"><i class="mdi mdi-library-books"><span class="path1"></span><span class="path2"></span></i>Ingredientes</a></li>
                         </ul>
 
                     </li>
@@ -208,7 +215,9 @@
                         <a href="#"><i class="mdi mdi-file-export"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Administrar</a>
                         <ul>
                             <li><a href="../Cuenta/Cuentas"><i class="fa fa-sticky-note-o"><span class="path1"></span><span class="path2"></span></i> Cuentas</a></li>
-                            <li><a href="../Venta/Ventas"><i class="fa fa-money"><span class="path1"></span><span class="path2"></span></i> Ventas</a></li>
+                            <li><a href="../Venta/Ventas?_fechaInicio=@GlobalConfig.GetMexDate().Date&_fechaFin=@GlobalConfig.GetMexDate().Date"><i class="fa fa-money"><span class="path1"></span><span class="path2"></span></i> Ventas</a></li>
+                            <li><a href="../Corte/CorteDiario"><i class="fa fa-file-archive-o"><span class="path1"></span><span class="path2"></span></i> Cortes</a></li>
+                            <li><a href="../CajaChica/CajaChicas"><i class="fa fa-recycle"><span class="path1"></span><span class="path2"></span></i> Entradas/Salidas</a></li>
                         </ul>
                     </li>
 
@@ -228,131 +237,131 @@
         </div>
         <!-- /.content-wrapper -->
         <!-- Content Right Sidebar -->
-        <div class="right-bar">
-            <div id="sidebarRight">
-                <div class="right-bar-inner">
-                    <div class="text-end position-relative">
-                        <a href="#" class="btn right-bar-btn waves-effect waves-circle btn btn-circle btn-danger btn-sm">
-                            <i class="mdi mdi-close"></i>
-                        </a>
-                    </div>
-                    <div class="right-bar-content">
-                        <div class="box no-shadow box-bordered border-light">
-                            <div class="box-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5>Total Sale</h5>
-                                        <h2 class="mb-0">$254.90</h2>
-                                    </div>
-                                    <div class="p-10">
-                                        <div id="chart-spark1"></div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="box-footer">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h5 class="my-0">6 total orders</h5>
-                                    <a href="#" class="mb-0">View Report</a>
-                                </div>
-                            </div>
+        @*<div class="right-bar">
+                <div id="sidebarRight">
+                    <div class="right-bar-inner">
+                        <div class="text-end position-relative">
+                            <a href="#" class="btn right-bar-btn waves-effect waves-circle btn btn-circle btn-danger btn-sm">
+                                <i class="mdi mdi-close"></i>
+                            </a>
                         </div>
-                        <div class="box no-shadow box-bordered border-light">
-                            <div class="box-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5>Total Sessions</h5>
-                                        <h2 class="mb-0">845</h2>
-                                    </div>
-                                    <div class="p-10">
-                                        <div id="chart-spark2"></div>
+                        <div class="right-bar-content">
+                            <div class="box no-shadow box-bordered border-light">
+                                <div class="box-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>Total Sale</h5>
+                                            <h2 class="mb-0">$254.90</h2>
+                                        </div>
+                                        <div class="p-10">
+                                            <div id="chart-spark1"></div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="box-footer">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <a href="#" class="btn btn-primary-light btn-sm">Live</a>
-                                    <a href="#" class="btn btn-info-light btn-sm">4 Visitors</a>
-                                    <a href="#" class="btn btn-success-light btn-sm">See Live View</a>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="box no-shadow box-bordered border-light">
-                            <div class="box-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <div>
-                                        <h5>Customer rate</h5>
-                                        <h2 class="mb-0">5.12%</h2>
-                                    </div>
-                                    <div class="p-10">
-                                        <div id="chart3"></div>
+                                <div class="box-footer">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <h5 class="my-0">6 total orders</h5>
+                                        <a href="#" class="mb-0">View Report</a>
                                     </div>
                                 </div>
                             </div>
-                            <div class="box-footer">
-                                <div class="d-flex align-items-center justify-content-between">
-                                    <h5 class="my-0"><span class="badge badge-xl badge-dot badge-primary me-10"></span>First Time</h5>
-                                    <h5 class="my-0"><span class="badge badge-xl badge-dot badge-danger me-10"></span>Returning</h5>
+                            <div class="box no-shadow box-bordered border-light">
+                                <div class="box-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>Total Sessions</h5>
+                                            <h2 class="mb-0">845</h2>
+                                        </div>
+                                        <div class="p-10">
+                                            <div id="chart-spark2"></div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <a href="#" class="btn btn-primary-light btn-sm">Live</a>
+                                        <a href="#" class="btn btn-info-light btn-sm">4 Visitors</a>
+                                        <a href="#" class="btn btn-success-light btn-sm">See Live View</a>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="box no-shadow box-bordered border-light">
-                            <div class="box-header">
-                                <h4 class="box-title">Resent Activity</h4>
-                            </div>
-                            <div class="box-body p-5">
-                                <div class="media-list media-list-hover">
-                                    <a class="media media-single mb-10 p-0 rounded-0" href="#">
-                                        <h4 class="w-50 text-gray fw-500">10:10</h4>
-                                        <div class="media-body ps-15 bs-5 rounded border-primary">
-                                            <p>Morbi quis ex eu arcu auctor sagittis.</p>
-                                            <span class="text-fade">by Johne</span>
+                            <div class="box no-shadow box-bordered border-light">
+                                <div class="box-body">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div>
+                                            <h5>Customer rate</h5>
+                                            <h2 class="mb-0">5.12%</h2>
                                         </div>
-                                    </a>
-
-                                    <a class="media media-single mb-10 p-0 rounded-0" href="#">
-                                        <h4 class="w-50 text-gray fw-500">08:40</h4>
-                                        <div class="media-body ps-15 bs-5 rounded border-success">
-                                            <p>Proin iaculis eros non odio ornare efficitur.</p>
-                                            <span class="text-fade">by Amla</span>
+                                        <div class="p-10">
+                                            <div id="chart3"></div>
                                         </div>
-                                    </a>
-
-                                    <a class="media media-single mb-10 p-0 rounded-0" href="#">
-                                        <h4 class="w-50 text-gray fw-500">07:10</h4>
-                                        <div class="media-body ps-15 bs-5 rounded border-info">
-                                            <p>In mattis mi ut posuere consectetur.</p>
-                                            <span class="text-fade">by Josef</span>
-                                        </div>
-                                    </a>
-
-                                    <a class="media media-single mb-10 p-0 rounded-0" href="#">
-                                        <h4 class="w-50 text-gray fw-500">01:15</h4>
-                                        <div class="media-body ps-15 bs-5 rounded border-danger">
-                                            <p>Morbi quis ex eu arcu auctor sagittis.</p>
-                                            <span class="text-fade">by Rima</span>
-                                        </div>
-                                    </a>
-
-                                    <a class="media media-single mb-10 p-0 rounded-0" href="#">
-                                        <h4 class="w-50 text-gray fw-500">23:12</h4>
-                                        <div class="media-body ps-15 bs-5 rounded border-warning">
-                                            <p>Morbi quis ex eu arcu auctor sagittis.</p>
-                                            <span class="text-fade">by Alaxa</span>
-                                        </div>
-                                    </a>
-
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <h5 class="my-0"><span class="badge badge-xl badge-dot badge-primary me-10"></span>First Time</h5>
+                                        <h5 class="my-0"><span class="badge badge-xl badge-dot badge-danger me-10"></span>Returning</h5>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="box-footer">
-                                <div class="text-center">
-                                    <a href="#" class="mb-0">Load More</a>
+                            <div class="box no-shadow box-bordered border-light">
+                                <div class="box-header">
+                                    <h4 class="box-title">Resent Activity</h4>
+                                </div>
+                                <div class="box-body p-5">
+                                    <div class="media-list media-list-hover">
+                                        <a class="media media-single mb-10 p-0 rounded-0" href="#">
+                                            <h4 class="w-50 text-gray fw-500">10:10</h4>
+                                            <div class="media-body ps-15 bs-5 rounded border-primary">
+                                                <p>Morbi quis ex eu arcu auctor sagittis.</p>
+                                                <span class="text-fade">by Johne</span>
+                                            </div>
+                                        </a>
+
+                                        <a class="media media-single mb-10 p-0 rounded-0" href="#">
+                                            <h4 class="w-50 text-gray fw-500">08:40</h4>
+                                            <div class="media-body ps-15 bs-5 rounded border-success">
+                                                <p>Proin iaculis eros non odio ornare efficitur.</p>
+                                                <span class="text-fade">by Amla</span>
+                                            </div>
+                                        </a>
+
+                                        <a class="media media-single mb-10 p-0 rounded-0" href="#">
+                                            <h4 class="w-50 text-gray fw-500">07:10</h4>
+                                            <div class="media-body ps-15 bs-5 rounded border-info">
+                                                <p>In mattis mi ut posuere consectetur.</p>
+                                                <span class="text-fade">by Josef</span>
+                                            </div>
+                                        </a>
+
+                                        <a class="media media-single mb-10 p-0 rounded-0" href="#">
+                                            <h4 class="w-50 text-gray fw-500">01:15</h4>
+                                            <div class="media-body ps-15 bs-5 rounded border-danger">
+                                                <p>Morbi quis ex eu arcu auctor sagittis.</p>
+                                                <span class="text-fade">by Rima</span>
+                                            </div>
+                                        </a>
+
+                                        <a class="media media-single mb-10 p-0 rounded-0" href="#">
+                                            <h4 class="w-50 text-gray fw-500">23:12</h4>
+                                            <div class="media-body ps-15 bs-5 rounded border-warning">
+                                                <p>Morbi quis ex eu arcu auctor sagittis.</p>
+                                                <span class="text-fade">by Alaxa</span>
+                                            </div>
+                                        </a>
+
+                                    </div>
+                                </div>
+                                <div class="box-footer">
+                                    <div class="text-center">
+                                        <a href="#" class="mb-0">Load More</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div>*@
         <!-- /.Content Right Sidebar -->
 
         <footer class="main-footer">
@@ -366,7 +375,7 @@
                     </li>
                 </ul>
             </div>
-            Las Paseras Restaurante Bar @GlobalConfig.GetMexDate().Year.
+            @config[1].Valor @GlobalConfig.GetMexDate().Year
         </footer>
         <!-- Control Sidebar -->
         <aside class="control-sidebar">
@@ -912,7 +921,8 @@
     <script src="~/js/parsley.js"></script>
 
     <!-- ELEMENTS FORM -->
-    @*<script src="~/assets/vendor_components/select2/dist/js/select2.full.js"></script>*@
+    <script src="~/assets/vendor_components/moment/min/moment.min.js"></script>
+    <script src="~/assets/vendor_components/select2/dist/js/select2.full.js"></script>
     <script src="~/assets/vendor_components/bootstrap-select/dist/js/bootstrap-select.js"></script>
     <script src="~/assets/vendor_components/dropzone/dropzone.js"></script>
     <script src="~/assets/vendor_components/raty-master/lib/jquery.raty.js"></script>
@@ -921,6 +931,16 @@
     <script src="~/js/pages/list.js"></script>
     <script src="~/assets/vendor_components/datatable/datatables.min.js"></script>
     <script src="~/js/pages/data-table.js"></script>
+    <script src="~/assets/vendor_plugins/input-mask/jquery.inputmask.js"></script>
+    <script src="~/assets/vendor_plugins/input-mask/jquery.inputmask.date.extensions.js"></script>
+    <script src="~/assets/vendor_plugins/input-mask/jquery.inputmask.extensions.js"></script>
+    <script src="~/assets/vendor_components/bootstrap-daterangepicker/daterangepicker.js"></script>
+    <script src="~/assets/vendor_components/bootstrap-datepicker/dist/js/bootstrap-datepicker.min.js"></script>
+    <script src="~/assets/vendor_components/x-editable/dist/bootstrap3-editable/js/bootstrap-editable.js"></script>
+    <script src="~/assets/vendor_plugins/iCheck/icheck.min.js"></script>
+    @*<script src="~/js/pages/advanced-form-element.js"></script>*@
+    @*<script src="~/js/pages/form-x-editable.js"></script>*@
+    @*<script src="~/js/pages/advanced-form-element.js"></script>*@
 
     <!-- This is COMANDAS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui-touch-punch/0.2.3/jquery.ui.touch-punch.min.js"></script>
@@ -928,6 +948,14 @@
     <script src="~/assets/vendor_components/gridstack/gridstack.js"></script>
     <script src="~/assets/vendor_components/gridstack/gridstack.jQueryUI.js"></script>
     <script src="~/js/pages/gridstackjs.js"></script>
+
+    <!-- This is CHARTS -->
+    <script src="~/js/pages/chat-popup.js"></script>
+    <script src="~/assets/vendor_components/apexcharts-bundle/dist/apexcharts.min.js"></script>
+    <script src="~/assets/vendor_components/OwlCarousel2/dist/owl.carousel.js"></script>
+    @*<script src="~/js/template.js"></script>*@
+    @*<script src="~/js/pages/dashboard2.js"></script>*@
+
     <!-- This is COMANDAS -->
     <script src="~/assets/VozATexto/Rita.js"></script>
     <script src="~/assets/VozATexto/script.js"></script>
@@ -935,6 +963,29 @@
         var nombre = '@usuario.Nombre';
         var idUsuarioLogged = '@usuario.Id';
         document.getElementById("imgUser").src = '@usuario.Sexo' == "False" ? "../images/avatar/avatar-6.png" : "../images/avatar/avatar-16.png";
+
+        function ModoOscuro(modo) {
+            var actual = modo == "dark-skin" ? true : false;
+            $.ajax({
+                url: "../Usuario/DarkMode",
+                data: { active: actual },
+                type: 'GET',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        location.reload(true);
+                        //swal({ title: 'Éxito', text: data.message, type: "success", },
+                        //    function (isConfirm) { if (isConfirm) { location.reload(true);} });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        }
     </script>
 
     @RenderSection("Scripts", required: false)

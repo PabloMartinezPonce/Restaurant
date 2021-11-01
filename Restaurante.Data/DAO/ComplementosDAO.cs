@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Restaurant.Web;
 using Restaurante.Model;
 using Restaurante.Data.DBModels;
 using System.Collections.Generic;
@@ -12,6 +11,34 @@ namespace Restaurante.Data.DAO
     public class ComplementosDAO
     {
         #region CRUD Entidad Complementos
+
+        public async Task<ResponseModel> GetAllActiveComplementos(int idTipo = 0)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var categorias = new List<Complemento>();
+                    if (idTipo != 0)
+                        categorias = await db.Complementos
+                            .Include("IdTipoComplementoNavigation")
+                            .AsNoTracking()
+                            .Where(com => com.Activo == true && com.IdTipoComplemento == idTipo)
+                            .ToListAsync();
+                    else
+                        categorias = await db.Complementos.Include("IdTipoComplementoNavigation").AsNoTracking().Where(com => com.Activo == true).ToListAsync();
+
+                    if (categorias.Count() >= 1)
+                        return new ResponseModel { responseCode = 200, objectResponse = categorias, message = "Success" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Complemento>(), message = "No se encontraron complementos." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = new List<Complemento>(), message = ex.Message };
+            }
+        }
 
         public async Task<ResponseModel> GetAllComplementos()
         {
@@ -44,12 +71,12 @@ namespace Restaurante.Data.DAO
                     if (categorias.Count > 0)
                         return new ResponseModel { responseCode = 200, objectResponse = categorias.First(), message = "Success" };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = new List<Complemento>(), message = "No se encontraron complementos." };
+                        return new ResponseModel { responseCode = 404, objectResponse = new Complemento(), message = "No se encontraron complementos." };
                 }
             }
             catch (SqlException ex)
             {
-                return new ResponseModel { responseCode = 500, objectResponse = new List<Complemento>(), message = ex.Message };
+                return new ResponseModel { responseCode = 500, objectResponse = new Complemento(), message = ex.Message };
             }
         }
 
@@ -60,7 +87,7 @@ namespace Restaurante.Data.DAO
                 using (var db = new restauranteContext())
                 {
                     var result = await db.Complementos.AsNoTracking().Include("IdTipoComplementoNavigation").ToListAsync();
-                    
+
                     if (result.Count > 0)
                         return new ResponseModel { responseCode = 200, objectResponse = result, message = "Success" };
                     else
@@ -73,19 +100,40 @@ namespace Restaurante.Data.DAO
             }
         }
 
+        public async Task<ResponseModel> GetTipoComplementos()
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var result = await db.Tipocomplementos.AsNoTracking().ToListAsync();
+
+                    if (result.Count > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Success" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Tipocomplemento>(), message = "No se encontraron complementos." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = new List<Tipocomplemento>(), message = ex.Message };
+            }
+        }
+
         public async Task<ResponseModel> Create(Complemento regitro)
         {
             try
             {
                 using (var db = new restauranteContext())
                 {
+                    regitro.Activo = true;
                     db.Complementos.Add(regitro);
 
                     var result = await db.SaveChangesAsync();
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Complemento guardado exitosamente." };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
+                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se efectuaron cambios." };
                 }
             }
             catch (SqlException ex)
@@ -102,13 +150,15 @@ namespace Restaurante.Data.DAO
                 {
                     var regitro = con.Complementos.Where(u => u.Id == regitroView.Id).First<Complemento>();
                     if (!string.IsNullOrEmpty(regitroView.Nombre)) regitro.Nombre = regitroView.Nombre;
+                    if (!string.IsNullOrEmpty(regitroView.Descripcion)) regitro.Descripcion = regitroView.Descripcion;
                     if (regitroView.Precio != 0) regitro.Precio = regitroView.Precio;
+                    if (regitroView.IdTipoComplemento != 0 || regitroView.IdTipoComplemento != null) regitro.IdTipoComplemento = regitroView.IdTipoComplemento;
 
                     var result = await con.SaveChangesAsync();
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Complemento guardado exitosamente." };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El complemento no existe." };
+                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se efectuaron cambios." };
                 }
             }
             catch (SqlException ex)
@@ -128,9 +178,31 @@ namespace Restaurante.Data.DAO
 
                     var result = await db.SaveChangesAsync();
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Complemento eliminado exitosamente." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El complemento no pudo ser eliminada." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> SetActivity(bool estatus, int Id)
+        {
+            try
+            {
+                using (var con = new restauranteContext())
+                {
+                    var regitro = con.Complementos.Where(u => u.Id == Id).First<Complemento>();
+                    regitro.Activo = !estatus;
+
+                    var result = await con.SaveChangesAsync();
+                    if (result > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "El complemento fue actualizado exitosamente." };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = null, message = "El complemento no pudo ser actualizado." };
                 }
             }
             catch (SqlException ex)

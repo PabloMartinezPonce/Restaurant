@@ -12,9 +12,13 @@ namespace Restaurante.Data.DBModels
         public string Precio { get; set; }
         public string Cantidad { get; set; }
         public string Descuento { get; set; }
+        public string PrecioComplemento { get; set; }
+        public string NombreComplemento { get; set; }
+        public int? IdComplemento { get; set; }
         public int? IdProducto { get; set; }
         public int? IdCuenta { get; set; }
 
+        public virtual Complemento IdComplementoNavigation { get; set; }
         public virtual Cuenta IdCuentaNavigation { get; set; }
         public virtual Producto IdProductoNavigation { get; set; }
     }

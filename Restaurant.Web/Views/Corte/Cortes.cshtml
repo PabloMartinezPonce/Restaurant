@@ -1,0 +1,146 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurant.Model;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model List<Corte>
+@{
+    ViewBag.Title = "Cortes";
+}
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="text-end pb-15">
+            @*<button class="btn btn-success" type="button"> <span><i class="fa fa-print"></i> Save</span> </button>*@
+            <a href="CorteDiario" class="btn btn-danger"> <span><i class="fa fa-step-backward"></i> Regresar</span> </a>
+        </div>
+        <div class="col-xl-12 col-lg-12 col-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="table-responsive">
+
+                        <table id="example" class="table table-lg invoice-archive">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Apertura</th>
+                                    <th>Cierre</th>
+                                    <th>Observaciones</th>
+                                    @*<th>Método</th>*@
+                                    @*<th>Calificación</th>*@
+                                    <th>Caja Chica</th>
+                                    <th>Ventas</th>
+                                    @*<th class="text-center">Actions</th>*@
+                                </tr>
+                            </thead>
+                            <tbody>
+
+                                @foreach (var obj in Model)
+                                {
+                                    <tr>
+                                        <td>#@obj.Id</td>
+                                        <td>@obj.FechaApertura.ToLongDateString()</td>
+                                        <td>@obj.FechaCierre.ToLongDateString()</td>
+                                        <td>
+                                            <h6 class="mb-0">
+                                                <a href="#">Nota:</a>
+                                                <span class="d-block text-muted">@obj.Observaciones</span>
+                                            </h6>
+                                        </td>
+                                        @*<td>
+                                            Pago: @obj.
+                                        </td>*@
+                                        @*<td>
+                                            <span class="badge badge-pill badge-success">Buena</span>
+                                        </td>*@
+                                        <td>
+                                            <h6 class="mb-0 fw-bold"><i class="fa fa-money"></i> @obj.TotalVentasEfectivo <span class="d-block text-muted fw-normal"><i class="fa fa-credit-card"></i> @obj.TotalVentasTarjeta </span></h6>
+                                        </td>
+                                        <td>
+                                            <h6 class="mb-0 fw-bold">E: @obj.TotalSalidas <span class="d-block text-muted fw-normal">S: @obj.TotalEntradas</span></h6>
+                                        </td>
+                                        @*<td class="text-center">
+                                            <div class="list-icons d-inline-flex">
+                                                <a href="#" class="list-icons-item me-10"><i class="fa fa-eye-slash"></i></a>
+                                                <div class="list-icons-item dropdown">
+                                                    <a href="#" class="list-icons-item dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
+                                                    <div class="dropdown-menu dropdown-menu-end">
+                                                        <a href="#" class="dropdown-item"><i class="fa fa-download"></i> Download</a>
+                                                        <a href="#" class="dropdown-item"><i class="fa fa-print"></i> Print</a>
+                                                        <div class="dropdown-divider"></div>
+                                                        <a href="#" class="dropdown-item"><i class="fa fa-pencil"></i> Edit</a>
+                                                        <a href="#" class="dropdown-item"><i class="fa fa-remove"></i> Remove</a>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>*@
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+
+@section scripts
+{
+    @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
+    <script>
+        var fechaInicio;
+        var fechaFin;
+
+        //Date range as a button
+        $('#dateVenta').daterangepicker(
+            {
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Antier': [moment().subtract(2, 'days'), moment().subtract(2, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                    'Mes Actual': [moment().startOf('month'), moment().endOf('month')],
+                    'Mes Pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                startDate: moment().subtract(29, 'days'),
+                endDate: moment()
+            },
+            function (start, end) {
+                $('#dateVenta span').html(start.format('MMMM D') + ' - ' + end.format('MMMM D'));
+                fechaInicio = start.format('DD/MM/YYYY');
+                fechaFin = end.format('DD/MM/YYYY');
+            }
+        );
+
+        function Filtrar() {
+            if (fechaInicio == undefined) {
+                swal({ title: "¡Atención!", text: "Selecciona una fecha", icon: "info" });
+                return false;
+            } else {
+                window.location.href = "/Venta/Ventas?_fechaInicio=" + fechaInicio + " &_fechaFin=" + fechaFin;
+            }
+
+            //$.ajax({
+            //    url: "Ventas",
+            //    data: { _fechaInicio: fechaInicio, _fechaFin: fechaFin },
+            //    type: 'GET',
+            //    success: function (data) {
+            //        if (data.responseCode == 200) {
+            //            swal({ title: 'Éxito', text: data.message, type: "success", },
+            //                function (isConfirm) { if (isConfirm) { } });
+            //        } else {
+            //            swal({ title: "Error", text: data.message, icon: "error" });
+            //        }
+            //    }, error: function (err) {
+            //        swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+            //    }
+            //}).done(function (data) {
+            //    //AlertExpiration(data);
+            //});
+        }
+    </script>
+}

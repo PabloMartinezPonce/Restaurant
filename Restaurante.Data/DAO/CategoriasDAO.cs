@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Restaurant.Web;
 using Restaurante.Model;
 using Restaurante.Data.DBModels;
 using System.Collections.Generic;
@@ -24,12 +23,12 @@ namespace Restaurante.Data.DAO
                     if (categorias.Count() >= 1)
                         return new ResponseModel { responseCode = 200, objectResponse = categorias, message = "Success" };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = new Categoria(), message = "No se encontraron categorías." };
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Categoria>(), message = "No se encontraron categorías." };
                 }
             }
             catch (SqlException ex)
             {
-                return new ResponseModel { responseCode = 500, objectResponse = new Categoria(), message = ex.Message };
+                return new ResponseModel { responseCode = 500, objectResponse = new List<Categoria>(), message = ex.Message };
             }
         }
 
@@ -44,12 +43,12 @@ namespace Restaurante.Data.DAO
                     if (categorias.Count > 0)
                         return new ResponseModel { responseCode = 200, objectResponse = categorias.First(), message = "Success" };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = new List<Categoria>(), message = "No se encontraron categorías." };
+                        return new ResponseModel { responseCode = 404, objectResponse = new Categoria(), message = "No se encontraron categorías." };
                 }
             }
             catch (SqlException ex)
             {
-                return new ResponseModel { responseCode = 500, objectResponse = new List<Categoria>(), message = ex.Message };
+                return new ResponseModel { responseCode = 500, objectResponse = new Categoria(), message = ex.Message };
             }
         }
 
@@ -63,7 +62,7 @@ namespace Restaurante.Data.DAO
 
                     var result = await db.SaveChangesAsync();
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Categoría guardada exitosamente." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
                 }
@@ -83,10 +82,11 @@ namespace Restaurante.Data.DAO
                     var regitro = con.Categorias.Where(u => u.Id == regitroView.Id).First<Categoria>();
                     if (!string.IsNullOrEmpty(regitroView.Nombre)) regitro.Nombre = regitroView.Nombre;
                     if (!string.IsNullOrEmpty(regitroView.Descripcion)) regitro.Descripcion = regitroView.Descripcion;
+                    if (!string.IsNullOrEmpty(regitroView.RutaImagen)) regitro.RutaImagen = regitroView.RutaImagen;
 
                     var result = await con.SaveChangesAsync();
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Categoría guardada exitosamente." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La categoría no existe." };
                 }
@@ -108,7 +108,7 @@ namespace Restaurante.Data.DAO
 
                     var result = await db.SaveChangesAsync();
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Categoría eliminada exitosamente." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La categoría no pudo ser eliminada." };
                 }

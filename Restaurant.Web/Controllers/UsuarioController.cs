@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
+using Microsoft.AspNetCore.Http;
 
 namespace Restaurant.Web.Controllers
 {
@@ -17,10 +18,12 @@ namespace Restaurant.Web.Controllers
     {
         private readonly UsuarioDAO _daoUsuario;
         private readonly RolesDAO _daoRoles;
+        private readonly ConfiguracionDAO _daoConfig;
         public UsuarioController()
         {
             _daoUsuario = new UsuarioDAO();
             _daoRoles = new RolesDAO();
+            _daoConfig = new ConfiguracionDAO();
         }
 
         [HttpGet]
@@ -120,6 +123,25 @@ namespace Restaurant.Web.Controllers
             catch (Exception ex)
             {
                 return Json(CommonTxt.GetResponseError(ex));
+            }
+        }
+
+        [HttpGet]
+        public async Task<ResponseModel> DarkMode(bool active)
+        {
+            try
+            {
+                var result = await _daoConfig.ActiveDarkMode(active);
+
+                var result2 = await _daoConfig.GetAll();
+                string configuraciones = JsonSerializer.Serialize(result2.objectResponse);
+                HttpContext.Session.SetString("ConfigSession", configuraciones);
+
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return CommonTxt.GetResponseError(ex);
             }
         }
 

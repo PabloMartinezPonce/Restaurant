@@ -5,60 +5,87 @@
 @{
     ViewBag.Title = "Complementos";
 }
-<div class="content-header">
-    <div class="d-flex align-items-center">
-        <div class="me-auto">
-            <h3 class="page-title">Complementos</h3>
-            <div class="d-inline-block align-items-center">
-                <nav>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-                        <li class="breadcrumb-item" aria-current="page">Listado de complementos</li>
-                        <li class="breadcrumb-item active" aria-current="page">Complementos</li>
-                    </ol>
-                </nav>
+<br />
+<div class="box">
+    <div class="box-body p-0">
+        <div class="flexbox align-items-center p-15">
+            <div class="flexbox align-items-center">
+                <div class="d-inline-block" style="float: right">
+                    <a href="FormComplemento?id=0" class="btn btn-success btn-round checkbox-toggle"><i class="ion ion-plus"></i> Nuevo Complemento</a>
+                </div>
+                <span class="divider-line mx-1"></span>
+            </div>
+            <div>
+                <div class="lookup lookup-circle lookup-right">
+                    <input type="text" data-provide="media-search">
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<section class="content">
-    <div class="row">
-        @foreach (var obj in Model)
-        {
-            <div class="col-6 col-lg-4 col-xl-3">
-                <div class="box food-box">
-                    <div class="box-body text-center">
-                        <div class="menu-item"><img src="~/images/productos/@obj.RutaImagen" class="img-fluid w-p75" alt="" /></div>
-                        <div class="menu-details text-center">
-                            <h4 class="mt-20 mb-10">@obj.Nombre</h4>
-                            <p>@obj.IdTipoComplementoNavigation.Nombre extra de @obj.Precio</p>
-                        </div>
-                        <div class="act-btn d-flex justify-content-between">
-                            <div class="text-center mx-5">
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-success-light btn-xs mb-5"><i class="fa fa-eye-slash"></i></a>
-                                <small class="d-block">View</small>
+@if (Model.Count > 0)
+{
+    <section class="content">
+        <div class="row">
+            @foreach (var obj in Model)
+            {
+                <div class="col-6 col-lg-4 col-xl-3">
+                    <div class="box food-box">
+                        <div class="box-body text-center" @(obj.Activo ?? true ? "" : "style=background-color:#faa3a3")>
+                            <div class="menu-item"><img src="~/images/productos/@obj.RutaImagen" class="img-fluid w-p75" alt="" /></div>
+                            <div class="menu-details text-center">
+                                <h4 class="mt-20 mb-10">@obj.Nombre</h4>
+                                <p>@obj.IdTipoComplementoNavigation.Nombre extra de @obj.Precio</p>
+                                <p>@obj.Descripcion</p>
                             </div>
-                            <div class="text-center mx-5">
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-danger-light btn-xs mb-5"><i class="fa fa-edit"></i></a>
-                                <small class="d-block">Edit</small>
-                            </div>
-                            <div class="text-center mx-5">
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-primary-light btn-xs mb-5"><i class="fa fa-trash"></i></a>
-                                <small class="d-block">Delete</small>
-                            </div>
-                            <div class="text-center mx-5">
-                                <a href="#" class="waves-effect waves-circle btn btn-circle btn-info-light btn-xs mb-5"><i class="fa fa-plus-square-o"></i></a>
-                                <small class="d-block">Duplicate</small>
+                            <div class="act-btn d-flex justify-content-between">
+                                <div class="text-center mx-5">
+                                    <a href="FormComplemento?id=@obj.Id" class="waves-effect waves-circle btn btn-circle btn-success btn-xs mb-5"><i class="fa fa-edit"></i></a>
+                                    <small class="d-block">Editar</small>
+                                </div>
+                                @if (obj.Activo ?? true)
+                                {
+                                    <div class="text-center mx-5">
+                                        <a href="javascript:CambiarEstatus(@obj.Id, '@obj.Activo');" class="waves-effect waves-circle btn btn-circle btn-primary btn-xs mb-5" title="Inactivar"><i class="fa fa-times"></i></a>
+                                        <small class="d-block">Inactivar</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center mx-5">
+                                        <a href="javascript:CambiarEstatus(@obj.Id, '@obj.Activo');" class="waves-effect waves-circle btn btn-circle btn-primary btn-xs mb-5" title="Activar"><i class="fa fa-check"></i></a>
+                                        <small class="d-block">Activar</small>
+                                    </div>
+                                }
+                                <div class="text-center mx-5">
+                                    <a href="javascript:EliminarProducto(@obj.Id);" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs mb-5"><i class="fa fa-trash"></i></a>
+                                    <small class="d-block">Elimnar</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            }
+        </div>
+    </section>
+}
+else
+{
+    <div class="col-xl-6">
+        <div class="box">
+            <div class="box-body d-flex p-0">
+                <div class="flex-grow-1 bg-gradient-secondary-dark p-30 flex-grow-1 bg-img" style="background-position: calc(100% + 0.5rem) bottom; background-size: auto 100%; background-image: url(../images/svg-icon/color-svg/custom-13.svg)">
+                    <h4 class="fw-500">Aún no hay complementos.</h4>
+                    <p class="my-10 fs-16">
+                        Selecciona el botón "Nuevo Complemento"<br /> y empieza a capturar.
+                    </p>
+                    @*<a href="#" class="btn btn-danger-light">Read More</a>*@
+                </div>
             </div>
-        }
+        </div>
     </div>
-</section>
-
+}
 <!-- Large modal -->
 <div class="modal fade bd-as" id="modal-complemento" tabindex="-1" role="dialog" style="display: none;" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -126,9 +153,9 @@
                                     <label class="bmd-label-floating">Categoría</label>
                                     <select class="form-control" id="idCategoriaComplemento" name="idCategoriaComplemento">
                                         @*@foreach (var item in ViewBag.ListaCategorias)
-                                        {
-                                            <option value="@item.Id">@item.Nombre</option>
-                                        }*@
+                                            {
+                                                <option value="@item.Id">@item.Nombre</option>
+                                            }*@
                                     </select>
                                 </div>
                             </div>
@@ -158,9 +185,9 @@
                                         <p class="text-muted font-13"> Agrega <code> categorías de complementos </code> a este nuevo complemento. </p>
                                         <select class="select2 m-b-10 select2-multiple" style="width: 90%" multiple="multiple" data-placeholder="Categorías">
                                             @*@foreach (var item in ViewBag.ListaCatComplemento)
-                                            {
-                                                <option value="@item.Id">@item.Nombre</option>
-                                            }*@
+                                                {
+                                                    <option value="@item.Id">@item.Nombre</option>
+                                                }*@
                                         </select>
                                     </div>
                                 </div>
@@ -181,4 +208,77 @@
 @section scripts
 {
     @*<script src="~/ViewAjax/ComplementoFunction.js"></script>*@
+    <script>
+        //Eliminar elemento
+        function EliminarProducto(id) {
+            swal({
+                title: '¿Esta seguro de eliminarlo?',
+                text: 'El registro se eliminará permanentemente.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: 'EliminarComplemento',
+                            type: "POST",
+                            data: { 'id': id },
+                            success: function (data) {
+                                if (data.objectResponse) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                                } else {
+                                    swal({ title: "Error", text: data.message, type: "error" });
+                                }
+                            },
+                            error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, type: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+
+        //Cambiar estatus
+        function CambiarEstatus(id, estatus) {
+            swal({
+                title: '¿Esta seguro cambiar estatus?',
+                text: 'El registro se cambiará.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: 'CambiarEstatus',
+                            type: "POST",
+                            data: { 'Id': id, 'estatus': estatus },
+                            success: function (data) {
+                                if (data.objectResponse) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                                } else {
+                                    swal({ title: "Error", text: data.message, type: "error" });
+                                }
+                            },
+                            error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, type: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+    </script>
 }

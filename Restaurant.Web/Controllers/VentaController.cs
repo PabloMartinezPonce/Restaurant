@@ -6,6 +6,7 @@ using Restaurante.Data.DBModels;
 using Restaurant.Web.Common;
 using Restaurante.Data.DAO;
 using Restaurante.Web.Common;
+using Restaurant.Model;
 
 namespace Restaurant.Web.Controllers
 {
@@ -19,13 +20,22 @@ namespace Restaurant.Web.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> Ventas()
+        public async Task<ActionResult> Ventas(string _fechaInicio, string _fechaFin)
         {
             try
             {
-                var result = await _dao.Get();
-                var resultTotales = await _dao.Get();
-                ViewBag.Total = resultTotales.objectResponse;
+                var fechaInicio = Convert.ToDateTime(_fechaInicio);
+                var fechaFin = Convert.ToDateTime(_fechaFin);
+
+                if (fechaInicio.Year == 0001 || fechaFin.Year == 0001)
+                {
+                    fechaInicio = GlobalConfig.GetMexDate();
+                    fechaFin = GlobalConfig.GetMexDate();
+                }
+
+                var result = await _dao.Get(fechaInicio, fechaFin, null);
+                //var resultTotales = await _dao.Get();
+                //ViewBag.Total = resultTotales.objectResponse;
 
                 return View(result.objectResponse);
             }

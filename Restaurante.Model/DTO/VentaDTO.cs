@@ -7,7 +7,9 @@ namespace Restaurante.Model
     public class VentaDTO
     {
         [NotMapped]
-        public decimal TotalDiaria { get; set; }
+        public decimal TotalTarjeta { get; set; }
+        [NotMapped]
+        public decimal TotalEfectivo { get; set; }
         [NotMapped]
         public decimal PropinaDiaria { get; set; }
     }

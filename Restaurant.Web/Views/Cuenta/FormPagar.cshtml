@@ -1,9 +1,11 @@
-﻿@using Restaurante.Model.DTOs;
+﻿@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
 @using Restaurante.Data.DBModels;
-@using System.Text.Json;
+@inject IHttpContextAccessor HttpContextAccessor;
 @model Cuenta
 @{
     ViewBag.Title = "Formulario Producto";
+    var config = JsonSerializer.Deserialize<List<Configuracionsistema>>(HttpContextAccessor.HttpContext.Session.GetString("ConfigSession"));
 }
 <br />
 <section class="content">
@@ -36,7 +38,10 @@
                                         <td><img src="~/images/productos/@obj.IdProductoNavigation.RutaImagen" alt="" width="80"></td>
                                         <td>
                                             <h5>@obj.Nombre</h5>
-                                            <p>@obj.IdProductoNavigation.Descripcion</p>
+                                            @if (!string.IsNullOrEmpty(obj.NombreComplemento))
+                                            {
+                                                <p>+ $@obj.PrecioComplemento de @obj.NombreComplemento</p>
+                                            }
                                         </td>
                                         <td>$@obj.Precio</td>
                                         <td width="70">@obj.Cantidad</td>
@@ -152,27 +157,28 @@
     </div>
 </section>
 
-@Html.Partial("FormTicket", @Model)
+@Html.Partial("FormTicketEPSON", @Model)
 
 @section scripts
 {
-    @*<script src="../Scripts/Productos.js"></script>*@
     <script>
         function SumarPropina(input) {
             var propina = input.value;
             document.getElementById("propina").innerText = "$" + propina;
             document.getElementById("ticketPropina").innerText = "$" + propina;
 
-            SumarTotal();
+            //SumarTotal();
         }
+
+        var comision = @config[5].Valor;
 
         function SumarInteres(input) {
             var metodo = input.value;
             if (metodo === "Tarjeta") {
                 var subtotal = parseFloat('@Model.total');
-                var interes = subtotal * 0.035;
+                var interes = subtotal * comision;
                 document.getElementById("interes").innerText = "$" + interes.toFixed(2);
-    
+
                 document.getElementById("ticketInteres").innerText = "$" + interes.toFixed(2);
             } else if (metodo === "No me quiere pagar") {
                 swal({ title: "¡Atención!", text: "Aquí tienes el número de la policia.", type: "warning" },
@@ -189,9 +195,10 @@
         function SumarTotal() {
             var descuento = parseFloat(0);
             var subtotal = parseFloat('@Model.total');
-            var propina = parseFloat(document.getElementById("propina").innerText.replace('$', ''));
+            //var propina = parseFloat(document.getElementById("propina").innerText.replace('$', ''));
             var interes = parseFloat(document.getElementById("interes").innerText.replace('$', ''));
-            var total = subtotal + propina + interes + descuento;
+            //var total = subtotal + propina + interes + descuento;
+            var total = subtotal + interes + descuento;
 
             document.getElementById("cambio").value = 0;
             document.getElementById("recibido").value = 0;
@@ -234,24 +241,38 @@
                 IdEmpleado : '@Model.IdEmpleado',
             };
 
-            $.ajax({
-                url: "PagarCuenta",
-                data: { obj: formData, idMesa: @Model.IdMesa},
-                type: 'POST',
-                dataType: "json",
-                success: function (data) {
-                    if (data.responseCode == 200) {
-                        swal({ title: 'Éxito', text: data.message, type: "success", },
-                            function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/Cuentas"; } });
-                    } else {
-                        swal({ title: "Error", text: data.message, icon: "error" });
+                swal({
+                title: '¿Esta seguro de cerrar la cuenta?',
+                text: 'El registro se cerrará permanentemente.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                       $.ajax({
+                        url: "PagarCuenta",
+                        data: { obj: formData, idMesa: @Model.IdMesa},
+                        type: 'POST',
+                        dataType: "json",
+                        success: function (data) {
+                            if (data.responseCode == 200) {
+                                swal({ title: 'Éxito', text: data.message, type: "success", },
+                                    function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/Cuentas"; } });
+                            } else {
+                                swal({ title: "Error", text: data.message, icon: "error" });
+                            }
+                        }, error: function (err) {
+                            swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                        }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
                     }
-                }, error: function (err) {
-                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
-                }
-            }).done(function (data) {
-                //AlertExpiration(data);
-            });
+                });
         });
 
     </script>

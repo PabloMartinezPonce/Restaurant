@@ -43,44 +43,85 @@
             </div>
         </div>
     </div>
-    <!-- /.box-body -->
 </div>
 
-<section class="content">
-    <div class="row">
-        @foreach (var obj in Model)
-        {
-            <div class="col-6 col-lg-4 col-xl-3">
-                <div class="box food-box">
-                    <div class="box-body text-center">
-                        <div class="menu-item"><img src="https://kraken-soft.com/images/productos/@obj.RutaImagen" class="img-fluid w-p75" alt="" /></div>
-                        <div class="menu-details text-center">
-                            <h4 class="mt-20 mb-10">@obj.Nombre $@obj.PrecioVenta</h4>
-                            <p>@obj.Descripcion</p>
-                            <p> En Stock: @obj.Stock</p>
-                            <p> Categoria: @obj.IdCategoria</p>
-                        </div>
-                        <div class="act-btn d-flex justify-content-between">
-                            <div class="text-center mx-5">
-                                <a href="FormProducto?id=@obj.Id" class="waves-effect waves-circle btn btn-circle btn-success btn-xs mb-5"><i class="fa fa-edit"></i></a>
-                                <small class="d-block">Editar</small>
-                            </div>
-                            <div class="text-center mx-5">
-                                <a href="javascript:CambiarEstatus(@obj.Id, '@obj.Activo');" class="waves-effect waves-circle btn btn-circle btn-primary btn-xs mb-5"><i class="fa fa-user-times"></i></a>
-                                <small class="d-block">@(obj.Activo != null ? "Inactivar" : "Activar")</small>
-                            </div>
-                            <div class="text-center mx-5">
-                                <a href="javascript:EliminarProducto(@obj.Id);" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs mb-5"><i class="fa fa-trash"></i></a>
-                                <small class="d-block">Elimnar</small>
+@if (Model.Count > 0)
+{
+    <section class="content">
+        <div class="row">
+            @foreach (var obj in Model)
+            {
+                <div class="col-6 col-lg-4 col-xl-3">
+                    <div class="box food-box">
+                        <div class="box-body text-center" @(obj.Activo ?? true ? "" : "style=background-color:#faa3a3")>
+                            <div class="menu-item"><img src="~/images/productos/@obj.RutaImagen" class="img-fluid w-p75" alt="" /></div>
+                            <div class="menu-details text-center">
+                                <h4 class="mt-20 mb-10">@obj.Nombre $@obj.PrecioVenta</h4>
+                                <p>@obj.Descripcion</p>
+                                @if (obj.EsMultiStock)
+                                {
+                                    <p>Receta con @obj.RelProductoReceta.Count ingredientes</p>
+                                }
+                                else
+                                {
+                                    <p> En Stock: @obj.Stock</p>
+                                }
+                                @if (obj.IdCategoriaNavigation != null)
+                                {
+                                    <p> Categoria: @obj.IdCategoriaNavigation.Nombre</p>
+                                }
+                                </div>
+                            <div class="act-btn d-flex justify-content-between">
+                                <div class="text-center mx-5">
+                                    <a href="FormProducto?id=@obj.Id" class="waves-effect waves-circle btn btn-circle btn-success btn-xs mb-5" title="Editar"><i class="fa fa-edit"></i></a>
+                                    <small class="d-block">Editar</small>
+                                </div>
+                                <div class="text-center mx-5">
+                                    <a href="DetalleProducto?id=@obj.Id" class="waves-effect waves-circle btn btn-circle btn-default btn-xs mb-5" title="Ver"><i class="fa fa-eye"></i></a>
+                                    <small class="d-block">Ver</small>
+                                </div>
+                                @if (obj.Activo ?? true)
+                                {
+                                    <div class="text-center mx-5">
+                                        <a href="javascript:CambiarEstatus(@obj.Id, '@obj.Activo');" class="waves-effect waves-circle btn btn-circle btn-primary btn-xs mb-5" title="Inactivar"><i class="fa fa-times"></i></a>
+                                        <small class="d-block">Inactivar</small>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <div class="text-center mx-5">
+                                        <a href="javascript:CambiarEstatus(@obj.Id, '@obj.Activo');" class="waves-effect waves-circle btn btn-circle btn-primary btn-xs mb-5" title="Activar"><i class="fa fa-check"></i></a>
+                                        <small class="d-block">Activar</small>
+                                    </div>
+                                }
+                                <div class="text-center mx-5">
+                                    <a href="javascript:EliminarProducto(@obj.Id);" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs mb-5" title="Elimnar"><i class="fa fa-trash"></i></a>
+                                    <small class="d-block">Elimnar</small>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            }
+        </div>
+    </section>
+}
+else
+{
+    <div class="col-xl-6">
+        <div class="box">
+            <div class="box-body d-flex p-0">
+                <div class="flex-grow-1 bg-gradient-secondary-dark p-30 flex-grow-1 bg-img" style="background-position: calc(100% + 0.5rem) bottom; background-size: auto 100%; background-image: url(../images/svg-icon/color-svg/custom-13.svg)">
+                    <h4 class="fw-500">Aún no hay productos.</h4>
+                    <p class="my-10 fs-16">
+                        Selecciona el botón "Nuevo Producto"<br /> y empieza a capturar.
+                    </p>
+                    @*<a href="#" class="btn btn-danger-light">Read More</a>*@
+                </div>
             </div>
-        }
+        </div>
     </div>
-</section>
-
+}
 @section scripts
 {
     <script>
@@ -94,7 +135,7 @@
                 confirmButtonClass: "btn btn-danger",
                 confirmButtonText: "Si",
                 cancelButtonText: "No",
-                closeOnConfirm: false
+                closeOnConfirm: true
             },
                 function (isConfirm) {
                     if (isConfirm) {
@@ -107,7 +148,7 @@
                                     swal({ title: 'Éxito', text: data.message, type: "success", },
                                         function (isConfirm) { if (isConfirm) { location.reload(true); } });
                                 } else {
-                                    swal({ title: "Error", text: data.message, type: "error" });
+                                    swal({ title: "¡Atención!", text: data.message, type: "warning" });
                                 }
                             },
                             error: function (err) {

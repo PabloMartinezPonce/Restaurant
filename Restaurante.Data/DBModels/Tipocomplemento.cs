@@ -10,6 +10,7 @@ namespace Restaurante.Data.DBModels
         public Tipocomplemento()
         {
             Complementos = new HashSet<Complemento>();
+            Productos = new HashSet<Producto>();
         }
 
         public int Id { get; set; }
@@ -17,5 +18,6 @@ namespace Restaurante.Data.DBModels
         public bool? Activo { get; set; }
 
         public virtual ICollection<Complemento> Complementos { get; set; }
+        public virtual ICollection<Producto> Productos { get; set; }
     }
 }

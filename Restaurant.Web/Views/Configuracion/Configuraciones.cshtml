@@ -1,0 +1,167 @@
+﻿@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
+@using Restaurante.Data.DBModels;
+@using Restaurant.Model;
+@inject IHttpContextAccessor HttpContextAccessor;
+@model List<Configuracionsistema>
+@{
+    ViewBag.Title = "Configuraciones";
+    var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+}
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Configración del sistema</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Administración</li>
+                        <li class="breadcrumb-item active" aria-current="page">Configración del sistema</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<section class="content">
+    <div class="row">
+        <div class="col">
+            <div class="box">
+                <div class="box-body">
+                    @*<div class="d-lg-flex d-block align-items-center">
+                            <div class="my-3 min-w-lg-350">Simple text field</div>
+                            <div class="my-3"><a href="#" id="inline-username" data-type="text" data-pk="1" data-title="Enter username">superuser</a></div>
+                        </div>*@
+                    @foreach (var item in Model)
+                    {
+                        <div class="d-lg-flex d-block align-items-center mt-lg-0 mt-30">
+                            <div class="my-3 min-w-lg-350">@item.Llave</div>
+                            <div class="my-3">
+                                <a href="javascript:;" name="@item.Id" id="@item.Id" data-type="text" data-pk="1" data-placement="right" data-placeholder="Required" data-title="Ingrese @item.Valor">@item.Valor</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+
+@section scripts
+{
+    <script>
+        //Envia a guardar formulario
+        $("#idBtnGuardar").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let $form = $('#formCaja');
+            let valid = $form.parsley().validate();
+
+            if (!valid) {
+                return false;
+            }
+
+            var formData = $form.serialize();
+
+            $.ajax({
+                url: 'CreateCajaChica',
+                data: formData,
+                type: 'POST',
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+
+        //$('#1').editable({
+        //    validate: function (value) {
+        //        if ($.trim(value) == '') return 'Este campo es requerido';
+        //    },
+        //    mode: 'inline',
+        //    url: function (params) {
+        //        return SendPost(params);
+        //    }
+        //});
+        $('#2').editable({
+            validate: function (value) {
+                if ($.trim(value) == '') return 'Este campo es requerido';
+            },
+            mode: 'inline',
+            url: function (params) {
+                return SendPost(params);
+            }
+        });
+        $('#3').editable({
+            validate: function (value) {
+                if ($.trim(value) == '') return 'Este campo es requerido';
+            },
+            mode: 'inline',
+            url: function (params) {
+                return SendPost(params);
+            }
+        });
+        $('#4').editable({
+            validate: function (value) {
+                if ($.trim(value) == '') return 'Este campo es requerido';
+            },
+            mode: 'inline',
+            url: function (params) {
+                return SendPost(params);
+            }
+        });
+        $('#5').editable({
+            validate: function (value) {
+                if ($.trim(value) == '') return 'Este campo es requerido';
+            },
+            mode: 'inline',
+            url: function (params) {
+                return SendPost(params);
+            }
+        });
+        $('#6').editable({
+            validate: function (value) {
+                if ($.trim(value) == '') return 'Este campo es requerido';
+            },
+            mode: 'inline',
+            url: function (params) {
+                return SendPost(params);
+            }
+        });
+
+        function SendPost(params) {
+            console.log(params);
+            $.ajax({
+                url: 'UpdateAyuda',
+                data: params,
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.objectResponse) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { location.reload(true);} });
+                    } else {
+                        swal({ title: "Error.", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: GetErrorMessage(err.responseText), icon: "error" }).then((value) => { /*window.location = location.origin;*/ })
+                }
+            }).done(function (data) {
+                AlertExpiration(data);
+            });
+        }
+    </script>
+}

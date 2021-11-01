@@ -1,0 +1,166 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model List<Ingrediente>
+@{
+    ViewBag.Title = "Ingredientes";
+}
+<br />
+<div class="box">
+    <div class="box-body p-0">
+        <div class="flexbox align-items-center p-15">
+            <div class="flexbox align-items-center">
+                <div class="d-inline-block" style="float: right">
+                    <a href="FormIngrediente?id=0" class="btn btn-success btn-round checkbox-toggle"><i class="ion ion-plus"></i> Nuevo Ingrediente</a>
+                </div>
+                <span class="divider-line mx-1"></span>
+            </div>
+
+            <div>
+                <div class="lookup lookup-circle lookup-right">
+                    <input type="text" data-provide="media-search">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Count > 0)
+{
+    <section class="content">
+        <div class="row">
+            @foreach (var obj in Model)
+            {
+                <div class="col-6 col-lg-4 col-xl-3">
+                    <div class="box food-box">
+                        <div class="box-body text-center" @(obj.Activo ? "" : "style=background-color:#faa3a3")>
+                            <div class="menu-item"><img src="~/images/Ingredientes/@obj.RutaImagen" class="img-fluid w-p75" alt="" /></div>
+                            <div class="menu-details text-center">
+                                <h4 class="mt-20 mb-10">@obj.Nombre</h4>
+                                @*<p>@obj.Descripcion</p>*@
+                                <p> En Stock: @(Math.Round(Convert.ToDouble(obj.Stock), 5)) @obj.TipoMedicionStock</p>
+                                <p> Medición en @obj.TipoMedicion</p>
+                            </div>
+                            <div class="act-btn d-flex justify-content-between">
+                                <div class="text-center mx-5">
+                                    <a href="FormIngrediente?id=@obj.Id" class="waves-effect waves-circle btn btn-circle btn-success btn-xs mb-5" title="Editar"><i class="fa fa-edit"></i></a>
+                                    <small class="d-block">Editar</small>
+                                </div>
+                                @*@if (obj.Activo)
+                                    {
+                                        <div class="text-center mx-5">
+                                            <a href="javascript:CambiarEstatus(@obj.Id, '@obj.Activo');" class="waves-effect waves-circle btn btn-circle btn-primary btn-xs mb-5" title="Inactivar"><i class="fa fa-times"></i></a>
+                                            <small class="d-block">Inactivar</small>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <div class="text-center mx-5">
+                                            <a href="javascript:CambiarEstatus(@obj.Id, '@obj.Activo');" class="waves-effect waves-circle btn btn-circle btn-primary btn-xs mb-5" title="Activar"><i class="fa fa-check"></i></a>
+                                            <small class="d-block">Activar</small>
+                                        </div>
+                                    }*@
+                                <div class="text-center mx-5">
+                                    <a href="javascript:EliminarIngrediente(@obj.Id);" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs mb-5" title="Elimnar"><i class="fa fa-trash"></i></a>
+                                    <small class="d-block">Elimnar</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}
+else
+{
+    <div class="col-xl-6">
+        <div class="box">
+            <div class="box-body d-flex p-0">
+                <div class="flex-grow-1 bg-gradient-secondary-dark p-30 flex-grow-1 bg-img" style="background-position: calc(100% + 0.5rem) bottom; background-size: auto 100%; background-image: url(../images/svg-icon/color-svg/custom-13.svg)">
+                    <h4 class="fw-500">Aún no hay Ingredientes.</h4>
+                    <p class="my-10 fs-16">
+                        Selecciona el botón "Nuevo Ingrediente"<br /> y empieza a capturar.
+                    </p>
+                    @*<a href="#" class="btn btn-danger-light">Read More</a>*@
+                </div>
+            </div>
+        </div>
+    </div>
+}
+@section scripts
+{
+    <script>
+        //Eliminar elemento
+        function EliminarIngrediente(id) {
+            swal({
+                title: '¿Esta seguro de eliminarlo?',
+                text: 'El registro se eliminará permanentemente.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: 'DeleteIngrediente',
+                            type: "POST",
+                            data: { 'id': id },
+                            success: function (data) {
+                                if (data.objectResponse) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                                } else {
+                                    swal({ title: "¡Atención!", text: data.message, type: "warning" });
+                                }
+                            },
+                            error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, type: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+
+        //Cambiar estatus
+        function CambiarEstatus(id, estatus) {
+            swal({
+                title: '¿Esta seguro cambiar estatus?',
+                text: 'El registro se cambiará.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: 'CambiarEstatus',
+                            type: "POST",
+                            data: { 'Id': id, 'estatus': estatus },
+                            success: function (data) {
+                                if (data.objectResponse) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                                } else {
+                                    swal({ title: "Error", text: data.message, type: "error" });
+                                }
+                            },
+                            error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, type: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+    </script>
+}

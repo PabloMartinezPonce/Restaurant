@@ -1,6 +1,5 @@
 ﻿using Restaurante.Model;
 using System;
-using System.Collections.Generic;
 
 #nullable disable
 
@@ -16,6 +15,7 @@ namespace Restaurante.Data.DBModels
         public string Metodopago { get; set; }
         public DateTime? Fecha { get; set; }
         public int IdCuenta { get; set; }
+        public int? IdCorte { get; set; }
 
         public virtual Cuenta IdCuentaNavigation { get; set; }
     }

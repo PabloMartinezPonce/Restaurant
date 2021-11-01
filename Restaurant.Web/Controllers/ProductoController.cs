@@ -23,6 +23,9 @@ namespace Restaurant.Web.Controllers
         private readonly ComplementosDAO _daoCom;
         private readonly ProveedoresDAO _daoPro;
         private readonly UsuarioDAO _daoUsr;
+        private readonly VentasDAO _daoVenta;
+        private readonly MedicionesDAO _daoMed;
+        private readonly IngredientesDAO _daoIng;
         public ProductoController()
         {
             _dao = new ProductosDAO();
@@ -30,6 +33,9 @@ namespace Restaurant.Web.Controllers
             _daoCom = new ComplementosDAO();
             _daoPro = new ProveedoresDAO();
             _daoUsr = new UsuarioDAO();
+            _daoVenta = new VentasDAO();
+            _daoMed = new MedicionesDAO();
+            _daoIng = new IngredientesDAO();
         }
 
         [HttpGet]
@@ -44,12 +50,12 @@ namespace Restaurant.Web.Controllers
                 else if (filtro == "Complemento")
                     productos = await _dao.GetByFilter(id, filtro);
                 else
-                    productos = await _dao.Get();
+                    productos = await _dao.GetAll();
 
                 var resultCat = await _daoCat.GetAllCategorias();
                 ViewBag.ListaCategorias = resultCat.objectResponse;
 
-                var resultCom = await _daoCom.GetAllComplementos();
+                var resultCom = await _daoCom.GetAllActiveComplementos();
                 ViewBag.ListaCatComplemento = resultCom.objectResponse;
 
                 return View(productos.objectResponse);
@@ -73,17 +79,48 @@ namespace Restaurant.Web.Controllers
                 var resultPro = await _daoPro.GetAllProveedores();
                 ViewBag.ListaProveedores = resultPro.objectResponse;
 
-                var resultPC = await _dao.GetAsComplement();
-                ViewBag.ListaProductos = resultPC.objectResponse;
+                var resultTC = await _daoCom.GetTipoComplementos();
+                ViewBag.ListaTiposCom = resultTC.objectResponse;
 
-                var resultCom = await _daoCom.GetAllTipos();
-                List<Complemento> list = resultCom.objectResponse;
-                ViewBag.ListaComplementos = list
-                                         .GroupBy(u => u.IdTipoComplemento)
-                                         .Select(grp => grp.ToList())
-                                         .ToList();
+                var resultMe = await _daoMed.GetAll(true);
+                ViewBag.ListaMedicion = resultMe.objectResponse;
+                
+                var resultIn = await _daoIng.GetAll(true);
+                ViewBag.ListaIdIngredientes = resultIn.objectResponse;
+
+                //var resultPC = await _dao.GetAsComplement();
+                //ViewBag.ListaProductos = resultPC.objectResponse;
+
+                //var resultCom = await _daoCom.GetAllTipos();
+                //List<Complemento> list = resultCom.objectResponse;
+                //ViewBag.ListaComplementos = list
+                //                         .GroupBy(u => u.IdTipoComplemento)
+                //                         .Select(grp => grp.ToList())
+                //                         .ToList();
 
                 return View(productos.objectResponse);
+            }
+            catch (Exception ex)
+            {
+                return View(CommonTxt.GetMessage(ex));
+            }
+        }
+
+        [HttpGet]
+        public async Task<ActionResult> DetalleProducto(int id)
+        {
+            try
+            {
+                var producto = await _dao.GetById(id);
+
+                var details = await _daoVenta.GetProductDetails(id);
+                ViewBag.ProductDetail = details.objectResponse;
+
+                int idComplemento = producto.objectResponse.IdTipoComplemento ?? 0;
+                var resultCom = await _daoCom.GetAllActiveComplementos(idComplemento);
+                ViewBag.ListaComplementos = resultCom.objectResponse;
+
+                return View(producto.objectResponse);
             }
             catch (Exception ex)
             {
@@ -97,6 +134,34 @@ namespace Restaurant.Web.Controllers
             try
             {
                 var result = await _dao.Create(pedido);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return CommonTxt.GetResponseError(ex);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ResponseModel> AgregarIngrediente(RelProductoRecetum ing)
+        {
+            try
+            {
+                var result = await _dao.AddIngredient(ing);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return CommonTxt.GetResponseError(ex);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ResponseModel> EliminarIngrediente(int id)
+        {
+            try
+            {
+                var result = await _dao.DeleteIngredient(id);
                 return result;
             }
             catch (Exception ex)
@@ -163,7 +228,7 @@ namespace Restaurant.Web.Controllers
                 var productos = _dao.Get().Result;
                 var resultCat = _daoCat.GetAllCategorias().Result;
                 ViewBag.ListaCategorias = resultCat.objectResponse;
-                var resultCom = _daoCom.GetAllComplementos().Result;
+                var resultCom = _daoCom.GetAllActiveComplementos().Result;
                 ViewBag.ListaCatComplemento = resultCom.objectResponse;
 
                 return View(productos.objectResponse);

@@ -1,0 +1,163 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model Ingrediente
+@{
+    ViewBag.Title = "Formulario Ingrediente";
+}
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Ingredientes</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Listado de productos</li>
+                        <li class="breadcrumb-item active" aria-current="page">Ingredientes</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    @if (Model.Id != 0)
+                    {
+                        @*<img width="70" src="~/images/productos/@Model.RutaImagen" />*@
+                        <h4 class="box-title">Edición de producto '@Model.Nombre'</h4>
+                    }
+                    else
+                    {
+                        <h4 class="box-title">Creación de nuevo ingrediente</h4>
+                    }
+                    <p><i class="fa fa-warning"></i> Por favor, revisa que las unidades de medida sean validas. Ej. Kilos - Gramos</p>
+                </div>
+                <div class="box-body">
+                    @*@if (Model.Id != 0)
+                    {
+                        <form method="post" enctype="multipart/form-data" asp-controller="Ingrediente" asp-action="Ingredientes">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input class="form-control" type="file" name="postedFile" accept="image/*" />
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="submit" value="Subir" class="btn btn-success" />
+                                </div>
+                            </div>
+                            <input type="hidden" name="id" value="@Model.Id" />
+                        </form>
+                        <br />
+                    }*@
+                    <form id="formIngrediente">
+                        <input id="Id" name="Id" value="@Model.Id" type="hidden" />
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Unidad de medida</label>
+                                        <select class="form-select" id="IdTipoMedicion" name="TipoMedicion" required>
+                                            @foreach (var item in ViewBag.ListaCategorias)
+                                            {
+                                                if (Model.TipoMedicion == item.Nombre)
+                                                {
+                                                    <option selected value="@item.Nombre">@item.Nombre</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Nombre">@item.Nombre</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Nombre del producto</label>
+                                        <input type="text" class="form-control" placeholder="Nombre del producto" value="@Model.Nombre" name="Nombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Stock</label>
+                                        <input type="text" class="form-control" placeholder="Ingresa cantidad" value="@Model.Stock" name="Stock" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Unidad de medida de stock</label>
+                                        <select class="form-select" id="TipoMedicionStock" name="TipoMedicionStock" required>
+                                            @foreach (var item in ViewBag.ListaCategorias)
+                                            {
+                                                if (Model.TipoMedicionStock == item.Nombre)
+                                                {
+                                                    <option selected value="@item.Nombre">@item.Nombre</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Nombre">@item.Nombre</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <br />
+                        <div class="form-actions mt-10">
+                            <a href="/Ingrediente/Ingredientes" class="btn btn-danger">Regresar</a>
+                            <a id="idBtnIngrediente" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section scripts
+{
+    <script>
+        //Envia a guardar formulario
+        $("#idBtnIngrediente").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let id = document.getElementById("Id").value;
+            let $form = $('#formIngrediente');
+            let valid = $form.parsley().validate();
+            let url = id == "0" ? "CreateIngrediente" : "EditarIngrediente";
+
+            if (!valid) {
+                return false;
+            }
+
+            var formData = $form.serialize();
+
+            $.ajax({
+                url: url,
+                data: formData,
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Ingrediente/Ingredientes"; } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+    </script>
+}

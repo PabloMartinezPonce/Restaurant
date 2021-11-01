@@ -1,7 +1,6 @@
 ﻿using Restaurante.Model;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations.Schema;
 
 #nullable disable
 
@@ -24,6 +23,7 @@ namespace Restaurante.Data.DBModels
         public decimal? Propina { get; set; }
         public int IdMesa { get; set; }
         public int IdEmpleado { get; set; }
+        public int? IdCorte { get; set; }
 
         public virtual ICollection<RelCuentaProducto> RelCuentaProductos { get; set; }
         public virtual ICollection<Venta> Venta { get; set; }

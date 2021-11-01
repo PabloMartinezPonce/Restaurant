@@ -1,17 +1,37 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Restaurant.Web;
 using Restaurante.Model;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
+using System;
 
 namespace Restaurante.Data.DAO
 {
     public class ProductosDAO
     {
-        #region CRUD Entidad os
+        #region CRUD Entidad Productos
+
+        public async Task<ResponseModel> GetAll()
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var productos = await db.Productos.Include("RelProductoReceta").Include("IdCategoriaNavigation").AsNoTracking().ToListAsync();
+
+                    if (productos.Count() >= 1)
+                        return new ResponseModel { responseCode = 200, objectResponse = productos, message = "Success" };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Producto>(), message = "No se encontraron usuarios." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = new List<Producto>(), message = ex.Message };
+            }
+        }
 
         public async Task<ResponseModel> Get()
         {
@@ -19,17 +39,17 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
-                    var productos = await db.Productos.AsNoTracking().ToListAsync();
+                    var productos = await db.Productos.AsNoTracking().Where(pro => pro.Activo == true).ToListAsync();
 
                     if (productos.Count() >= 1)
                         return new ResponseModel { responseCode = 200, objectResponse = productos, message = "Success" };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = new Producto(), message = "No se encontraron usuarios." };
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Producto>(), message = "No se encontraron usuarios." };
                 }
             }
             catch (SqlException ex)
             {
-                return new ResponseModel { responseCode = 500, objectResponse = new Producto(), message = ex.Message };
+                return new ResponseModel { responseCode = 500, objectResponse = new List<Producto>(), message = ex.Message };
             }
         }
 
@@ -88,10 +108,17 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
-                    var producto = await db.Productos.AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync<Producto>();
+                    var producto = await db.Productos.Include("RelProductoComplementos").AsNoTracking().Where(e => e.Id == id).FirstOrDefaultAsync<Producto>();
+                    var listaReceta = await db.RelProductoReceta
+                        .Include("IdIngredienteNavigation").Include("IdProductoNavigation")
+                        .Where(e => e.IdProducto == id)
+                        .AsNoTracking().ToListAsync();
 
                     if (producto != null)
+                    {
+                        producto.RelProductoReceta = listaReceta;
                         return new ResponseModel { responseCode = 200, objectResponse = producto, message = "Success" };
+                    }
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = new Producto(), message = "El producto no existe." };
                 }
@@ -128,6 +155,9 @@ namespace Restaurante.Data.DAO
             {
                 using (var db = new restauranteContext())
                 {
+                    regitro.Complementos = string.Empty;
+                    regitro.ComplementosSelect = string.Empty;
+                    regitro.Activo = true;
                     db.Productos.Add(regitro);
 
                     var result = await db.SaveChangesAsync();
@@ -135,6 +165,50 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 200, objectResponse = result, message = "El producto fue registrado exitosamente." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El producto no pudo ser creado." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> AddIngredient(RelProductoRecetum regitro)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    //regitro.Activo = true;
+                    db.RelProductoReceta.Add(regitro);
+
+                    var result = await db.SaveChangesAsync();
+                    if (result > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = regitro.Id, message = "El ingrediente fue registrado exitosamente." };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = null, message = "El ingrediente no pudo ser creado." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> DeleteIngredient(int id)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var regitro = db.RelProductoReceta.Where(u => u.Id == id).First<RelProductoRecetum>();
+                    db.RelProductoReceta.Remove(regitro);
+
+                    var result = await db.SaveChangesAsync();
+                    if (result > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "El ingrediente fue eliminado exitosamente." };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = null, message = "El ingrediente no pudo ser eliminado." };
                 }
             }
             catch (SqlException ex)
@@ -154,12 +228,16 @@ namespace Restaurante.Data.DAO
                     if (!string.IsNullOrEmpty(regitroView.Codigo)) regitro.Codigo = regitroView.Codigo;
                     if (!string.IsNullOrEmpty(regitroView.Descripcion)) regitro.Descripcion = regitroView.Descripcion;
                     if (!string.IsNullOrEmpty(regitroView.ComplementosSelect)) regitro.ComplementosSelect = regitroView.ComplementosSelect;
+                    if (!string.IsNullOrEmpty(regitroView.TipoMedicion)) regitro.TipoMedicion = regitroView.TipoMedicion;
                     if (regitroView.PrecioCosto != 0) regitro.PrecioCosto = regitroView.PrecioCosto;
                     if (regitroView.PrecioVenta != 0) regitro.PrecioVenta = regitroView.PrecioVenta;
                     if (regitroView.Stock != 0) regitro.Stock = regitroView.Stock;
                     if (regitroView.Descuento != 0) regitro.Descuento = regitroView.Descuento;
                     if (regitroView.IdCategoria != 0) regitro.IdCategoria = regitroView.IdCategoria;
                     if (regitroView.IdProveedor != 0) regitro.IdProveedor = regitroView.IdProveedor;
+                    if (regitroView.IdTipoComplemento != 0) regitro.IdTipoComplemento = regitroView.IdTipoComplemento;
+                    if (!string.IsNullOrEmpty(regitroView.TipoMedicion)) regitro.TipoMedicion = regitroView.TipoMedicion;
+                    regitro.EsMultiStock = regitroView.EsMultiStock;
 
                     var result = await con.SaveChangesAsync();
                     if (result > 0)
@@ -174,16 +252,39 @@ namespace Restaurante.Data.DAO
             }
         }
 
-        public async Task<ResponseModel> ControlStock(int idProducto)
+        public async Task<ResponseModel> ControlStock(int idProducto, int unidadesVendidas)
         {
             try
             {
                 using (var con = new restauranteContext())
                 {
+                    int result = 0;
                     var regitro = con.Productos.Where(u => u.Id == idProducto).First<Producto>();
-                    regitro.Stock = regitro.Stock - regitro.Cantidad;
+                    if (regitro.EsMultiStock)
+                    {
+                        var regitroRel = await con.RelProductoReceta.Where(u => u.IdProducto == idProducto).ToListAsync();
+                        foreach (var item in regitroRel)
+                        {
+                            var restar = 0.0;
+                            var ingrediente = await con.Ingredientes.Where(u => u.Id == item.IdIngrediente).FirstOrDefaultAsync();
+                            var totalRestar = unidadesVendidas * item.Cantidad;
+                            if ((ingrediente.TipoMedicion == "mililitro(s)" && ingrediente.TipoMedicionStock == "litro(s)") ||
+                                (ingrediente.TipoMedicion == "gramo(s)" && ingrediente.TipoMedicionStock == "kilo(s)"))
+                                restar = totalRestar * 0.00100;
+                            else
+                                restar = totalRestar;
 
-                    var result = await con.SaveChangesAsync();
+                            ingrediente.Stock = ingrediente.Stock - restar;
+                            result = await con.SaveChangesAsync();
+                        }
+                    }
+                    else
+                    {
+                        var totalRestar = unidadesVendidas * regitro.Cantidad;
+                        regitro.Stock = regitro.Stock - totalRestar;
+                        result = await con.SaveChangesAsync();
+                    }
+
                     if (result > 0)
                         return new ResponseModel { responseCode = 200, objectResponse = result, message = "El producto fue actualizado exitosamente." };
                     else

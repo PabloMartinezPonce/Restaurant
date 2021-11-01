@@ -1,0 +1,177 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model Producto
+@{
+    ViewBag.Title = "Formulario Producto";
+}
+<style>
+    .ganancia {
+        font-size: 18px;
+        color: forestgreen
+    }
+</style>
+<section class="content">
+
+    <div class="row">
+        <div class="col-lg-12">
+            <div class="box">
+                <div class="box-body">
+                    <div class="row">
+                        <div class="col-md-4 col-sm-6">
+                            <div class="box box-body b-1 text-center no-shadow">
+                                <img src="~/images/productos/@Model.RutaImagen" id="product-image" class="img-fluid" alt="" />
+                            </div>
+
+                        </div>
+                        <div class="col-md-8 col-sm-6">
+                            <h2 class="box-title mt-0">@Model.Nombre</h2>
+                            <div class="list-inline">
+                                <a class="text-warning"><i class="mdi mdi-star"></i></a>
+                                <a class="text-warning"><i class="mdi mdi-star"></i></a>
+                                <a class="text-warning"><i class="mdi mdi-star"></i></a>
+                                <a class="text-warning"><i class="mdi mdi-star"></i></a>
+                                <a class="text-warning"><i class="mdi mdi-star"></i></a>
+                            </div>
+                            <h1 class="pro-price mb-0 mt-20">
+                                &#36;@Model.PrecioVenta
+                                <span class="old-price">&#36;@Model.PrecioCosto</span>
+                                <span class="text-danger">@Model.Descuento% off</span>
+                            </h1>
+                            <hr>
+                            <p>@Model.Descripcion</p>
+                            <div class="row">
+                                <div class="col-sm-6">
+                                    @if (Model.EsMultiStock)
+                                    {
+                                        <h4 class="box-title mt-20">Receta compuesta por @Model.RelProductoReceta.Count ingredientes:</h4>
+                                        <ul class="list-icons list-unstyled">
+                                            @foreach (var item in Model.RelProductoReceta)
+                                            {
+                                            <li>
+                                                <i class="fa fa-apple text-danger me-3"></i>
+                                                @item.Cantidad @item.IdIngredienteNavigation.TipoMedicion de @item.IdIngredienteNavigation.Nombre
+                                                / @(Math.Round(Convert.ToDouble(@item.IdIngredienteNavigation.Stock), 5)) @item.IdIngredienteNavigation.TipoMedicionStock en Stock
+                                            </li>
+                                            }
+                                        </ul>
+                                    }
+                                    else
+                                    {
+                                        <h4 class="box-title mt-20">@Model.TipoMedicion en Stock</h4>
+                                        <ul class="list-icons list-unstyled">
+                                            <li>
+                                                <i class="fa fa-apple text-danger me-3"></i>
+                                                @Model.Stock productos  @Model.Nombre en stock.
+                                            </li>
+
+                                        </ul>
+                                    }
+                                </div>
+                                <div class="col-sm-6">
+                                    <h4 class="box-title mt-20">Complementos:</h4>
+                                    @if (Model.IdTipoComplemento != null)
+                                    {
+                                        <p class="mb-0">
+                                            @foreach (var compl in @ViewBag.ListaComplementos)
+                                            {
+                                                <span class="badge badge-pill badge-lg badge-secondary-light">@compl.Nombre</span>@: + $@compl.Precio
+                                            }
+                                        </p>
+                                    }
+                                    else
+                                    {
+                                        <p class="mb-0">
+                                            <span class="badge badge-pill badge-lg badge-secondary-light">Producto sin Complementos</span>
+                                        </p>
+                                    }
+                                </div>
+                            </div>
+                            <hr>
+                            <h4 class="box-title mt-20">Datos de venta </h4>
+                            <ul class="list-icons list-unstyled">
+                                @*<li><i class="fa fa-check text-danger me-3"></i> @Model.Stock productos en stock.</li>*@
+                                <li><i class="fa fa-check text-danger me-3"></i> @ViewBag.ProductDetail.TotalCantidadVentidos procutos vendidos.</li>
+                                <li><i class="fa fa-check text-danger me-3"></i> <span class="ganancia">$@ViewBag.ProductDetail.TotalVenta</span> vendido con <span class="ganancia">$@(ViewBag.ProductDetail.TotalVenta - @ViewBag.ProductDetail.TotalCosto)</span> de ganancia.</li>
+                            </ul>
+                        </div>
+                        <div class="col-lg-12 col-md-12 col-sm-12">
+                            <h4 class="box-title mt-40">Información General</h4>
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <tbody>
+                                        <tr>
+                                            <td width="390">Código</td>
+                                            <td> @Model.Codigo </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Tipo de medida</td>
+                                            <td> @Model.TipoMedicion </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Cantidad por venta</td>
+                                            <td> @Model.Cantidad </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Categoria</td>
+                                            <td> @Model.IdCategoria </td>
+                                        </tr>
+                                        <tr>
+                                            <td>Proveedor</td>
+                                            <td> @Model.IdProveedor </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+<!-- /.content -->
+
+@section scripts
+{
+    <script>
+        //Envia a guardar formulario
+        $("#idBtnProducto").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let id = document.getElementById("Id").value;
+            let $form = $('#formProducto');
+            let valid = $form.parsley().validate();
+            let url = id == "0" ? "CrearProducto" : "EditarProducto";
+
+            if (!valid) {
+                return false;
+            }
+            //var list = $('#complementos').val().join(',');
+            var formData = $form.serialize();
+            //var formData = $form.serialize() + "&ComplementosSelect=[" + list + "]";
+            //console.log(formData);
+
+            $.ajax({
+                url: url,
+                data: formData,
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Producto/Productos"; } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+    </script>
+}

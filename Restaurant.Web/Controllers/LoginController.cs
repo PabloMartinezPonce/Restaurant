@@ -13,14 +13,22 @@ namespace Restaurant.Web.Controllers
     public class LoginController : Controller
     {
         private readonly LoginDAO _daoLogin;
+        private readonly ConfiguracionDAO _daoConfig;
 
         public LoginController()
         {
             _daoLogin = new LoginDAO();
+            _daoConfig = new ConfiguracionDAO();
         }
 
-        public ActionResult Login()
+        public async Task<ActionResult> Login()
         {
+            var result = await _daoConfig.GetById(5);
+            ViewBag.fondoLogin = result.objectResponse;
+
+            var result2 = await _daoConfig.GetById(3);
+            ViewBag.logoLogin = result2.objectResponse;
+
             return View();
         }
 
@@ -36,6 +44,11 @@ namespace Restaurant.Web.Controllers
                     string user = JsonSerializer.Serialize(result.objectResponse);
                     HttpContext.Session.SetString("UserSession", user);
                 }
+
+                var result2 = await _daoConfig.GetAll();
+                string configuraciones = JsonSerializer.Serialize(result2.objectResponse);
+                HttpContext.Session.SetString("ConfigSession", configuraciones);
+
                 string jsonString = JsonSerializer.Serialize(result);
 
                 return Content(jsonString);

@@ -42,6 +42,9 @@ namespace Restaurant.Web.Controllers
             {
                 var result = await _dao.GetById(id);
 
+                var resultCat = await _dao.GetTipoComplementos();
+                ViewBag.ListaTipos = resultCat.objectResponse;
+
                 return View(result.objectResponse);
             }
             catch (Exception ex)
@@ -51,58 +54,58 @@ namespace Restaurant.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CrearComplemento(Complemento pedido)
+        public async Task<ResponseModel> CrearComplemento(Complemento pedido)
         {
             try
             {
                 var result = await _dao.Create(pedido);
-                return Json(result, 0);
+                return result;
             }
             catch (Exception ex)
             {
-                return Json(CommonTxt.GetResponseError(ex));
+                return CommonTxt.GetResponseError(ex);
             }
         }
 
         [HttpPost]
-        public async Task<ActionResult> EditarComplemento(Complemento pedido)
+        public async Task<ResponseModel> EditarComplemento(Complemento pedido)
         {
             try
             {
                 var result = await _dao.Update(pedido);
-                return Json(result, 0);
+                return result;
             }
             catch (Exception ex)
             {
-                return Json(CommonTxt.GetResponseError(ex));
+                return CommonTxt.GetResponseError(ex);
             }
         }
 
-        //[HttpPost]
-        //public async Task<ActionResult> CambiarEstatus(Complemento pedido)
-        //{
-        //    try
-        //    {
-        //        var result = _dao.CambiarEstatus(pedido, Security.GetUserToken());
-        //        return Json(result, JsonRequestBehavior.AllowGet);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //           return Json(CommonTxt.GetResponseError(ex));
-        //    }
-        //}
-
         [HttpPost]
-        public async Task<ActionResult> EliminarComplemento(int id)
+        public async Task<ResponseModel> EliminarComplemento(int id)
         {
             try
             {
                 var result = await _dao.Delete(id);
-                return Json(result, 0);
+                return result;
             }
             catch (Exception ex)
             {
-                return Json(CommonTxt.GetResponseError(ex));
+                return CommonTxt.GetResponseError(ex);
+            }
+        }
+
+        [HttpPost]
+        public async Task<ResponseModel> CambiarEstatus(bool estatus, int Id)
+        {
+            try
+            {
+                var result = await _dao.SetActivity(estatus, Id);
+                return result;
+            }
+            catch (Exception ex)
+            {
+                return CommonTxt.GetResponseError(ex);
             }
         }
 

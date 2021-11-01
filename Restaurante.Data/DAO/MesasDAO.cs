@@ -1,11 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Restaurant.Web;
-using Restaurante.Model;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
+using Restaurante.Model;
 
 namespace Restaurante.Data.DAO
 {
@@ -24,12 +23,12 @@ namespace Restaurante.Data.DAO
                     if (mesas.Count() >= 1)
                         return new ResponseModel { responseCode = 200, objectResponse = mesas, message = "Success" };
                     else
-                        return new ResponseModel { responseCode = 404, objectResponse = new Mesa(), message = "No se encontraron mesas." };
+                        return new ResponseModel { responseCode = 404, objectResponse = new List<Mesa>(), message = "No se encontraron mesas." };
                 }
             }
             catch (SqlException ex)
             {
-                return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
+                return new ResponseModel { responseCode = 500, objectResponse = new List<Mesa>(), message = ex.Message };
             }
         }
 
@@ -63,7 +62,7 @@ namespace Restaurante.Data.DAO
                     var result = await db.SaveChangesAsync();
 
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Mesa guardada exitosamente." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La mesa no pudo ser guardada." };
                 }
@@ -87,7 +86,7 @@ namespace Restaurante.Data.DAO
                     var result = await con.SaveChangesAsync();
 
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Mesa guardada exitosamente." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La mesa no pudo ser guardada." };
                 }
@@ -109,7 +108,7 @@ namespace Restaurante.Data.DAO
 
                     var result = await db.SaveChangesAsync();
                     if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Éxito" };
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Mesa eliminada exitosamente." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La mesa no pudo ser eliminada." };
                 }

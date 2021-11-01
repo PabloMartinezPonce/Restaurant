@@ -1,20 +1,20 @@
 ﻿@using Restaurante.Model.DTOs;
 @using Restaurante.Data.DBModels;
 @using System.Text.Json;
-@model Producto
+@model Categoria
 @{
-    ViewBag.Title = "Formulario Producto";
+    ViewBag.Title = "Formulario Categoria";
 }
 <div class="content-header">
     <div class="d-flex align-items-center">
         <div class="me-auto">
-            <h3 class="page-title">Productos</h3>
+            <h3 class="page-title">Categorias</h3>
             <div class="d-inline-block align-items-center">
                 <nav>
                     <ol class="breadcrumb">
                         <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-                        <li class="breadcrumb-item" aria-current="page">Listado de productos</li>
-                        <li class="breadcrumb-item active" aria-current="page">Productos</li>
+                        <li class="breadcrumb-item" aria-current="page">Listado de categorias</li>
+                        <li class="breadcrumb-item active" aria-current="page">Categorias</li>
                     </ol>
                 </nav>
             </div>
@@ -29,120 +29,71 @@
                 <div class="box-header with-border">
                     @if (Model.Id != 0)
                     {
-                        <img width="70" src="~/images/productos/@Model.RutaImagen" />
-                        <h4 class="box-title">Edición de producto '@Model.Nombre'</h4>
+                        <img width="70" src="~/images/categorias/@Model.RutaImagen" />
+                        <h4 class="box-title">Edición de categoria '@Model.Nombre'</h4>
                     }
                     else
                     {
-                        <h4 class="box-title">Creación de nuevo @Model.Nombre</h4>
+                        <h4 class="box-title">Creación de nueva categoría</h4>
                     }
                 </div>
                 <div class="box-body">
-                    <form action="CrearProducto" id="formProducto">
-                        <input name="Id" value="@Model.Id" type="hidden" />
+                    <form action="CrearCategoria" id="formProducto">
+                        <input id="Id" name="Id" value="@Model.Id" type="hidden" />
                         <div class="form-body">
                             <div class="row">
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Nombre del producto</label>
-                                        <input type="text" class="form-control" placeholder="Nombre del producto" value="@Model.Nombre" name="Nombre" required>
+                                        <label class="fw-700 fs-16 form-label">Nombre del categoria</label>
+                                        <input type="text" class="form-control" placeholder="Nombre del categoria" value="@Model.Nombre" name="Nombre" required>
                                     </div>
                                 </div>
                                 <div class="col-md-4">
                                     <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Código</label>
-                                        <input type="text" class="form-control" placeholder="Ingresa código" value="@Model.Codigo" name="Codigo" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Stock</label>
-                                        <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Stock" name="Stock" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <!--/row-->
-                            <!--/row-->
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Categoría</label>
-                                        <select class="form-select" id="idCategoria" name="idCategoria" required>
-                                            @foreach (var item in ViewBag.ListaCategorias)
+                                        <label class="fw-700 fs-16 form-label">Imagen</label>
+                                        <select name="RutaImagen" class="form-select">
+                                            <option selected disabled value="0">Selecciona un tipo de imagen</option>
+                                            @if (Model.RutaImagen == "breads.jpg")
                                             {
-                                                <option value="@item.Id">@item.Nombre</option>
+                                                <option selected value="breads.jpg">Rolls</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="breads.jpg">Rolls</option>
+                                            }
+                                            @if (Model.RutaImagen == "starters.jpg")
+                                            {
+                                                <option selected value="starters.jpg">Comida</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="starters.jpg">Comida</option>
+                                            }
+                                            @if (Model.RutaImagen == "mocktails.jpg")
+                                            {
+                                                <option selected value="mocktails.jpg">Coctalis</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="mocktails.jpg">Coctalis</option>
+                                            }
+                                            @if (Model.RutaImagen == "mocktails.jpg")
+                                            {
+                                                <option selected value="mocktails.jpg">Café</option>
+                                            }
+                                            else
+                                            {
+                                                <option value="mocktails.jpg">Café</option>
                                             }
                                         </select>
                                     </div>
                                 </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Complementos</label>
-                                        <select class="form-select" id="idProveedor" name="idProveedor">
-                                            @foreach (var item in ViewBag.ListaProveedores)
-                                            {
-                                                <option value="@item.Id">@item.Compania</option>
-                                            }
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Estatus</label>
-                                        <div class="radio-list">
-                                            <label class="radio-inline p-0 me-10">
-                                                <div class="radio radio-info">
-                                                    <input type="radio" name="activo" id="radio1" value="@Model.Activo">
-                                                    <label for="radio1">Activo</label>
-                                                </div>
-                                            </label>
-                                            <label class="radio-inline">
-                                                <div class="radio radio-info">
-                                                    <input type="radio" name="radio" id="radio2" value="option2">
-                                                    <label for="radio2">Inactivo</label>
-                                                </div>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--/span-->
                             </div>
                             <!--/row-->
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Precio compra</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="ti-money"></i></div>
-                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioCosto" name="PrecioCosto" id="PrecioCosto">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Precio venta</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="ti-money"></i></div>
-                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioVenta" name="PrecioVenta" id="PrecioVenta">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--/span-->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Descuento</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="ti-cut"></i></div>
-                                            <input type="text" class="form-control" placeholder="Ingresa descuento" value="@Model.Descuento" name="Descuento" id="Descuento">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--/span-->
-                            </div>
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Descripción de producto</label>
+                                        <label class="fw-700 fs-16 form-label">Descripción de categoria</label>
                                         <textarea class="form-control p-15" rows="2" name="Descripcion" id="Descripcion">@Model.Descripcion</textarea>
                                     </div>
                                 </div>
@@ -150,8 +101,8 @@
                             <!--/row-->
                         </div>
                         <div class="form-actions mt-10">
-                            <a href="/Producto/Productos" class="btn btn-danger">Cancelar</a>
-                            <button type="submit" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</button>
+                            <a href="/Categoria/Categorias" class="btn btn-danger">Cancelar</a>
+                            <a id="idBtnProducto" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</a>
                         </div>
                     </form>
                 </div>
@@ -163,5 +114,45 @@
 
 @section scripts
 {
-    <script src="../Scripts/Productos.js"></script>
+    @*<script src="../Scripts/Categorias.js"></script>*@
+
+    <script>
+        //Envia a guardar formulario
+        $("#idBtnProducto").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let id = document.getElementById("Id").value;
+            let $form = $('#formProducto');
+            let valid = $form.parsley().validate();
+            let url = id == "0" ? "CreateCategoria" : "EditCategoria";
+
+            if (!valid) {
+                return false;
+            }
+            //var list = $('#complementos').val().join(',');
+            var formData = $form.serialize();
+            //var formData = $form.serialize() + "&ComplementosSelect=[" + list + "]";
+            //console.log(formData);
+
+            $.ajax({
+                url: url,
+                data: formData,
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Categoria/Categorias"; } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+    </script>
 }

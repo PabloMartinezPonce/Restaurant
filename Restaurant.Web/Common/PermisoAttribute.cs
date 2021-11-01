@@ -32,7 +32,7 @@ namespace Restaurante.Web.Common
                     filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
                     {
                         controller = "Login",
-                        action = "AccesoDenegado"
+                        action = "Login"
                     }));
                 }
                 //else if (!usuario.Roles.Permisos.Any(p => p.id == (int)permiso))
@@ -50,7 +50,7 @@ namespace Restaurante.Web.Common
                 filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new
                 {
                     controller = "Login",
-                    action = "AccesoDenegado"
+                    action = "Login"
                 }));
             }
         }

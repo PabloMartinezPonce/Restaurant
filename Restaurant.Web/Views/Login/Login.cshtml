@@ -10,9 +10,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="~/images/logo/LogoArbol.png">
+    <link rel="icon" href="~/images/logo/@ViewBag.logoLogin.Valor">
 
-    <title>Login - Las Paseras</title>
+    <title>Login</title>
 
     <!-- Vendors Style-->
     <link rel="stylesheet" href="css/vendors_css.css">
@@ -24,7 +24,7 @@
 
 </head>
 
-<body class="hold-transition theme-primary bg-img" style="background-image: url(images/Background/BG1.jpeg);">
+<body class="hold-transition theme-primary bg-img" style="background-image: url(images/Background/@ViewBag.fondoLogin.Valor);">
 
     <div class="container h-p100">
         <div class="row align-items-center justify-content-md-center h-p100">
@@ -33,8 +33,11 @@
                     <div class="row justify-content-center g-0">
                         <div class="col-lg-5 col-md-5 col-12">
                             <div class="bg-white rounded10 shadow-lg">
+                                <div style="align-content:center; text-align:center;">
+                                    <img src="~/images/logo/@ViewBag.logoLogin.Valor" width="150"/>
+                                </div>
                                 <div class="content-top-agile p-20 pb-0">
-                                    <h2 class="text-primary">Iniciar Sesión</h2>
+                                    <h2 class="text-danger"><i class="fa fa-lock "></i> Iniciar Sesión</h2>
                                     <p class="mb-0">Ingresa tus credenciales.</p>
                                 </div>
                                 <div class="p-40">
@@ -104,7 +107,11 @@
                                 window.localStorage.setItem('username', obj.objectResponse.NombreUsuario);
                                 window.localStorage.setItem('name', obj.objectResponse.Nombre);
                                 window.localStorage.setItem('sexo', obj.objectResponse.Sexo);
-                                document.location.href = "@Url.Content("~/Login/Dashboard")"
+                                if (obj.objectResponse.IdRol == 1 || obj.objectResponse.IdRol == 2) {
+                                    document.location.href = "@Url.Content("~/Login/Dashboard")"
+                                } else {
+                                    document.location.href = "@Url.Content("~/Cuenta/Cuentas")"
+                                }
                             } else {
                                 $.toast({
                                     heading: 'Error al iniciar sesión',

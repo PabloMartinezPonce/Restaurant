@@ -5,53 +5,121 @@
 @{
     ViewBag.Title = "Categorías";
 }
-<div class="content-header">
-    <div class="d-flex align-items-center">
-        <div class="me-auto">
-            <h3 class="page-title">Categorías</h3>
-            <div class="d-inline-block align-items-center">
-                <nav>
-                    <ol class="breadcrumb">
-                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
-                        <li class="breadcrumb-item" aria-current="page">Listado de categorías</li>
-                        <li class="breadcrumb-item active" aria-current="page">Categorías</li>
-                    </ol>
-                </nav>
+<br />
+<div class="box">
+    <div class="box-body p-0">
+        <div class="flexbox align-items-center p-15">
+            <div class="flexbox align-items-center">
+                <div class="d-inline-block" style="float: right">
+                    <a href="FormCategoria?id=0" class="btn btn-success btn-round checkbox-toggle"><i class="ion ion-plus"></i> Nueva Categoría</a>
+                </div>
+
+                <span class="divider-line mx-1"></span>
+            </div>
+
+            <div>
+                <div class="lookup lookup-circle lookup-right">
+                    <input type="text" data-provide="media-search">
+                </div>
             </div>
         </div>
     </div>
+    <!-- /.box-body -->
 </div>
-
-<section class="content">
-    <div class="row">
-        @foreach (var obj in Model)
-        {
-            <div class="col-6 col-lg-4 col-xl-3">
-                <div class="box overflow-h">
-                    <div class="box-body p-0">
-                        <div>
-                            <img class="rounded img-fluid" src="~/images/food/@obj.RutaImagen" alt="">
+@if (Model.Count > 0)
+{
+    <section class="content">
+        <div class="row">
+            @foreach (var obj in Model)
+            {
+                <div class="col-6 col-lg-4 col-xl-3">
+                    <div class="box overflow-h">
+                        <div class="box-body p-0">
+                            <div>
+                                <img class="rounded img-fluid" src="~/images/food/@obj.RutaImagen" alt="">
+                            </div>
                         </div>
-                    </div>
-                    <div class="box-body">
-                        <div class="info-content">
-                            <h4 class="mb-10 mt-0">@obj.Descripcion</h4>
-                            <div class="d-flex justify-content-between align-items-center">
-                                <h4 class="mb-0 text-primary">@obj.Nombre</h4>
-                                <div class="d-flex align-items-center">
-                                    <span class="fs-18 mx-10 text-primary icon-Wine"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
-                                    <h5 class="text-black mb-0">12 Item</h5>
+                        <div class="box-body">
+                            <div class="info-content">
+                                <h4 class="mb-10 mt-0">@obj.Descripcion</h4>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h4 class="mb-0 text-primary">@obj.Nombre</h4>
+                                    @*<div class="d-flex align-items-center">
+                                            <span class="fs-18 mx-10 text-primary icon-Wine"><span class="path1"></span><span class="path2"></span><span class="path3"></span></span>
+                                            <h5 class="text-black mb-0">12 Item</h5>
+                                        </div>*@
+                                    <div class="text-center mx-5">
+                                        <a href="FormCategoria?id=@obj.Id" class="waves-effect waves-circle btn btn-circle btn-success btn-xs mb-5"><i class="fa fa-edit"></i></a>
+                                        <small class="d-block">Editar</small>
+                                    </div>
+                                    <div class="text-center mx-5">
+                                        <a href="javascript:EliminarCategoria(@obj.Id);" class="waves-effect waves-circle btn btn-circle btn-danger btn-xs mb-5"><i class="fa fa-trash"></i></a>
+                                        <small class="d-block">Elimnar</small>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            }
+        </div>
+    </section>
+}
+else
+{
+    <div class="col-xl-6">
+        <div class="box">
+            <div class="box-body d-flex p-0">
+                <div class="flex-grow-1 bg-gradient-secondary-dark p-30 flex-grow-1 bg-img" style="background-position: calc(100% + 0.5rem) bottom; background-size: auto 100%; background-image: url(../images/svg-icon/color-svg/custom-13.svg)">
+                    <h4 class="fw-500">Aún no hay categorías.</h4>
+                    <p class="my-10 fs-16">
+                        Selecciona el botón "Nueva Categoría"<br /> y empieza a capturar.
+                    </p>
+                    @*<a href="#" class="btn btn-danger-light">Read More</a>*@
+                </div>
             </div>
-        }
+        </div>
     </div>
-</section>
-
+}
 @section scripts
 {
     @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
+
+    <script>
+        //Eliminar elemento
+        function EliminarCategoria(id) {
+            swal({
+                title: '¿Esta seguro de eliminarlo?',
+                text: 'El registro se eliminará permanentemente.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: 'DeleteCategoria',
+                            type: "POST",
+                            data: { 'id': id },
+                            success: function (data) {
+                                if (data.objectResponse) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                                } else {
+                                    swal({ title: "Error", text: data.message, type: "error" });
+                                }
+                            },
+                            error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, type: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+    </script>
 }

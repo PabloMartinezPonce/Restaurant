@@ -24,6 +24,7 @@
                     <p><strong>Nota: </strong> @Model.Descripcion</p>
                     <p>Propina:<strong>@Model.Propina</strong> </p>
                     <a class="btn btn-outline btn-success" href="Cuentas"><i class="fa fa-arrow-circle-left"></i> Regresar</a>
+                    <a class="btn btn-outline btn-info" onclick="$('#modalReceipt').modal('show')"><i class="fa fa-print"></i> Re-Imprimir</a>
                 </div>
             </div>
         </div>
@@ -68,10 +69,11 @@
             </div>
         </div>
     </div>
-
 </section>
+
+@Html.Partial("FormTicketEPSON", @Model)
 
 @section scripts
 {
-    <script src="../Scripts/Productos.js"></script>
+    @*<script src="../Scripts/Productos.js"></script>*@
 }

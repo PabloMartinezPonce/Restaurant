@@ -1,4 +1,5 @@
 ﻿@using Restaurante.Model.DTOs;
+@using Restaurant.Model;
 @using Restaurante.Data.DBModels;
 @using System.Text.Json;
 @model List<Venta>
@@ -20,7 +21,6 @@
                     </nav>
                 </div>
             </div>
-
         </div>
     </div>*@
 <br />
@@ -28,11 +28,29 @@
 <!-- Main content -->
 <section class="content">
     <div class="row">
-        <div class="col-xl-10 col-lg-9 col-12">
+        <div class="col-xl-9 col-lg-9 col-12">
             <div class="box">
                 <div class="box-header with-border">
                     <h4 class="box-title">Ventas</h4>
-                    <h6 class="box-subtitle">Export Invoice List to Copy, CSV, Excel, PDF & Print</h6>
+                    <h6 class="box-subtitle">Hoy: @GlobalConfig.GetMexDate()</h6>
+                    @*<br />
+                    <div class="row">
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <a class="btn btn-default pull-right" id="dateVenta">
+                                        <span>
+                                            <i class="fa fa-calendar"></i> Selecciona Fechas
+                                        </span>
+                                        <i class="fa fa-caret-down"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-default" href="javascript:Filtrar();"><i class="fa fa-search"></i> Buscar</a>
+                        </div>
+                    </div>*@
                 </div>
                 <div class="box-body">
                     <div class="table-responsive">
@@ -44,10 +62,10 @@
                                     <th>Fecha</th>
                                     <th>Cuenta</th>
                                     <th>Método</th>
-                                    <th>Calificación</th>
+                                    @*<th>Calificación</th>*@
                                     <th>Propina</th>
                                     <th>Totales</th>
-                                    <th class="text-center">Actions</th>
+                                    @*<th class="text-center">Actions</th>*@
                                 </tr>
                             </thead>
                             <tbody>
@@ -66,30 +84,30 @@
                                         <td>
                                             Pago: @obj.Metodopago
                                         </td>
-                                        <td>
-                                            <span class="badge badge-pill badge-success">Buena</span>
-                                        </td>
+                                        @*<td>
+                                                <span class="badge badge-pill badge-success">Buena</span>
+                                            </td>*@
                                         <td>
                                             <h6 class="mb-0 fw-bold"> @obj.Propina <span class="d-block text-muted fw-normal"> efectivo</span></h6>
                                         </td>
                                         <td>
                                             <h6 class="mb-0 fw-bold">T: @obj.Total <span class="d-block text-muted fw-normal">S: @obj.Subtotal</span></h6>
                                         </td>
-                                        <td class="text-center">
-                                            <div class="list-icons d-inline-flex">
-                                                <a href="#" class="list-icons-item me-10"><i class="fa fa-eye-slash"></i></a>
-                                                <div class="list-icons-item dropdown">
-                                                    <a href="#" class="list-icons-item dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
-                                                    <div class="dropdown-menu dropdown-menu-end">
-                                                        <a href="#" class="dropdown-item"><i class="fa fa-download"></i> Download</a>
-                                                        <a href="#" class="dropdown-item"><i class="fa fa-print"></i> Print</a>
-                                                        <div class="dropdown-divider"></div>
-                                                        <a href="#" class="dropdown-item"><i class="fa fa-pencil"></i> Edit</a>
-                                                        <a href="#" class="dropdown-item"><i class="fa fa-remove"></i> Remove</a>
+                                        @*<td class="text-center">
+                                                <div class="list-icons d-inline-flex">
+                                                    <a href="#" class="list-icons-item me-10"><i class="fa fa-eye-slash"></i></a>
+                                                    <div class="list-icons-item dropdown">
+                                                        <a href="#" class="list-icons-item dropdown-toggle" data-bs-toggle="dropdown"><i class="fa fa-file-text"></i></a>
+                                                        <div class="dropdown-menu dropdown-menu-end">
+                                                            <a href="#" class="dropdown-item"><i class="fa fa-download"></i> Download</a>
+                                                            <a href="#" class="dropdown-item"><i class="fa fa-print"></i> Print</a>
+                                                            <div class="dropdown-divider"></div>
+                                                            <a href="#" class="dropdown-item"><i class="fa fa-pencil"></i> Edit</a>
+                                                            <a href="#" class="dropdown-item"><i class="fa fa-remove"></i> Remove</a>
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
-                                        </td>
+                                            </td>*@
                                     </tr>
                                 }
                             </tbody>
@@ -99,23 +117,39 @@
                 </div>
             </div>
         </div>
-        <div class="col-xl-2 col-lg-3 col-12">
+        <div class="col-xl-3 col-lg-3 col-12">
             <div class="box box-inverse box-success">
                 <div class="box-body">
                     <div class="flexbox">
-                        <h5>Ingresos</h5>
-                        <div class="dropdown">
-                            <span class="dropdown-toggle no-caret" data-bs-toggle="dropdown"><i class="ion-android-more-vertical rotate-90"></i></span>
-                            <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="#"><i class="ion-android-list"></i> Details</a>
-                                <a class="dropdown-item" href="#"><i class="ion-android-add"></i> Add new</a>
-                                <a class="dropdown-item" href="#"><i class="ion-android-refresh"></i> Refresh</a>
-                            </div>
-                        </div>
+                        <h5>Ingresos Efectivo</h5>
                     </div>
-
                     <div class="text-center my-2">
-                        <div class="fs-60">$@Model.Last().TotalDiaria</div>
+                        @if (Model.Count > 0)
+                        {
+                            <div class="fs-60">$@Model.Last().TotalEfectivo</div>
+                        }
+                        else
+                        {
+                            <div class="fs-60">$0</div>
+                        }
+                        <span>Ingresos totales</span>
+                    </div>
+                </div>
+            </div>
+            <div class="box box-inverse box-success">
+                <div class="box-body">
+                    <div class="flexbox">
+                        <h5>Ingresos Tarjeta</h5>
+                    </div>
+                    <div class="text-center my-2">
+                        @if (Model.Count > 0)
+                        {
+                            <div class="fs-60">$@Model.Last().TotalTarjeta</div>
+                        }
+                        else
+                        {
+                            <div class="fs-60">$0</div>
+                        }
                         <span>Ingresos totales</span>
                     </div>
                 </div>
@@ -135,7 +169,14 @@
                     </div>
 
                     <div class="text-center my-2">
-                        <div class="fs-60">$0</div>
+                        @if (Model.Count > 0)
+                        {
+                            <div class="fs-60">$@Model.Last().PropinaDiaria</div>
+                        }
+                        else
+                        {
+                            <div class="fs-60">$0</div>
+                        }
                         <span>Total de propinas</span>
                     </div>
                 </div>
@@ -148,5 +189,57 @@
 @section scripts
 {
     @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
-    <script src="~/ViewAjax/ProductoFunction.js"></script>
+    <script>
+        var fechaInicio;
+        var fechaFin;
+
+        //Date range as a button
+        $('#dateVenta').daterangepicker(
+            {
+                ranges: {
+                    'Hoy': [moment(), moment()],
+                    'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+                    'Antier': [moment().subtract(2, 'days'), moment().subtract(2, 'days')],
+                    'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+                    'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+                    'Mes Actual': [moment().startOf('month'), moment().endOf('month')],
+                    'Mes Pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+                },
+                startDate: moment().subtract(29, 'days'),
+                endDate: moment()
+            },
+            function (start, end) {
+                $('#dateVenta span').html(start.format('MMMM D') + ' - ' + end.format('MMMM D'));
+                fechaInicio = start.format('DD/MM/YYYY');
+                fechaFin = end.format('DD/MM/YYYY');
+            }
+        );
+
+        function Filtrar() {
+            if (fechaInicio == undefined) {
+                swal({ title: "¡Atención!", text: "Selecciona una fecha", icon: "info" });
+                return false;
+            } else {
+                window.location.href = "/Venta/Ventas?_fechaInicio=" + fechaInicio + " &_fechaFin=" + fechaFin;
+            }
+
+            //$.ajax({
+            //    url: "Ventas",
+            //    data: { _fechaInicio: fechaInicio, _fechaFin: fechaFin },
+            //    type: 'GET',
+            //    success: function (data) {
+            //        if (data.responseCode == 200) {
+            //            swal({ title: 'Éxito', text: data.message, type: "success", },
+            //                function (isConfirm) { if (isConfirm) { } });
+            //        } else {
+            //            swal({ title: "Error", text: data.message, icon: "error" });
+            //        }
+            //    }, error: function (err) {
+            //        swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+            //    }
+            //}).done(function (data) {
+            //    //AlertExpiration(data);
+            //});
+        }
+    </script>
 }

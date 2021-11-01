@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Restaurant.Web;
 using Restaurante.Model;
 using System.Collections.Generic;
 using System.Data.SqlClient;

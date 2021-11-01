@@ -1,7 +1,6 @@
 ﻿using System.Data.SqlClient;
 using System.Linq;
 using System;
-using Restaurant.Web;
 using Microsoft.EntityFrameworkCore;
 using Restaurante.Model;
 using Restaurante.Data.DBModels;
@@ -18,13 +17,15 @@ namespace Restaurante.Data.DAO
         MesasDAO daoMesa = new MesasDAO();
         ProductosDAO daoPro = new ProductosDAO();
 
-        public async Task<ResponseModel> GetCuentaByIdEmpleado(int IdEmpleado)
+        public async Task<ResponseModel> GetCuentaByIdEmpleado(int IdEmpleado, bool estaActiva)
         {
             try
             {
                 using (var db = new restauranteContext())
                 {
-                    var Cuentas = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking().Where(cu => cu.CuentaActiva.Value == true && cu.IdEmpleado == IdEmpleado).ToListAsync();
+                    var Cuentas = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking()
+                                                  .Where(cu => cu.CuentaActiva.Value == estaActiva && cu.IdEmpleado == IdEmpleado && cu.IdCorte == null || cu.IdCorte == 0)
+                                                  .ToListAsync();
                     var empleado = await db.Usuarios.AsNoTracking().Where(us => us.Id == IdEmpleado).FirstAsync();
                     foreach (var cuenta in Cuentas)
                     {
@@ -91,6 +92,31 @@ namespace Restaurante.Data.DAO
             }
         }
 
+        public async Task<ResponseModel> Cancel(int idCuenta)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var cuenta = db.Cuentas.Where(u => u.Id == idCuenta).First<Cuenta>();
+                    cuenta.CuentaActiva = false;
+                    var resU = db.SaveChanges();
+
+                    if (resU > 0)
+                    {
+                        await daoMesa.StatusOcupada(new Mesa { Id = cuenta.IdMesa, Ocupada = false });
+                        return new ResponseModel { responseCode = 200, objectResponse = cuenta.Id, message = "La cuenta fue cancelada." };
+                    }
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo cancelar la cuenta." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
         public async Task<ResponseModel> CreateAssistant(Cuenta cuentas)
         {
             try
@@ -126,7 +152,10 @@ namespace Restaurante.Data.DAO
                 {
                     var result = await daoPro.GetById(producto.IdProducto.Value);
                     Producto productoBD = result.objectResponse;
-                    producto.Precio = productoBD.PrecioVenta.ToString();
+                    if (!string.IsNullOrEmpty(producto.NombreComplemento))
+                        producto.Precio = (productoBD.PrecioVenta + Convert.ToDecimal(producto.PrecioComplemento)).ToString();
+                    else
+                        producto.Precio = productoBD.PrecioVenta.ToString();
                     producto.Nombre = productoBD.Nombre;
                     producto.Descuento = productoBD.Descuento.ToString();
 
@@ -134,9 +163,31 @@ namespace Restaurante.Data.DAO
                     var resU = db.SaveChanges();
 
                     if (resU > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = resU, message = "Producto Agregado." };
+                        return new ResponseModel { responseCode = 200, objectResponse = producto.Id, message = "Producto Agregado." };
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se pudo agregar el producto a la cuenta." };
+                }
+            }
+            catch (SqlException ex)
+            {
+                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+            }
+        }
+
+        public async Task<ResponseModel> DeleteProduct(int id)
+        {
+            try
+            {
+                using (var db = new restauranteContext())
+                {
+                    var regitro = db.RelCuentaProductos.Where(u => u.Id == id).First<RelCuentaProducto>();
+                    db.RelCuentaProductos.Remove(regitro);
+
+                    var result = await db.SaveChangesAsync();
+                    if (result > 0)
+                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "El producto fue eliminado exitosamente." };
+                    else
+                        return new ResponseModel { responseCode = 404, objectResponse = null, message = "El producto no pudo ser eliminado." };
                 }
             }
             catch (SqlException ex)
@@ -163,7 +214,7 @@ namespace Restaurante.Data.DAO
                             var result = await GetById(venta.IdCuenta);
                             Cuenta cuenta = result.objectResponse;
                             foreach (var producto in cuenta.RelCuentaProductos)
-                                await daoPro.ControlStock(producto.Id);
+                                await daoPro.ControlStock(producto.IdProducto.Value, Convert.ToInt32(producto.Cantidad));
                         }
                         catch (Exception ex) { error = error + " ControlStock: " + ex.Message; }
                         await StatusCuenta(venta.IdCuenta);
@@ -204,13 +255,15 @@ namespace Restaurante.Data.DAO
             }
         }
 
-        public async Task<ResponseModel> GetAll()
+        public async Task<ResponseModel> GetAll(bool estaActiva)
         {
             try
             {
                 using (var db = new restauranteContext())
                 {
-                    var Cuentas = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking().Where(cu => cu.CuentaActiva.Value == true).ToListAsync();
+                    var Cuentas = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking()
+                                          .Where(cu => cu.CuentaActiva.Value == estaActiva && cu.IdCorte == null || cu.IdCorte == 0)
+                                           .ToListAsync();
 
                     foreach (var cuenta in Cuentas)
                     {
@@ -285,7 +338,7 @@ namespace Restaurante.Data.DAO
                 if (cuenta.Id > 0)
                     return new ResponseModel { responseCode = 200, objectResponse = cuenta, message = "Success" };
                 else
-                    return new ResponseModel { responseCode = 404, objectResponse = new Categoria(), message = "No se encontraron cuentas." };
+                    return new ResponseModel { responseCode = 404, objectResponse = new Cuenta(), message = "No se encontraron cuentas." };
             }
             catch (SqlException ex)
             {

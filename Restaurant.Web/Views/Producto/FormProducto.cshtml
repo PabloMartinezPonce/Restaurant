@@ -6,13 +6,13 @@
     ViewBag.Title = "Formulario Producto";
 }
 <style>
-    .wrapperSelect {
-        /*max-width: 100px;*/
-        /* max-height: 300px;*/
-        z-index: 1000000000;
-        height: 500px;
-        /*display: block;*/
-    }
+    /*.wrapperSelect {*/
+    /*max-width: 100px;*/
+    /* max-height: 300px;*/
+    /*z-index: 1000000000;
+        height: 500px;*/
+    /*display: block;*/
+    /*}*/
 </style>
 <div class="content-header">
     <div class="d-flex align-items-center">
@@ -47,18 +47,21 @@
                     }
                 </div>
                 <div class="box-body">
-                    <form method="post" enctype="multipart/form-data" asp-controller="Producto" asp-action="Productos">
-                        <div class="row">
-                            <div class="col-md-6">
-                                <input class="form-control" type="file" name="postedFile" />
+                    @if (Model.Id != 0)
+                    {
+                        <form method="post" enctype="multipart/form-data" asp-controller="Producto" asp-action="Productos">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <input class="form-control" type="file" name="postedFile" accept="image/*" />
+                                </div>
+                                <div class="col-md-6">
+                                    <input type="submit" value="Subir" class="btn btn-success" />
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <input type="submit" value="Subir" class="btn btn-success" />
-                            </div>
-                        </div>
-                        <input type="hidden" name="id" value="@Model.Id" />
-                    </form>
-                    <br />
+                            <input type="hidden" name="id" value="@Model.Id" />
+                        </form>
+                        <br />
+                    }
                     <form id="formProducto">
                         <input id="Id" name="Id" value="@Model.Id" type="hidden" />
                         <div class="form-body">
@@ -77,36 +80,33 @@
                                 </div>
                                 <div class="col-md-2">
                                     <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Tipo</label>
-                                        <select type="text" class="form-select" value="@Model.Tipo" name="Tipo" required>
-                                            @if (Model.Tipo == "unidad")
-                                            {
-                                                <option selected value="unidad">unidad</option>
-                                                <option value="gramos">gramos</option>
-                                                <option value="litros">litros</option>
-                                            }
-                                            else
-                                            {
-                                                <option value="unidad">unidad</option>
-                                                <option selected value="gramos">gramos</option>
-                                                <option value="litros">litros</option>
-                                            }
+                                        <label class="fw-700 fs-16 form-label">Precio compra</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-money"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioCosto" name="PrecioCosto" id="PrecioCosto">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Precio venta</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-money"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioVenta" name="PrecioVenta" id="PrecioVenta">
+                                        </div>
+                                    </div>
+                                </div>
+                                <!--/span-->
+                                <div class="col-md-2">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Descuento</label>
+                                        <div class="input-group">
+                                            <div class="input-group-addon"><i class="ti-cut"></i></div>
+                                            <input type="text" class="form-control" placeholder="Ingresa descuento" value="@Model.Descuento" name="Descuento" id="Descuento">
+                                        </div>
+                                    </div>
+                                </div>
 
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Cantidad</label>
-                                        <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Cantidad" name="Cantidad" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-2">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Stock</label>
-                                        <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Stock" name="Stock" required>
-                                    </div>
-                                </div>
                             </div>
                             <!--/row-->
                             <!--/row-->
@@ -141,72 +141,40 @@
                                     </div>
                                 </div>
                                 @*<div class="col-md-4 wrapperSelect">
-                                    <h5 class="my-10">Complementos</h5>
-                                    <select class="selectpicker" id="complementos" multiple>
-                                        @foreach (var list in ViewBag.ListaComplementos)
-                                        {
-                                            <optgroup label="@list[0].IdTipoComplementoNavigation.Nombre">
-                                            @foreach (var item in list)
+                                        <h5 class="my-10">Complementos</h5>
+                                        <select class="selectpicker" id="complementos" multiple>
+                                            @foreach (var list in ViewBag.ListaComplementos)
                                             {
-                                                <option value='{"Id":@item.Id, "RutaImagen":"Complemento", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
+                                                <optgroup label="@list[0].IdTipoComplementoNavigation.Nombre">
+                                                @foreach (var item in list)
+                                                {
+                                                    <option value='{"Id":@item.Id, "RutaImagen":"Complemento", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
+                                                }
+                                                </optgroup>
+                                            }
+                                            <optgroup label="Cervezas">
+                                            @foreach (var item in ViewBag.ListaProductos)
+                                            {
+                                                <option value='{"Id":@item.Id, "RutaImagen":"Producto", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
                                             }
                                             </optgroup>
-                                        }
-                                        <optgroup label="Cervezas">
-                                        @foreach (var item in ViewBag.ListaProductos)
-                                        {
-                                            <option value='{"Id":@item.Id, "RutaImagen":"Producto", "Nombre":"@item.Nombre"}'>@item.Nombre</option>
-                                        }
-                                        </optgroup>
-                                    </select>
-                                </div>*@
+                                        </select>
+                                    </div>*@
 
                                 <div class="col-md-4 wrapperSelect">
-                                    <h5 class="my-10">Complementos</h5>
-                                    <select class="selectpicker" id="complementos">
-                                        @foreach (var list in ViewBag.ListaComplementos)
+                                    <label class="fw-700 fs-16 form-label">Tipo Complemento</label>
+                                    <select class="selectpicker" id="IdTipoComplemento" name="IdTipoComplemento">
+                                        <option selected disabled value="null">Selecciona tipo de complemento</option>
+                                        @foreach (var item in ViewBag.ListaTiposCom)
                                         {
-                                            @foreach (var item in list)
-                                            {
-                                                <option value='@item.Id'>@item.Nombre</option>
-                                            }
+                                            <option value='@item.Id'>@item.Nombre</option>
                                         }
                                     </select>
                                 </div>
                                 <!--/span-->
                             </div>
                             <!--/row-->
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Precio compra</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="ti-money"></i></div>
-                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioCosto" name="PrecioCosto" id="PrecioCosto">
-                                        </div>
-                                    </div>
-                                </div>
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Precio venta</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="ti-money"></i></div>
-                                            <input type="text" class="form-control" placeholder="Ingresa precio" value="@Model.PrecioVenta" name="PrecioVenta" id="PrecioVenta">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--/span-->
-                                <div class="col-md-4">
-                                    <div class="form-group">
-                                        <label class="fw-700 fs-16 form-label">Descuento</label>
-                                        <div class="input-group">
-                                            <div class="input-group-addon"><i class="ti-cut"></i></div>
-                                            <input type="text" class="form-control" placeholder="Ingresa descuento" value="@Model.Descuento" name="Descuento" id="Descuento">
-                                        </div>
-                                    </div>
-                                </div>
-                                <!--/span-->
-                            </div>
+
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
@@ -217,9 +185,131 @@
 
                             </div>
                             <!--/row-->
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label"></label>
+                                        <div class="demo-checkbox">
+                                            <input type="checkbox" id="md_checkbox_3" class="chk-col-success" name="c1" @(Model.EsMultiStock ? "checked" : "") onclick="showMe()">
+                                            <label for="md_checkbox_3">¿El producto tiene multiple stock?</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-2" id="div2">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Cantidad de medida a restar</label>
+                                        <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Cantidad" name="Cantidad" id="Cantidad">
+                                    </div>
+                                </div>
+                                <div class="col-md-2" id="div1" style="display:@(!Model.EsMultiStock ? "blocked" : "none")">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Tipo</label>
+                                        <select type="text" class="form-select" id="TipoMedicion" name="TipoMedicion">
+                                            <option selected disabled value="0">Selecciona medicion</option>
+                                            @foreach (var item in ViewBag.ListaMedicion)
+                                            {
+                                                if (Model.TipoMedicion == item.Nombre)
+                                                {
+                                                    <option selected value="@item.Nombre">@item.Nombre</option>
+                                                }
+                                                else
+                                                {
+                                                    <option value="@item.Nombre">@item.Nombre</option>
+                                                }
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-2" id="div3" style="display:@(!Model.EsMultiStock ? "blocked" : "none")">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Stock</label>
+                                        <input type="text" class="form-control" placeholder="Ingresa stock" value="@Model.Stock" name="Stock" id="Stock">
+                                    </div>
+                                </div>
+                                <div class="col-md-4" id="div6" style="display:@(Model.EsMultiStock ? "blocked" : "none")">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Ingrediente</label>
+                                        <select type="text" class="form-select" id="IdIngrediente" name="IdIngrediente">
+                                            <option selected disabled value="0">Selecciona ingrediente</option>
+                                            @foreach (var item in ViewBag.ListaIdIngredientes)
+                                            {
+                                                <option id=" @(Math.Round(Convert.ToDouble(@item.Stock), 5)) @item.TipoMedicionStock" value="@item.Id">@item.TipoMedicion de @item.Nombre</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-md-1" id="div4" style="display:@(Model.EsMultiStock ? "blocked" : "none")">
+                                    <a class="btn btn-success form-control" id="idBtnIngrediente"><i class="fa fa-plus"></i> Agregar</a>
+                                </div>
+                            </div>
+                            <div class="row" id="div5" style="display:@(Model.EsMultiStock ? "blocked" : "none")">
+                                <div class="col-xl-5 col-5">
+                                    <div class="box">
+                                        <div class="box-header with-border">
+                                            <h4 class="box-title"><i class="fa fa-list"></i> Listado de ingredientes</h4>
+                                        </div>
+                                        <div class="box-body" id="listadoReceta">
+                                            @if (Model.RelProductoReceta.Count > 0)
+                                            {
+                                                foreach (var item in Model.RelProductoReceta)
+                                                {
+                                                    <div class="d-flex align-items-center mb-25" id="@item.Id">
+                                                        <span class="bullet bullet-bar bg-primary align-self-stretch"></span>
+                                                        <div class="h-20 mx-20 flex-shrink-0">
+                                                            <input disabled type="checkbox" checked id="md_checkbox_23" class="filled-in chk-col-primary">
+                                                            <label for="md_checkbox_23" class="h-20 p-10 mb-0"></label>
+                                                        </div>
+                                                        <div class="d-flex flex-column flex-grow-1">
+                                                            <a href="#" class="text-dark hover-primary fw-500 fs-16">
+                                                                @item.Cantidad @item.IdIngredienteNavigation.TipoMedicion de @item.IdIngredienteNavigation.Nombre
+                                                            </a>
+                                                            <span class="text-fade fw-500">
+                                                                @(Math.Round(Convert.ToDouble(@item.IdIngredienteNavigation.Stock), 5)) @item.IdIngredienteNavigation.TipoMedicionStock en Stock
+                                                            </span>
+                                                        </div>
+                                                        <div class="dropdown">
+                                                            <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i class="ti-more-alt"></i></a>
+                                                            <div class="dropdown-menu dropdown-menu-end">
+                                                                <h6 class="dropdown-header">Elige una opción:</h6>
+                                                                <a class="dropdown-item flexbox" href="#">
+                                                                    <span>Inactivar</span>
+                                                                    <span class="badge badge-pill badge-default">+</span>
+                                                                </a>
+                                                                <a class="dropdown-item flexbox" onclick="RemoveIngrediente('@item.Id')">
+                                                                    <span>Eliminar</span>
+                                                                    <span class="badge badge-pill badge-default">x</span>
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            }
+                                            else
+                                            {
+                                                <div class="col-xl-12" id="MsjVacio">
+                                                    <div class="box">
+                                                        <div class="box-body d-flex p-0">
+                                                            <div class="flex-grow-1 bg-gradient-secondary-dark p-30 flex-grow-1 bg-img" style="background-position: calc(100% + 0.5rem) bottom; background-size: auto 100%; background-image: url(../images/svg-icon/color-svg/custom-13.svg)">
+                                                                <h4 class="fw-500">Aún no hay ingredientes.</h4>
+                                                                <p class="my-10 fs-16">
+                                                                    Llena los campos tipo, cantidad, stock y nombre <br />
+                                                                    y selecciona el botón "Agregar" para crear el primer <br />
+                                                                    ingrediente de tu receta.
+                                                                </p>
+                                                                @*<a href="#" class="btn btn-danger-light">Read More</a>*@
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                        <br />
                         <div class="form-actions mt-10">
-                            <a href="/Producto/Productos" class="btn btn-danger">Cancelar</a>
+                            <a href="/Producto/Productos" class="btn btn-danger">Regresar</a>
                             <a id="idBtnProducto" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</a>
                         </div>
                     </form>
@@ -233,6 +323,152 @@
 @section scripts
 {
     <script>
+        function RemoveIngrediente(id) {
+            swal({
+                title: '¿Esta seguro de eliminar ingrediente?',
+                text: 'El registro del stock se perderá.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: "EliminarIngrediente",
+                            data: { id: id},
+                            type: 'POST',
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.responseCode == 200) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) {
+                                            if (isConfirm) {
+                                                document.getElementById(id).remove();
+                                            }
+                                        });
+                                } else {
+                                    swal({ title: "Error", text: data.message, icon: "error" });
+                                }
+                            }, error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+
+        $("#idBtnIngrediente").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            var cantidad = document.getElementById("Cantidad").value;
+            var idIngrediente = document.getElementById("IdIngrediente").value;
+            var nombreIngrediente = $("#IdIngrediente option:selected").text();
+            var stock = $("#IdIngrediente option:selected")[0].id;
+
+            if (cantidad == "" || idIngrediente == "0") {
+                swal({ title: '¡Atención!', text: "Los compos son para la receta son obligatorios", type: "info" });
+                return false;
+            }
+
+            var formData = {
+                Cantidad: cantidad,
+                IdIngrediente: idIngrediente,
+                IdProducto: '@Model.Id',
+            };
+
+            $.ajax({
+                url: "AgregarIngrediente",
+                data: formData,
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) {
+                                if (isConfirm) {
+                                    let elemento =
+                                        `<div class="d-flex align-items-center mb-25" id="${data.objectResponse}">
+                                            <span class="bullet bullet-bar bg-primary align-self-stretch"></span>
+                                            <div class="h-20 mx-20 flex-shrink-0">
+                                                <input disabled type="checkbox" checked id="md_checkbox_23" class="filled-in chk-col-primary">
+                                                    <label for="md_checkbox_23" class="h-20 p-10 mb-0"></label>
+                                             </div>
+                                             <div class="d-flex flex-column flex-grow-1">
+                                                 <a href="#" class="text-dark hover-primary fw-500 fs-16">
+                                                     ${cantidad} ${nombreIngrediente}
+                                                 </a>
+                                                 <span class="text-fade fw-500">
+                                                     ${stock} en Stock
+                                                  </span>
+                                             </div>
+                                             <div class="dropdown">
+                                                 <a class="px-10 pt-5" href="#" data-bs-toggle="dropdown"><i class="ti-more-alt"></i></a>
+                                                 <div class="dropdown-menu dropdown-menu-end">
+                                                     <h6 class="dropdown-header">Elige una opción:</h6>
+                                                     <a class="dropdown-item flexbox" href="#">
+                                                         <span>Inactivar</span>
+                                                         <span class="badge badge-pill badge-default">+</span>
+                                                     </a>
+                                                     <a class="dropdown-item flexbox" onclick="RemoveIngrediente('${data.objectResponse}')">
+                                                         <span>Eliminar</span>
+                                                         <span class="badge badge-pill badge-default">x</span>
+                                                     </a>
+                                                 </div>
+                                             </div>
+                                         </div>`;
+                                    let listado = document.getElementById("listadoReceta");
+                                    listado.innerHTML = listado.innerHTML + elemento;
+                                    //document.getElementById("MsjVacio").remove();
+                                }
+                            });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+
+        function showMe() {
+            var chboxs = document.getElementById("md_checkbox_3");
+            var none = "none";
+            var block = "block";
+            if (chboxs.checked) {
+                document.getElementById("div1").style.display = none;
+                //document.getElementById("div2").style.display = none;
+                document.getElementById("div3").style.display = none;
+                document.getElementById("div4").style.display = block;
+                document.getElementById("div5").style.display = block;
+                document.getElementById("div6").style.display = block;
+            } else {
+                document.getElementById("div1").style.display = block;
+                //document.getElementById("div2").style.display = block;
+                document.getElementById("div3").style.display = block;
+                document.getElementById("div4").style.display = none;
+                document.getElementById("div5").style.display = none;
+                document.getElementById("div6").style.display = none;
+            }
+        }
+
+        @if (Model.IdTipoComplemento != null ) {
+            @:document.getElementById("IdTipoComplemento").value = @Model.IdTipoComplemento;
+        }
+        @if (Model.IdProveedor != null ) {
+            @:document.getElementById("idProveedor").value = @Model.IdProveedor;
+        }
+        @if (Model.IdCategoria != 0) {
+             @:document.getElementById("idCategoria").value = @Model.IdCategoria;
+        }
+
         //Envia a guardar formulario
         $("#idBtnProducto").click(function (event) {
             event.stopPropagation();
@@ -246,9 +482,12 @@
             if (!valid) {
                 return false;
             }
-            var list = $('#complementos').val().join(',');
-            var formData = $form.serialize() + "&ComplementosSelect=[" + list + "]";
-            console.log(formData);
+            //var list = $('#complementos').val().join(',');
+            var formData = $form.serialize();
+            //var formData = $form.serialize() + "&ComplementosSelect=[" + list + "]";
+            //console.log(formData);
+            var chboxs = document.getElementById("md_checkbox_3");
+            var formData = $form.serialize() + "&esMultiStock=" + chboxs.checked;
 
             $.ajax({
                 url: url,

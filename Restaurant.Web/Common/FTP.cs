@@ -15,6 +15,8 @@ namespace Restaurante.Web.Common
         private static FtpClient CreateFtpClient()
         {
             return new FtpClient("ftp.site4now.net", new NetworkCredential { UserName = "ftplaspaseras", Password = "LPB2021." });
+            //return new FtpClient("ftp.site4now.net", new NetworkCredential { UserName = "ftpdemotest", Password = "DEMO2021." });
+            //return new FtpClient("ftp.site4now.net", new NetworkCredential { UserName = "ftpcinarolls", Password = "CRC2021." });
         }
 
         public static FTPModel FtpUploadAsync(IFormFile postedFile)

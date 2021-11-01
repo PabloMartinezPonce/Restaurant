@@ -1,0 +1,140 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@model Complemento
+@{
+    ViewBag.Title = "Formulario Complemento";
+}
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Complementos</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Listado de complementos</li>
+                        <li class="breadcrumb-item active" aria-current="page">Complementos</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-12">
+            <div class="box">
+                <div class="box-header with-border">
+                    @if (Model.Id != 0)
+                    {
+                        @*<img width="70" src="~/images/complementos/@Model.RutaImagen" />*@
+                        <h4 class="box-title">Edición de complemento '@Model.Nombre'</h4>
+                    }
+                    else
+                    {
+                        <h4 class="box-title">Creación de nuevo @Model.Nombre</h4>
+                    }
+                </div>
+                <div class="box-body">
+                    <form id="formProducto">
+                        <input id="Id" name="Id" value="@Model.Id" type="hidden" />
+                        <input id="Activo" name="Activo" value="@Model.Activo" type="hidden" />
+                        <input id="RutaImagen" name="RutaImagen" value="@Model.RutaImagen" type="hidden" />
+                        <div class="form-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Nombre del complemento</label>
+                                        <input type="text" class="form-control" placeholder="Nombre del complemento" value="@Model.Nombre" name="Nombre" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Precio</label>
+                                        <input type="number" class="form-control" placeholder="Ingresa precio" value="@Model.Precio" name="Precio" required>
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Tipo de complemento</label>
+                                        <select class="form-select" id="idCategoria" name="idCategoria" required>
+                                            @foreach (var item in ViewBag.ListaTipos)
+                                            {
+                                                <option value="@item.Id">@item.Nombre</option>
+                                            }
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label class="fw-700 fs-16 form-label">Descripción de complemento</label>
+                                        <textarea class="form-control p-15" rows="2" name="Descripcion" id="Descripcion">@Model.Descripcion</textarea>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="form-actions mt-10">
+                            <a href="/Complemento/Complementos" class="btn btn-danger">Cancelar</a>
+                            <a id="idBtnProducto" class="btn btn-success"> <i class="fa fa-check"></i> Guardar</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+@section scripts
+{
+    <script>
+        @if (Model.IdTipoComplemento != null ) {
+            @:document.getElementById("idCategoria").value = @Model.IdTipoComplemento;
+        }
+
+        //Envia a guardar formulario
+        $("#idBtnProducto").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let id = document.getElementById("Id").value;
+            let $form = $('#formProducto');
+            let valid = $form.parsley().validate();
+            let url = id == "0" ? "CrearComplemento" : "EditarComplemento";
+
+            if (!valid) {
+                return false;
+            }
+            var idTipo = document.getElementById("idCategoria").value;
+
+            //var list = $('#complementos').val().join(',');
+            var formData = $form.serialize() + "&IdTipoComplemento=" + idTipo;
+            //var formData = $form.serialize() + "&ComplementosSelect=[" + list + "]";
+            //console.log(formData);
+
+            $.ajax({
+                url: url,
+                data: formData,
+                type: 'POST',
+                dataType: "json",
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { window.location.href = "/Complemento/Complementos"; } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+    </script>
+}

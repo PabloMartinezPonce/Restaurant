@@ -6,6 +6,7 @@ using Restaurante.Data.DBModels;
 using Restaurant.Web.Common;
 using Restaurante.Data.DAO;
 using Restaurante.Web.Common;
+using Restaurante.Model;
 
 namespace Restaurant.Web.Controllers
 {
@@ -62,44 +63,44 @@ namespace Restaurant.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> CreateCategoria(Categoria usuario)
+        public async Task<ResponseModel> CreateCategoria(Categoria usuario)
         {
             try
             {
                 var result = await _dao.Create(usuario);
-                return Json(result, 0);
+                return result;
             }
             catch (Exception ex)
             {
-                return Json(CommonTxt.GetResponseError(ex));
+                return CommonTxt.GetResponseError(ex);
             }
         }
 
         [HttpPost]
-        public ActionResult EditCategoria(Categoria usuario)
+        public async Task<ResponseModel> EditCategoria(Categoria usuario)
         {
             try
             {
-                var result = _dao.Update(usuario);
-                return Json(result);
+                var result = await _dao.Update(usuario);
+                return result;
             }
             catch (Exception ex)
             {
-                return Json(CommonTxt.GetResponseError(ex));
+                return CommonTxt.GetResponseError(ex);
             }
         }
 
         [HttpPost]
-        public ActionResult DeleteCategoria(int id)
+        public async Task<ResponseModel> DeleteCategoria(int id)
         {
             try
             {
-                var result = _dao.Delete(id);
-                return Json(result);
+                var result = await _dao.Delete(id);
+                return result;
             }
             catch (Exception ex)
             {
-                return Json(new { objectResponse = false, message = ex.Message }, 0);
+                return CommonTxt.GetResponseError(ex);
             }
         }
 

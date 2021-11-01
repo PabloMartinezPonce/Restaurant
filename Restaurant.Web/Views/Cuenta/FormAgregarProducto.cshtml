@@ -9,46 +9,67 @@
 <section class="content">
     <div class="row">
 
-        <div class="col-12 col-lg-5">
+        <div class="col-12 col-lg-6">
             <div class="box">
                 <div class="box-header with-border">
-                    <h4 class="box-title">Ingresa cantidad y añade producto</h4>
+                    @*<h4 class="box-title">Ingresa cantidad y añade producto</h4>*@
+                    <div class="row">
+                        <div class="col-12 col-md-12">
+                            <input type="text" id="search" class="form-control" placeholder="Buscar producto">
+                        </div>
+                        <div class="col-12 col-md-12">
+                            <div class="btn-group" role="group" aria-label="Basic example">
+                                <a id="all" class="btn btn-success"><i class="fa fa-reply-all"></i></a>
+                                @foreach (var item in ViewBag.ListaCategorias)
+                                {
+                                    <a id="@item.Id" class="btn btn-success">@item.Nombre</a>
+                                }
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="box-body p-0">
-                    <div class="media-list media-list-hover media-list-divided inner-user-div" style="height: 500px">
+                <div class="box-body p-0 row">
+                    <div class="media-list media-list-hover media-list-divided inner-user-div row" id="parent" style="height: 500px">
                         @foreach (var item in ViewBag.ListaProductos)
                         {
-                            <div class="media media-single">
-                                <a href="#">
-                                    <img class="avatar avatar-lg rounded bg-success-light" src="https://kraken-soft.com/images/productos/@item.RutaImagen" alt="...">
-                                </a>
+                            <div class="media media-single boxito @item.IdCategoria">
+                                <img class="avatar avatar-lg rounded bg-success-light" src="~/images/productos/@item.RutaImagen" alt="...">
 
                                 <div class="media-body">
-                                    <h6><a href="#">@item.Nombre</a></h6>
+                                    <h6 class="name">@item.Nombre</h6>
                                     <small class="text-fader">@item.Descripcion</small>
                                 </div>
                                 @{
-                                    List<Complemento> listaCompl = new List<Complemento>();
-                                    var noHayComplemento = string.IsNullOrEmpty(item.ComplementosSelect);
-                                    if (!noHayComplemento)
+                                    //List<Complemento> listaCompl = new List<Complemento>();
+                                    //var noHayComplemento = string.IsNullOrEmpty(item.ComplementosSelect);
+                                    //if (!noHayComplemento)
+                                    //{
+                                    //    listaCompl = JsonSerializer.Deserialize<List<Complemento>>(item.ComplementosSelect);
+                                    //}
+                                    var listaCompl = new List<Complemento>();
+                                    var listaComplFl = new List<Complemento>();
+                                    var tieneComplemento = item.IdTipoComplemento != null ? true : false;
+                                    if (tieneComplemento)
                                     {
-                                        listaCompl = JsonSerializer.Deserialize<List<Complemento>>(item.ComplementosSelect);
+                                        listaCompl = @ViewBag.ListaComplementos;
+                                        listaCompl = listaCompl.Where(com => com.IdTipoComplemento == item.IdTipoComplemento).ToList();
                                     }
                                 }
                                 <div class="media-right">
                                     <input type="number" class="form-control" value="1" id="@item.Nombre" style="text-align:center;" />
-                                    @if (!noHayComplemento)
+                                    @if (tieneComplemento)
                                     {
-                                        <select class="form-select" id="Select@item.Nombre">
+                                        <select class="form-select" name="@item.Id">
+                                            <option selected value="null">Sin complemento</option>
                                             @foreach (var compl in listaCompl)
                                             {
-                                                <option value="@compl.Nombre"> @compl.Nombre</option>
+                                                <option value="@compl.Id">@compl.Nombre $@compl.Precio</option>
                                             }
                                         </select>
                                     }
                                 </div>
                                 <div class="media-right">
-                                    <a class="btn btn-info btn-sm" href="javascript:AgregarProducto(@item.Id, '@item.Nombre');"><i class="fa fa-plus fa-2x"></i></a>
+                                    <a class="btn btn-info btn-sm" href="javascript:AgregarProducto(@item.Id, '@item.Nombre', '@item.Descripcion', '@item.PrecioVenta', '@item.RutaImagen', '@tieneComplemento');"><i class="fa fa-plus fa-2x"></i></a>
                                 </div>
                             </div>
                         }
@@ -56,20 +77,21 @@
                     </div>
                 </div>
                 <div class="text-center bt-1 border-light p-10">
+                    <a class="btn btn-outline btn-warning" href="javascript:location.reload(true);;"><i class="fa fa-refresh"></i> Actualizar</a>
                     <a class="btn btn-outline btn-success" href="FormPagar?id=@Model.Id"><i class="fa fa-money"></i> Liquidar</a>
                 </div>
             </div>
         </div>
 
 
-        <div class="col-12 col-lg-7">
+        <div class="col-12 col-lg-6">
             <div class="box">
                 <div class="box-header bg-info">
                     <h4 class="box-title">Productos (@Model.RelCuentaProductos.Count) de Cuenta #@Model.Id </h4>
                 </div>
                 <div class="box-body">
                     <div class="table-responsive">
-                        <table class="table product-overview">
+                        <table id="tableProducts" class="table product-overview">
                             <thead>
                                 <tr>
                                     <th>Imagen</th>
@@ -77,21 +99,26 @@
                                     <th>Precio</th>
                                     <th>Cantidad</th>
                                     <th style="text-align:center">Total</th>
+                                    <th style="text-align:center">Eliminar</th>
                                     @*<th style="text-align:center">Acci</th>*@
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var obj in Model.RelCuentaProductos)
                                 {
-                                    <tr>
-                                        <td><img src="https://kraken-soft.com/images/productos/@obj.IdProductoNavigation.RutaImagen" alt="" width="80"></td>
+                                    <tr id="@obj.Id">
+                                        <td><img src="~/images/productos/@obj.IdProductoNavigation.RutaImagen" width="80"></td>
                                         <td>
                                             <h5>@obj.Nombre</h5>
-                                            <p>@obj.IdProductoNavigation.Descripcion</p>
+                                            @if (!string.IsNullOrEmpty(obj.NombreComplemento))
+                                            {
+                                                <p>+ $@obj.PrecioComplemento de @obj.NombreComplemento</p>
+                                            }
                                         </td>
                                         <td>$@obj.Precio</td>
                                         <td width="70">@obj.Cantidad</td>
                                         <td width="100" align="center" class="fw-900">$@(Convert.ToDecimal(obj.Cantidad) * Convert.ToDecimal(obj.Precio)) </td>
+                                        <td width="100" align="center" class="fw-900"><a class="btn btn-danger" href="javascript:EliminarProducto(@obj.Id);"><i class="fa fa-times"></i></a> </td>
                                         @*<td align="center"><a href="javascript:void(0)" class="btn btn-circle btn-danger btn-xs" title="" data-bs-toggle="tooltip" data-bs-original-title="Delete"><i class="ti-trash"></i></a></td>*@
                                     </tr>
                                 }
@@ -112,7 +139,7 @@
 
     <script>
         //Envia a liquidar cuenta
-        function AgregarProducto(idProducto, nombre) {
+        function AgregarProducto(idProducto, nombre, descripcion, precio, rutaImagen, tieneComplemento) {
             let cantidad = document.getElementById(nombre).value;
 
             if (cantidad == "" || cantidad == "0") {
@@ -120,15 +147,44 @@
                 return false;
             }
 
+            let precioCom = 0;
+            let complemento = "";
+            let textoTable = "";
+            let idCom = "null";
+            //let idCom = $("#" + idProducto + " option:selected").val();
+            if (document.getElementsByName(idProducto).length > 0) {
+                idCom = document.getElementsByName(idProducto)[0].value;
+            }
+            if (tieneComplemento == "True" && idCom != "null" && idCom != undefined && idCom != "undefined") {
+                let e = document.getElementsByName(idProducto)[0];
+                let txt = e.options[e.selectedIndex].text;
+                let list = txt.split("$");
+                precioCom = list[1];
+                complemento = list[0];
+                textoTable = "+ $" + precioCom + " de " + complemento;
+                precio = parseFloat(precio) + parseFloat(precioCom);
+            }
+
             $.ajax({
                 url: "AddProduct",
-                data: { IdProducto: idProducto, Cantidad: cantidad, IdCuenta: @Model.Id },
+                data: { IdProducto: idProducto, Cantidad: cantidad, IdCuenta: @Model.Id, PrecioComplemento: precioCom, NombreComplemento: complemento, IdComplemento: idCom },
                 type: 'POST',
                 dataType: "json",
                 success: function (data) {
                     if (data.responseCode == 200) {
-                        swal({ title: 'Éxito', text: data.message, type: "success", },
-                            function (isConfirm) { if (isConfirm) {  } });
+                        swal({ title: 'Éxito', text: data.message, type: "success", allowOutsideClick: false },
+                            function (isConfirm) {
+                                if (isConfirm) {
+                                    $("<tr id='" + data.objectResponse + "'>").append(
+                                        $("<td>").attr("width", 80).append('<img src="../images/productos/' + rutaImagen + '">'),
+                                        $("<td>").addClass("producto font-500").append('<h5 class="">' + nombre + '</h5> <p>' + textoTable + '</p>'),
+                                        $("<td>").text("$" + precio),
+                                        $("<td>").attr("width", 70).text(cantidad),
+                                        $("<td>").attr("width", 100).attr("align", "center").addClass("fw-900").text("$" + parseFloat(precio) * parseFloat(cantidad)),
+                                        $('<td>').attr("align", "center").append('<a href="javascript:EliminarProducto(' + data.objectResponse +');" class="btn btn-danger" title="Eliminar Producto"><i class="fa fa-times"></i></a>'),
+                                    ).appendTo("#tableProducts tbody");
+                                }
+                            });
                     } else {
                         swal({ title: "Error", text: data.message, icon: "error" });
                     }
@@ -139,5 +195,69 @@
                 //AlertExpiration(data);
             });
         };
+
+        //Eliminar producto
+        function EliminarProducto(idRel) {
+            swal({
+                title: '¿Esta seguro de eliminar el producto?',
+                text: 'Se eliminará de la cuenta permanentemente.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true,
+                allowOutsideClick: false
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: "DeleteProduct",
+                            data: { idRel: idRel },
+                            type: 'POST',
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.responseCode == 200) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", allowOutsideClick: false },
+                                        function (isConfirm) {
+                                            if (isConfirm) {
+                                                let row = document.getElementById(idRel);
+                                                row.parentNode.removeChild(row);
+                                            }
+                                        });
+                                } else {
+                                    swal({ title: "Error", text: data.message, icon: "error" });
+                                }
+                            }, error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                })
+        };
+
+        $(document).ready(function () {
+            var $btns = $('.btn').click(function () {
+                if (this.id == 'all') {
+                    $('#parent > div').fadeIn(450);
+                } else {
+                    var $el = $('.' + this.id).fadeIn(450);
+                    $('#parent > div').not($el).hide();
+                }
+                $btns.removeClass('active');
+                $(this).addClass('active');
+            })
+
+            var $search = $("#search").on('input', function () {
+                $btns.removeClass('active');
+                var matcher = new RegExp($(this).val(), 'gi');
+                $('.boxito').show().not(function () {
+                    return matcher.test($(this).find('.name, .sku').text())
+                }).hide();
+            })
+        })
+
     </script>
 }

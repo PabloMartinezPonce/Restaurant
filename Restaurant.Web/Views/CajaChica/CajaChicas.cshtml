@@ -1,0 +1,203 @@
+﻿@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
+@using Restaurante.Data.DBModels;
+@using Restaurant.Model;
+@inject IHttpContextAccessor HttpContextAccessor;
+@model List<Cajachica>
+@{
+    ViewBag.Title = "Caja Chica";
+    var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+}
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Caja Chica</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Listado de Caja Chica</li>
+                        <li class="breadcrumb-item active" aria-current="page">Caja Chica</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="content">
+    <div class="row">
+        <div class="col-lg-9 col-md-8">
+            <div class="box">
+                <div class="media-list media-list-divided media-list-hover">
+
+                    @foreach (var obj in Model)
+                    {
+                    <div class="media align-items-center">
+                        @if (obj.Tipo == "Salida")
+                        {
+                            <span class="badge badge-dot badge-danger"></span>
+                            <span class="avatar avatar-lg bg-danger-light rounded"><i class="fa fa-money"></i></span>
+                        }
+                        else if (obj.Tipo == "Entrada")
+                        {
+                            <span class="badge badge-dot badge-success"></span>
+                            <span class="avatar avatar-lg bg-success-light rounded"><i class="fa fa-money"></i></span>
+                        }
+                        else
+                        {
+                            <span class="badge badge-dot badge-primary"></span>
+                            <span class="avatar avatar-lg bg-primary-light rounded"><i class="fa fa-database"></i></span>
+                        }
+
+                        <div class="media-body">
+                            <p>
+                                <a href="#"><strong>@obj.Tipo</strong></a>
+                                <small class="sidetitle">$@obj.Cantidad</small>
+                            </p>
+                            <p>@obj.Motivo</p>
+                        </div>
+
+                        <div class="media-right gap-items">
+                            <a class="media-action lead" href="#" data-bs-toggle="tooltip" title="Orders" onclick="Eliminar(@obj.Id)"><i class="fa fa-trash"></i></a>
+                            @*<a class="media-action lead" href="#" data-bs-toggle="tooltip" title="Receipts"><i class="ti-receipt"></i></a>*@
+                        </div>
+                    </div>
+                    }
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-3 col-md-4">
+            <div class="box no-shadow">
+                <div class="box-body">
+                    <a class="btn btn-outline btn-success mb-5 d-flex justify-content-between" href="javascript:void(0)">Entradas <span class="pull-right">103</span></a>
+                    <a class="btn btn-outline btn-danger mb-5 d-flex justify-content-between" href="javascript:void(0)">Salida <span class="pull-right">19</span></a>
+                    @*<a class="btn btn-outline btn-info mb-5 d-flex justify-content-between" href="javascript:void(0)">Nómina <span class="pull-right">623</span></a>*@
+                    <a class="btn btn-outline btn-primary mb-5 d-flex justify-content-between" href="javascript:void(0)">Caja Inicial <span class="pull-right">53</span></a>
+                    <a class="btn btn-info mt-10 d-flex justify-content-between" href="javascript:void(0)">Todos <span class="pull-right">123</span></a>
+                    <a href="javascript:void(0)" data-bs-toggle="modal" data-bs-target="#myModal" class="btn btn-success mt-10 d-block text-center">+ Agregar Nuevo</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+<!-- Popup Model Plase Here -->
+<div id="myModal" class="modal fade in" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Añadir nuevo movimiento</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" id="formCaja">
+                    <input type="hidden" name="idUsuario" value="@usuario.Id">
+                    <input type="hidden" name="fecha" value="@GlobalConfig.GetMexDate().ToShortTimeString()">
+                    <div class="form-group">
+                        <label class="col-md-12 form-label">Tipo Movimiento</label>
+                        <div class="col-md-12">
+                            <select type="text" class="form-control" name="tipo">
+                                <option disabled selected value="">Selecciona el tipo de movimiento</option>
+                                <option value="Entrada">Entrada</option>
+                                <option value="Salida">Salida</option>
+                                <option value="Caja Chica">Caja Chica</option>
+                            </select>
+                        </div>
+                        <label class="col-md-12 form-label">Cantidad</label>
+                        <div class="col-md-12">
+                            <input type="number" class="form-control" placeholder="Ingresa Cantidad" name="cantidad">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-md-12 form-label">Motivo</label>
+                        <div class="col-md-12">
+                            <textarea class="form-control" placeholder="Ingresa Motivo" name="motivo"></textarea>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <a class="btn btn-danger" data-bs-dismiss="modal">Cancelar</a>
+                <a class="btn btn-success float-end" data-bs-dismiss="modal" id="idBtnGuardar"><i class="fa fa-plus"></i> Agregar</a>
+            </div>
+        </div>
+        <!-- /.modal-content -->
+    </div>
+    <!-- /.modal-dialog -->
+</div>
+<!-- /Popup Model Plase Here -->
+
+@section scripts
+{
+    <script>
+        //Envia a guardar formulario
+        $("#idBtnGuardar").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let $form = $('#formCaja');
+            let valid = $form.parsley().validate();
+
+            if (!valid) {
+                return false;
+            }
+
+            var formData = $form.serialize();
+
+            $.ajax({
+                url: 'CreateCajaChica',
+                data: formData,
+                type: 'POST',
+                success: function (data) {
+                    if (data.responseCode == 200) {
+                        swal({ title: 'Éxito', text: data.message, type: "success", },
+                            function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                    } else {
+                        swal({ title: "Error", text: data.message, icon: "error" });
+                    }
+                }, error: function (err) {
+                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                }
+            }).done(function (data) {
+                //AlertExpiration(data);
+            });
+        });
+
+        //Eliminar elemento
+        function Eliminar(id) {
+            swal({
+                title: '¿Esta seguro de eliminarlo?',
+                text: 'El registro se eliminará permanentemente.',
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonClass: "btn btn-danger",
+                confirmButtonText: "Si",
+                cancelButtonText: "No",
+                closeOnConfirm: true
+            },
+                function (isConfirm) {
+                    if (isConfirm) {
+                        $.ajax({
+                            url: 'DeleteCajaChica',
+                            type: "POST",
+                            data: { 'id': id },
+                            success: function (data) {
+                                if (data.objectResponse) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { location.reload(true); } });
+                                } else {
+                                    swal({ title: "Error", text: data.message, type: "error" });
+                                }
+                            },
+                            error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, type: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
+                    }
+                });
+        }
+    </script>
+}

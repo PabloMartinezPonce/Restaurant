@@ -1,0 +1,279 @@
+﻿@using Restaurante.Model.DTOs;
+@using Restaurante.Data.DBModels;
+@using System.Text.Json;
+@using Microsoft.AspNetCore.Http;
+@using Restaurant.Model;
+@inject IHttpContextAccessor HttpContextAccessor;
+@model List<Venta>
+@{
+    var usuario = JsonSerializer.Deserialize<Usuario>(HttpContextAccessor.HttpContext.Session.GetString("UserSession"));
+    ViewBag.Title = "Cortes";
+}
+<div class="content-header">
+    <div class="d-flex align-items-center">
+        <div class="me-auto">
+            <h3 class="page-title">Cortes</h3>
+            <div class="d-inline-block align-items-center">
+                <nav>
+                    <ol class="breadcrumb">
+                        <li class="breadcrumb-item"><a href="#"><i class="mdi mdi-home-outline"></i></a></li>
+                        <li class="breadcrumb-item" aria-current="page">Reporte de corte</li>
+                        <li class="breadcrumb-item active" aria-current="page">Cortes</li>
+                    </ol>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Main content -->
+<section class="invoice printableArea">
+    <div class="row">
+        <div class="col-12">
+            <div class="bb-1 clearFix">
+                <div class="text-end pb-15">
+                    @*<button class="btn btn-success" type="button"> <span><i class="fa fa-print"></i> Save</span> </button>*@
+                    <a id="print2" class="btn btn-default"> <span><i class="fa fa-print"></i> Imprimir</span> </a>
+                    <a href="Cortes" class="btn btn-danger"> <span><i class="fa fa-list"></i> Ver Todos</span> </a>
+                </div>
+                @*<div class="row">
+                        <p>Puedes personalizar tu corte de venta seleccionado fechas</p>
+                        <div class="col-md-3">
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <a class="btn btn-default pull-right" id="dateVenta">
+                                        <span>
+                                            <i class="fa fa-calendar"></i> Selecciona Fechas
+                                        </span>
+                                        <i class="fa fa-caret-down"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-2">
+                            <a class="btn btn-default" href="javascript:Filtrar();"><i class="fa fa-search"></i> Buscar</a>
+                        </div>
+                    </div>*@
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="page-header">
+                <h2 class="d-inline"><span class="fs-30">Reporte de ventas</span></h2>
+                <div class="pull-right text-end">
+                    <h3>@GlobalConfig.GetMexDate().ToLongDateString()</h3>
+                </div>
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row invoice-info">
+        <div class="col-md-6 invoice-col">
+            <strong>Usuario:</strong>
+            <address>
+                <strong class="text-blue fs-24">@usuario.Nombre @usuario.Apellido</strong><br>
+                <strong class="d-inline">@usuario.Descripcion</strong><br>
+                <strong>
+                    Teléfono: @usuario.Telefono &nbsp;&nbsp;&nbsp;&nbsp;
+                </strong>
+            </address>
+        </div>
+        <!-- /.col -->
+        @*<div class="col-md-6 invoice-col text-end">
+                <strong>To</strong>
+                <address>
+                    <strong class="text-blue fs-24">Doe Shina</strong><br>
+                    124 Lorem Ipsum, Suite 478, Dummuy, USA 123456<br>
+                    <strong>Phone: (00) 789-456-1230 &nbsp;&nbsp;&nbsp;&nbsp; Email: conatct@example.com</strong>
+                </address>
+            </div>*@
+        <!-- /.col -->
+        <div class="col-sm-12 invoice-col mb-15">
+            <div class="invoice-details row no-margin">
+                <div class="col-md-12 col-lg-12">
+                    <textarea class="form-control" id="observaciones" placeholder="Ingresa breve descripción" rows="2"></textarea>
+                </div>
+            </div>
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row">
+        <div class="col-12 table-responsive">
+            <table class="table table-bordered">
+                <tbody>
+                    <tr>
+                        <th>#</th>
+                        <th>Fecha</th>
+                        <th>Cliente</th>
+                        <th class="text-end">Método Pago</th>
+                        <th class="text-end">Propina</th>
+                        <th class="text-end">Subtotal</th>
+                    </tr>
+                    @foreach (var obj in Model)
+                    {
+                        <tr>
+                            <td>#@obj.Id</td>
+                            <td>@obj.Fecha</td>
+                            <td>
+                                <h6 class="mb-0">
+                                    <a href="#">Mesa #@obj.IdCuentaNavigation.IdMesa</a>
+                                    <span class="d-block text-muted">Personas: @obj.IdCuentaNavigation.CantidadPersonas</span>
+                                </h6>
+                            </td>
+                            <td>
+                                Pago: @obj.Metodopago
+                            </td>
+                            <td>
+                                <h6 class="mb-0 fw-bold"> @obj.Propina <span class="d-block text-muted fw-normal"> efectivo</span></h6>
+                            </td>
+                            <td>
+                                <h6 class="mb-0 fw-bold">T: @obj.Total <span class="d-block text-muted fw-normal">S: @obj.Subtotal</span></h6>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row">
+        <div class="col-12 text-end">
+            @*<p class="lead"><b>Payment Due</b><span class="text-danger"> 14/08/2018 </span></p>*@
+
+            <div>
+                <p>Entradas   :  $@ViewBag.CajaChica.TotalEntradas</p>
+                <p>Salidas  :  $@ViewBag.CajaChica.TotalSalidas</p>
+                @if (Model.Count > 0)
+                {
+                    <p>Comisiones (3.5%)  :  $@(Math.Round(Convert.ToDouble(Model.Last().TotalTarjeta) * 0.035, 2))</p>
+                    <p>Propinas  :  $@Model.Last().PropinaDiaria</p>
+                    <p>Total Tarjeta  :  $@Model.Last().TotalTarjeta</p>
+                    <p>Total Efectivo:  $@Model.Last().TotalEfectivo</p>
+                    <p>Sub-Total  :  $@(Model.Last().TotalEfectivo + @Model.Last().TotalTarjeta) </p>
+                }
+                else
+                {
+                    <p>Comisiones (3.5%)  :  $0</p>
+                    <p>Propinas  :  $0</p>
+                    <p>Total Tarjeta  :  $0</p>
+                    <p>Total Efectivo:  $0</p>
+                    <p>Sub-Total  :  $0</p>
+                }
+            </div>
+            <div class="total-payment">
+                @if (Model.Count > 0)
+                {
+                    <h3><b>Total :</b> $@(Model.Last().TotalEfectivo + Model.Last().TotalTarjeta + Model.Last().PropinaDiaria + @ViewBag.CajaChica.TotalEntradas - @ViewBag.CajaChica.TotalSalidas)</h3>
+                }
+                else
+                {
+                    @:<h3><b>Total :</b> $0</h3>
+                }
+            </div>
+
+        </div>
+        <!-- /.col -->
+    </div>
+    <div class="row no-print">
+        <div class="col-12">
+            <a id="btnEnviar" class="btn btn-success pull-right">
+                <i class="fa fa-credit-card"></i> Realizar Corte
+            </a>
+        </div>
+    </div>
+</section>
+<!-- /.content -->
+
+@section scripts
+{
+    <script>
+        //Date range as a button
+        //$('#dateVenta').daterangepicker(
+        //    {
+        //        ranges: {
+        //            'Hoy': [moment(), moment()],
+        //            'Ayer': [moment().subtract(1, 'days'), moment().subtract(1, 'days')],
+        //            'Antier': [moment().subtract(2, 'days'), moment().subtract(2, 'days')],
+        //            'Últimos 7 días': [moment().subtract(6, 'days'), moment()],
+        //            'Últimos 30 días': [moment().subtract(29, 'days'), moment()],
+        //            'Mes Actual': [moment().startOf('month'), moment().endOf('month')],
+        //            'Mes Pasado': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
+        //        },
+        //        startDate: moment().subtract(29, 'days'),
+        //        endDate: moment()
+        //    },
+        //    function (start, end) {
+        //        $('#dateVenta span').html(start.format('MMMM D') + ' - ' + end.format('MMMM D'));
+        //        fechaInicio = start.format('DD/MM/YYYY');
+        //        fechaFin = end.format('DD/MM/YYYY');
+        //    }
+        //);
+
+         //Envia a liquidar cuenta
+        $("#btnEnviar").click(function (event) {
+            event.stopPropagation();
+            event.preventDefault();
+
+            let obs = document.getElementById("observaciones").value;
+            if (obs == "") {
+                swal({ title: "¡Atención!", text: "El ingresa un breve comentario para identificar el corte.", type: "info" });
+                return false;
+            }
+
+            @if (Model.Count > 0)
+            {
+                @:var formData = {
+                @:TotalVentasEfectivo: @Model.Last()?.TotalEfectivo,
+                @:TotalVentasTarjeta: @Model.Last()?.TotalTarjeta,
+                @:TotalPropinas: @Model.Last()?.PropinaDiaria,
+                @:TotalSalidas: @ViewBag.CajaChica.TotalSalidas,
+                @:TotalEntradas: @ViewBag.CajaChica.TotalEntradas,
+                @:Observaciones: obs,
+                @:IdUsuario: @usuario.Id,
+            @:};
+            } else {
+                @:var formData = {
+                @:TotalVentasEfectivo: 0,
+                @:TotalVentasTarjeta: 0,
+                @:TotalPropinas: 0,
+                @:TotalSalidas: @ViewBag.CajaChica.TotalSalidas,
+                @:TotalEntradas: @ViewBag.CajaChica.TotalEntradas,
+                @:Observaciones: obs,
+                @:IdUsuario: @usuario.Id,
+            @:};
+            }
+
+            swal({
+            title: '¿Esta seguro de hacer corte?',
+            text: 'El corte se cerrará permanentemente y se generará uno nuevo.',
+            type: "warning",
+            showCancelButton: true,
+            confirmButtonClass: "btn btn-danger",
+            confirmButtonText: "Si",
+            cancelButtonText: "No",
+            closeOnConfirm: true
+            },
+            function (isConfirm) {
+                if (isConfirm) {
+                       $.ajax({
+                       url: "CreateCorte",
+                       data: formData,
+                       type: 'POST',
+                       dataType: "json",
+                       success: function (data) {
+                           if (data.responseCode == 200) {
+                               swal({ title: 'Éxito', text: data.message, type: "success", },
+                                   function (isConfirm) { if (isConfirm) { window.location.href = "/Corte/Cortes"; } });
+                           } else {
+                               swal({ title: "Error", text: data.message, icon: "error" });
+                           }
+                       }, error: function (err) {
+                           swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                       }
+                    }).done(function (data) {
+                        //AlertExpiration(data);
+                    });
+                }
+            });
+        });
+    </script>
+}
