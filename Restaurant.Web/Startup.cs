@@ -1,15 +1,11 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Hosting;
-using Restaurant.Web.Common;
-using Restaurante.Data.DBModels;
 using System;
-using WebEssentials.AspNetCore.Pwa;
 
 namespace Restaurant.Web
 {
@@ -21,8 +17,8 @@ namespace Restaurant.Web
         }
 
         public IConfiguration Configuration { get; }
-        //Scaffold-DbContext "server=MYSQL5035.site4now.net;database=db_a78b82_lpb;port=3306;user id=a78b82_lpb;password=LPB2021.;SslMode=none" MySql.EntityFrameworkCore -OutputDir ..\Restaurante.Data\DBModels -f
-        //Scaffold-DbContext "server=MYSQL5035.site4now.net;database=db_a78b82_lpb;port=3306;user id=a78b82_lpb;password=LPB2021.;SslMode=none" MySql.EntityFrameworkCore -Context restauranteContext -DataAnnotations -verbose -force -OutputDir ..\Restaurante.Model\EFModel -f - ContextDir ..\Restaurante.Model\EFModel
+        //Scaffold-DbContext "server=db4free.net;database=las_paseras_db;port=3306;user id=a78b82_lpb;password=LPB2021.;SslMode=none" MySql.EntityFrameworkCore -OutputDir ..\Restaurante.Data\DBModels -f
+        //Scaffold-DbContext "server=db4free.net;database=las_paseras_db;port=3306;user id=a78b82_lpb;password=LPB2021.;SslMode=none" MySql.EntityFrameworkCore -Context restauranteContext -DataAnnotations -verbose -force -OutputDir ..\Restaurante.Model\EFModel -f - ContextDir ..\Restaurante.Model\EFModel
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)

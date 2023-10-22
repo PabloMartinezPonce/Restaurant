@@ -23,10 +23,10 @@ namespace Restaurant.Web.Controllers
 
         public async Task<ActionResult> Login()
         {
-            var result = await _daoConfig.GetById(5);
+            var result = await _daoConfig.GetById(4);
             ViewBag.fondoLogin = result.objectResponse;
 
-            var result2 = await _daoConfig.GetById(3);
+            var result2 = await _daoConfig.GetById(2);
             ViewBag.logoLogin = result2.objectResponse;
 
             return View();
