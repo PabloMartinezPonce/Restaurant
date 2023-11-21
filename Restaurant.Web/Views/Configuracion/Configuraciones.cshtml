@@ -141,7 +141,24 @@
                 return SendPost(params);
             }
         });
-
+        $('#7').editable({
+            validate: function (value) {
+                if ($.trim(value) == '') return 'Este campo es requerido';
+            },
+            mode: 'inline',
+            url: function (params) {
+                return SendPost(params);
+            }
+        });
+        $('#8').editable({
+            validate: function (value) {
+                if ($.trim(value) == '') return 'Este campo es requerido';
+            },
+            mode: 'inline',
+            url: function (params) {
+                return SendPost(params);
+            }
+        });
         function SendPost(params) {
             console.log(params);
             $.ajax({

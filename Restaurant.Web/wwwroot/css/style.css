@@ -30497,8 +30497,12 @@ time {
 
 .food-box {
   margin-top: 90px; }
-  .food-box .menu-item img {
-    margin-top: -90px; }
+    .food-box .menu-item img {
+        width: 150px; /* Ancho fijo para todas las imágenes */
+        height: 100px; /* Altura fija para todas las imágenes */
+        object-fit: cover; /* Esto asegura que la imagen cubra completamente el área sin distorsionarse */
+        margin-top: -90px;
+    }
 
 /* ps-scrollbar */
 .ps-container {

@@ -17,7 +17,7 @@
     <meta name="author" content="">
     <link rel="icon" href="~/images/logo/@config[2].Valor">
 
-    <title>@ViewData["Title"] - @config[1].Valor </title>
+    <title>@ViewData["Title"] - @config[6].Valor </title>
 
     <!-- Vendors Style-->
     <link rel="stylesheet" href="~/css/vendors_css.css">
@@ -190,7 +190,7 @@
 
             <!-- Sample menu definition -->
             <ul id="main-menu" class="sm sm-blue">
-                @if (usuario.IdRol == 1 || usuario.IdRol == 2)
+                @if (usuario.IdRol == 1)
                 {
 
                     <li><a href="../Login/Dashboard"><i class="icon-Home"><span class="path1"></span><span class="path2"></span></i>Dashboard</a></li>
