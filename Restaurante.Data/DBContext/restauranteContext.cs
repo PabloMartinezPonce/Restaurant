@@ -39,8 +39,10 @@ namespace Restaurante.Data.DBModels
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //Las Paseras
+                //MONTANAS
                 optionsBuilder.UseMySql("server=db4free.net;database=las_paseras_db;port=3306;user id=a78b82_lpb;password=LPB2021.;SslMode=none", new MySqlServerVersion(new Version(8, 0, 32)));
+                //Las Paseras
+                //optionsBuilder.UseMySql("server=db4free.net;database=las_paseras_db;port=3306;user id=a78b82_lpb;password=LPB2021.;SslMode=none", new MySqlServerVersion(new Version(8, 0, 32)));
                 // Cinna Rolls
                 //optionsBuilder.UseMySql("server=MYSQL5030.site4now.net;database=db_a78b82_cinna;port=3306;user id=a78b82_cinna;password=CinnaR2021.;SslMode=none", new MySqlServerVersion(new Version(8, 0, 21)));
                 // DEMO
