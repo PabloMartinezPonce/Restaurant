@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Web;
 using Restaurante.Data.DBModels;
 using Restaurant.Web.Common;
-using Restaurante.Data.DAO;
 using Restaurante.Web.Common;
 using Restaurant.Model;
 using Restaurante.Model;
@@ -15,13 +13,13 @@ namespace Restaurant.Web.Controllers
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class CorteController : Controller
     {
-        private readonly CortesDAO _dao;
-        private readonly VentasDAO _daoVen;
+        private readonly ICortesDAO _dao;
+        private readonly IVentasDAO _daoVen;
         private readonly ICajaChicaDAO _daoCaja;
-        public CorteController(ICajaChicaDAO daoCaja)
+        public CorteController(ICajaChicaDAO daoCaja, ICortesDAO dao, IVentasDAO daoVen)
         {
-            _dao = new CortesDAO();
-            _daoVen = new VentasDAO();
+            _dao = dao;
+            _daoVen = daoVen;
             _daoCaja = daoCaja;
         }
 

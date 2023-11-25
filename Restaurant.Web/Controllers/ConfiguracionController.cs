@@ -3,22 +3,22 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Restaurante.Data.DBModels;
 using Restaurant.Web.Common;
-using Restaurante.Data.DAO;
 using Restaurante.Web.Common;
 using Restaurante.Model.Model;
 using Restaurante.Model;
 using System.Text.Json;
 using Microsoft.AspNetCore.Http;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurant.Web.Controllers
 {
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class ConfiguracionController : Controller
     {
-        private readonly ConfiguracionDAO _dao;
-        public ConfiguracionController()
+        private readonly IConfiguracionDAO _dao;
+        public ConfiguracionController(IConfiguracionDAO dao)
         {
-            _dao = new ConfiguracionDAO();
+            _dao = dao;
         }
 
         [HttpGet]

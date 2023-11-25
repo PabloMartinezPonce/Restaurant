@@ -1,198 +1,150 @@
-﻿using System.Data.SqlClient;
-using System.Linq;
-using System;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Restaurante.Model;
 using Restaurante.Data.DBModels;
-using System.Threading.Tasks;
-using System.Collections.Generic;
 using Restaurant.Model;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurante.Data.DAO
 {
-    public class CuentasDAO
+    public class CuentasDAO : ICuentasDAO
     {
         #region CRUD Entidad Cuenta
 
-        MesasDAO daoMesa = new MesasDAO();
-        ProductosDAO daoPro = new ProductosDAO();
+        IMesasDAO _daoMesa;
+        IProductosDAO _daoPro;
+
+        public CuentasDAO(IProductosDAO daoPro, IMesasDAO daoMesa)
+        {
+            _daoPro = daoPro;
+            _daoMesa = daoMesa;
+        }
 
         public async Task<ResponseModel> GetCuentaByIdEmpleado(int IdEmpleado, bool estaActiva)
         {
-            try
+            var cuentas = new List<Cuenta>();
+            using (var db = new restauranteContext())
             {
-                using (var db = new restauranteContext())
-                {
-                    var Cuentas = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking()
-                                                  .Where(cu => cu.CuentaActiva.Value == estaActiva && cu.IdEmpleado == IdEmpleado && cu.IdCorte == null || cu.IdCorte == 0)
-                                                  .ToListAsync();
-                    var empleado = await db.Usuarios.AsNoTracking().Where(us => us.Id == IdEmpleado).FirstAsync();
-                    foreach (var cuenta in Cuentas)
-                    {
-                        cuenta.NombreEmpleado = empleado.Nombre;
-                        decimal total = 0;
-                        foreach (var productos in cuenta.RelCuentaProductos)
-                        {
-                            var subtotal = Convert.ToDecimal(productos.Precio) * Convert.ToInt32(productos.Cantidad);
-                            total = total + subtotal;
-
-                            productos.IdProductoNavigation =
-                                     (from usr in db.Productos.AsNoTracking()
-                                      where usr.Id == productos.IdProducto
-                                      select new Producto
-                                      {
-                                          Id = usr.Id,
-                                          Nombre = usr.Nombre,
-                                          Cantidad = usr.Cantidad,
-                                          RutaImagen = usr.RutaImagen,
-                                          PrecioVenta = usr.PrecioVenta,
-                                          PrecioCosto = usr.PrecioCosto,
-                                          Descripcion = usr.Descripcion,
-                                      }).First();
-                        }
-                        cuenta.total = total;
-                    }
-
-                    if (Cuentas.Count() >= 1)
-                        return new ResponseModel { responseCode = 200, objectResponse = Cuentas, message = "Success" };
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontraron cuentas." };
-                }
+                // Incluye los detalles necesarios en una sola consulta
+                cuentas = await db.Cuentas
+                               .Include(c => c.RelCuentaProductos)
+                                   .ThenInclude(r => r.IdProductoNavigation)
+                               .Where(c => c.CuentaActiva.Value == estaActiva &&
+                                           c.IdEmpleado == IdEmpleado &&
+                                           (c.IdCorte == null || c.IdCorte == 0))
+                               .ToListAsync();
             }
-            catch (Exception ex)
+
+            if (!cuentas.Any())
+                return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontraron cuentas." };
+
+            // Calcular el total y asignar el nombre del empleado
+            Parallel.ForEach(cuentas, cuenta =>
             {
-                return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
-            }
+                cuenta.NombreEmpleado = cuenta.IdEmpleado.ToString();
+                cuenta.total = cuenta.RelCuentaProductos.Sum(p => Convert.ToDecimal(p.Precio) * Convert.ToDecimal(p.Cantidad));
+            });
+
+            return new ResponseModel { responseCode = 200, objectResponse = cuentas, message = "Success" };
         }
 
         public async Task<ResponseModel> Create(Cuenta cuentas)
         {
-            try
+            using (var db = new restauranteContext())
             {
-                using (var db = new restauranteContext())
+                cuentas.CuentaActiva = true;
+                cuentas.FechaApertura = GlobalConfig.GetMexDate();
+
+                db.Cuentas.Add(cuentas);
+                var resU = db.SaveChanges();
+
+                if (resU > 0)
                 {
-                    cuentas.CuentaActiva = true;
-                    cuentas.FechaApertura = GlobalConfig.GetMexDate();
-
-                    db.Cuentas.Add(cuentas);
-                    var resU = db.SaveChanges();
-
-                    if (resU > 0)
-                    {
-                        await daoMesa.StatusOcupada(new Mesa { Id = cuentas.IdMesa, Ocupada = true });
-                        return new ResponseModel { responseCode = 200, objectResponse = cuentas.Id, message = "Nueva cuenta abierta." };
-                    }
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo abrir la cuenta." };
+                    await _daoMesa.StatusOcupada(new Mesa { Id = cuentas.IdMesa, Ocupada = true });
+                    return new ResponseModel { responseCode = 200, objectResponse = cuentas.Id, message = "Nueva cuenta abierta." };
                 }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+                else
+                    return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo abrir la cuenta." };
             }
         }
 
         public async Task<ResponseModel> Cancel(int idCuenta)
         {
-            try
+            using (var db = new restauranteContext())
             {
-                using (var db = new restauranteContext())
-                {
-                    var cuenta = db.Cuentas.Where(u => u.Id == idCuenta).First<Cuenta>();
-                    cuenta.CuentaActiva = false;
-                    var resU = db.SaveChanges();
+                var cuenta = db.Cuentas.Where(u => u.Id == idCuenta).First<Cuenta>();
+                cuenta.CuentaActiva = false;
+                var resU = db.SaveChanges();
 
-                    if (resU > 0)
-                    {
-                        await daoMesa.StatusOcupada(new Mesa { Id = cuenta.IdMesa, Ocupada = false });
-                        return new ResponseModel { responseCode = 200, objectResponse = cuenta.Id, message = "La cuenta fue cancelada." };
-                    }
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo cancelar la cuenta." };
+                if (resU > 0)
+                {
+                    await _daoMesa.StatusOcupada(new Mesa { Id = cuenta.IdMesa, Ocupada = false });
+                    return new ResponseModel { responseCode = 200, objectResponse = cuenta.Id, message = "La cuenta fue cancelada." };
                 }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+                else
+                    return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo cancelar la cuenta." };
             }
         }
 
         public async Task<ResponseModel> CreateAssistant(Cuenta cuentas)
         {
-            try
+            using (var db = new restauranteContext())
             {
-                using (var db = new restauranteContext())
+                cuentas.CuentaActiva = true;
+                cuentas.FechaApertura = GlobalConfig.GetMexDate();
+
+                db.Cuentas.Add(cuentas);
+                var resU = db.SaveChanges();
+
+                if (resU > 0)
                 {
-                    cuentas.CuentaActiva = true;
-                    cuentas.FechaApertura = GlobalConfig.GetMexDate();
-
-                    db.Cuentas.Add(cuentas);
-                    var resU = db.SaveChanges();
-
-                    if (resU > 0)
-                    {
-                        await daoMesa.StatusOcupada(new Mesa { Id = cuentas.IdMesa, Ocupada = true });
-                        return new ResponseModel { responseCode = 200, objectResponse = cuentas.Id, message = "Nueva cuenta abierta." };
-                    }
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo abrir la cuenta." };
+                    await _daoMesa.StatusOcupada(new Mesa { Id = cuentas.IdMesa, Ocupada = true });
+                    return new ResponseModel { responseCode = 200, objectResponse = cuentas.Id, message = "Nueva cuenta abierta." };
                 }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+                else
+                    return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo abrir la cuenta." };
             }
         }
 
         public async Task<ResponseModel> AddProducto(RelCuentaProducto producto)
         {
-            try
+            using (var db = new restauranteContext())
             {
-                using (var db = new restauranteContext())
-                {
-                    var result = await daoPro.GetById(producto.IdProducto.Value);
-                    Producto productoBD = result.objectResponse;
-                    if (!string.IsNullOrEmpty(producto.NombreComplemento))
-                        producto.Precio = (productoBD.PrecioVenta + Convert.ToDecimal(producto.PrecioComplemento)).ToString();
-                    else
-                        producto.Precio = productoBD.PrecioVenta.ToString();
-                    producto.Nombre = productoBD.Nombre;
-                    producto.Descuento = productoBD.Descuento.ToString();
+                var result = await _daoPro.GetById(producto.IdProducto.Value);
+                if (result == null || result.objectResponse == null)
+                    return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se pudo agregar el producto a la cuenta." };
 
-                    db.RelCuentaProductos.Add(producto);
-                    var resU = db.SaveChanges();
+                Producto productoBD = result.objectResponse;
+                if (!string.IsNullOrEmpty(producto.NombreComplemento))
+                    producto.Precio = (productoBD.PrecioVenta + Convert.ToDecimal(producto.PrecioComplemento)).ToString();
+                else
+                    producto.Precio = productoBD.PrecioVenta.ToString();
 
-                    if (resU > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = producto.Id, message = "Producto Agregado." };
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se pudo agregar el producto a la cuenta." };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+                producto.Nombre = productoBD.Nombre;
+                producto.Descuento = productoBD.Descuento.ToString();
+
+                db.RelCuentaProductos.Add(producto);
+                var resU = db.SaveChanges();
+
+                if (resU > 0)
+                    return new ResponseModel { responseCode = 200, objectResponse = producto.Id, message = "Producto Agregado." };
+                else
+                    return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se pudo agregar el producto a la cuenta." };
             }
         }
 
         public async Task<ResponseModel> DeleteProduct(int id)
         {
-            try
+            using (var db = new restauranteContext())
             {
-                using (var db = new restauranteContext())
-                {
-                    var regitro = db.RelCuentaProductos.Where(u => u.Id == id).First<RelCuentaProducto>();
-                    db.RelCuentaProductos.Remove(regitro);
+                var regitro = await db.RelCuentaProductos.FindAsync(id);
+                //var regitro = db.RelCuentaProductos.Where(u => u.Id == id).First<RelCuentaProducto>();
+                db.RelCuentaProductos.Remove(regitro);
 
-                    var result = await db.SaveChangesAsync();
-                    if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "El producto fue eliminado exitosamente." };
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = null, message = "El producto no pudo ser eliminado." };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+                var result = await db.SaveChangesAsync();
+                if (result > 0)
+                    return new ResponseModel { responseCode = 200, objectResponse = result, message = "El producto fue eliminado exitosamente." };
+                else
+                    return new ResponseModel { responseCode = 404, objectResponse = null, message = "El producto no pudo ser eliminado." };
             }
         }
 
@@ -214,12 +166,12 @@ namespace Restaurante.Data.DAO
                             var result = await GetById(venta.IdCuenta);
                             Cuenta cuenta = result.objectResponse;
                             foreach (var producto in cuenta.RelCuentaProductos)
-                                await daoPro.ControlStock(producto.IdProducto.Value, Convert.ToInt32(producto.Cantidad));
+                                await _daoPro.ControlStock(producto.IdProducto.Value, Convert.ToInt32(producto.Cantidad));
                         }
                         catch (Exception ex) { error = error + " ControlStock: " + ex.Message; }
                         await StatusCuenta(venta.IdCuenta);
 
-                        await daoMesa.StatusOcupada(new Mesa { Id = idMesa, Ocupada = false });
+                        await _daoMesa.StatusOcupada(new Mesa { Id = idMesa, Ocupada = false });
                         return new ResponseModel { responseCode = 200, objectResponse = resU, message = "Venta regitrada exitosamente." + "\n" + error };
                     }
                     else
@@ -232,144 +184,85 @@ namespace Restaurante.Data.DAO
             }
         }
 
-        public async Task<ResponseModel> StatusCuenta(int idCuenta)
+        public async Task<ResponseModel> StatusCuenta(int id)
         {
-            try
+            using (var db = new restauranteContext())
             {
-                using (var con = new restauranteContext())
-                {
-                    var regitro = con.Cuentas.Where(u => u.Id == idCuenta).First<Cuenta>();
-                    regitro.CuentaActiva = false;
+                var regitro = await db.Cuentas.FindAsync(id);
+                //var regitro = db.Cuentas.Where(u => u.Id == idCuenta).First<Cuenta>();
+                regitro.CuentaActiva = false;
 
-                    var result = await con.SaveChangesAsync();
+                var result = await db.SaveChangesAsync();
 
-                    if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "La venta ha sido registrada" };
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La mesa no pudo ser guardada." };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+                if (result > 0)
+                    return new ResponseModel { responseCode = 200, objectResponse = result, message = "La venta ha sido registrada" };
+                else
+                    return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La mesa no pudo ser guardada." };
             }
         }
 
         public async Task<ResponseModel> GetAll(bool estaActiva)
         {
-            try
+            var cuentas = new List<Cuenta>();
+            using (var db = new restauranteContext())
             {
-                using (var db = new restauranteContext())
-                {
-                    var Cuentas = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking()
-                                          .Where(cu => cu.CuentaActiva.Value == estaActiva && cu.IdCorte == null || cu.IdCorte == 0)
-                                           .ToListAsync();
-
-                    foreach (var cuenta in Cuentas)
-                    {
-                        decimal total = 0;
-                        var empleado = await db.Usuarios.AsNoTracking().Where(us => us.Id == cuenta.IdEmpleado).FirstAsync();
-                        cuenta.NombreEmpleado = empleado.Nombre;
-                        foreach (var productos in cuenta.RelCuentaProductos)
-                        {
-                            var subtotal = Convert.ToDecimal(productos.Precio) * Convert.ToInt32(productos.Cantidad);
-                            total = total + subtotal;
-
-                            productos.IdProductoNavigation =
-                                     (from usr in db.Productos.AsNoTracking()
-                                      where usr.Id == productos.IdProducto
-                                      select new Producto
-                                      {
-                                          Id = usr.Id,
-                                          Nombre = usr.Nombre,
-                                          Cantidad = usr.Cantidad,
-                                          RutaImagen = usr.RutaImagen,
-                                          PrecioVenta = usr.PrecioVenta,
-                                          PrecioCosto = usr.PrecioCosto,
-                                          Descripcion = usr.Descripcion,
-                                      }).First();
-                        }
-                        cuenta.total = total;
-                    }
-
-                    if (Cuentas.Count() >= 1)
-                        return new ResponseModel { responseCode = 200, objectResponse = Cuentas, message = "Success" };
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontraron cuentas." };
-                }
+                cuentas = await db.Cuentas
+                               .Include(c => c.RelCuentaProductos)
+                                   .ThenInclude(r => r.IdProductoNavigation)
+                               .Where(c => c.CuentaActiva.Value == estaActiva &&
+                                           (c.IdCorte == null || c.IdCorte == 0))
+                               .ToListAsync();
             }
-            catch (Exception ex)
+
+            if (!cuentas.Any())
+                return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontraron cuentas." };
+
+            // Calcular el total y asignar el nombre del empleado
+            Parallel.ForEach(cuentas, cuenta =>
             {
-                return new ResponseModel { responseCode = 500, objectResponse = new List<Cuenta>(), message = ex.Message };
-            }
+                cuenta.NombreEmpleado = cuenta.IdEmpleado.ToString();
+                cuenta.total = cuenta.RelCuentaProductos.Sum(p => Convert.ToDecimal(p.Precio) * Convert.ToDecimal(p.Cantidad));
+            });
+
+            return new ResponseModel { responseCode = 200, objectResponse = cuentas, message = "Success" };
         }
 
         public async Task<ResponseModel> GetById(int id)
         {
-            try
+            Cuenta cuenta = new Cuenta();
+            using (var db = new restauranteContext())
             {
-                Cuenta cuenta = new Cuenta();
-                using (var db = new restauranteContext())
-                {
-                    cuenta = await db.Cuentas.Include("RelCuentaProductos").AsNoTracking().Where(usr => usr.Id == id).FirstAsync();
-                    decimal total = 0;
-                    foreach (var productos in cuenta.RelCuentaProductos)
-                    {
-                        var subtotal = Convert.ToDecimal(productos.Precio) * Convert.ToInt32(productos.Cantidad);
-                        total = total + subtotal;
-
-                        productos.IdProductoNavigation =
-                                 (from usr in db.Productos.AsNoTracking()
-                                  where usr.Id == productos.IdProducto
-                                  select new Producto
-                                  {
-                                      Id = usr.Id,
-                                      Nombre = usr.Nombre,
-                                      Cantidad = usr.Cantidad,
-                                      RutaImagen = usr.RutaImagen,
-                                      PrecioVenta = usr.PrecioVenta,
-                                      PrecioCosto = usr.PrecioCosto,
-                                      Descripcion = usr.Descripcion,
-                                  }).First();
-                    }
-                    cuenta.total = total;
-                }
-
-                if (cuenta.Id > 0)
-                    return new ResponseModel { responseCode = 200, objectResponse = cuenta, message = "Success" };
-                else
-                    return new ResponseModel { responseCode = 404, objectResponse = new Cuenta(), message = "No se encontraron cuentas." };
+                cuenta = await db.Cuentas
+                             .Include(c => c.RelCuentaProductos)
+                                 .ThenInclude(r => r.IdProductoNavigation)
+                             .Where(c => (c.IdCorte == null || c.IdCorte == 0))
+                             .FirstAsync();
             }
-            catch (Exception ex)
-            {
-                return new ResponseModel
-                {
-                    responseCode = 500,
-                    objectResponse = new Categoria(),
-                    message = ex.Message
-                };
-            }
+
+            if (cuenta == null)
+                return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontró la cuenta." };
+
+            cuenta.NombreEmpleado = cuenta.IdEmpleado.ToString();
+            cuenta.total = cuenta.RelCuentaProductos.Sum(p => Convert.ToDecimal(p.Precio) * Convert.ToDecimal(p.Cantidad));
+
+            if (cuenta.Id > 0)
+                return new ResponseModel { responseCode = 200, objectResponse = cuenta, message = "Success" };
+            else
+                return new ResponseModel { responseCode = 404, objectResponse = new Cuenta(), message = "No se encontraron cuentas." };
         }
 
         public async Task<bool> Exist(int id)
         {
-            try
+            Cuenta cuenta = new Cuenta();
+            using (var db = new restauranteContext())
             {
-                Cuenta cuenta = new Cuenta();
-                using (var db = new restauranteContext())
-                {
-                    cuenta = await db.Cuentas.AsNoTracking().Where(usr => usr.Id == id).FirstAsync();
-                }
+                cuenta = await db.Cuentas.FindAsync(id);
+            }
 
-                if (cuenta.Id > 0)
-                    return true;
-                else
-                    return false;
-            }
-            catch (Exception)
-            {
+            if (cuenta.Id > 0)
+                return true;
+            else
                 return false;
-            }
         }
 
         #endregion

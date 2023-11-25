@@ -7,18 +7,19 @@ using Microsoft.AspNetCore.Http;
 using Restaurante.Web.Common;
 using Restaurante.Data.DBModels;
 using Restaurante.Data.DAO;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurant.Web.Controllers
 {
     public class LoginController : Controller
     {
         private readonly LoginDAO _daoLogin;
-        private readonly ConfiguracionDAO _daoConfig;
+        private readonly IConfiguracionDAO _daoConfig;
 
-        public LoginController()
+        public LoginController(IConfiguracionDAO daoConfig)
         {
             _daoLogin = new LoginDAO();
-            _daoConfig = new ConfiguracionDAO();
+            _daoConfig = daoConfig;
         }
 
         public async Task<ActionResult> Login()

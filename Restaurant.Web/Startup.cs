@@ -10,6 +10,8 @@ using Restaurant.Repository.Config;
 using Restaurant.Repository.Interfaces;
 using Restaurant.Web.Extentions;
 using Restaurante.Data.DAO;
+using Restaurante.Data.DBModels;
+using Restaurante.Model;
 using System;
 using System.Globalization;
 
@@ -48,6 +50,15 @@ namespace Restaurant.Web
 
             //INYECCIONES
             services.AddScoped<ICajaChicaDAO, CajaChicaDAO>();
+            services.AddScoped<IMesasDAO, MesasDAO>();
+            services.AddScoped<IProductosDAO, ProductosDAO>();
+            services.AddScoped<ICuentasDAO, CuentasDAO>();
+            services.AddScoped<ICategoriasDAO, CategoriasDAO>();
+            services.AddScoped<IUsuariosDAO, UsuarioDAO>();
+            services.AddScoped<IComplementosDAO, ComplementosDAO>();
+            services.AddScoped<IConfiguracionDAO, ConfiguracionDAO>();
+            services.AddScoped<ICortesDAO, CortesDAO>();
+            services.AddScoped<IVentasDAO, VentasDAO>();
 
             //var sqlConnectionConfiguration = new SqlConfiguration(Configuration.GetConnectionString("SqlConnection"));
             //ENTITY

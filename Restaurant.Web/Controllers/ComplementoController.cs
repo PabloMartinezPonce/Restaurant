@@ -2,23 +2,21 @@
 using Restaurant.Web.Common;
 using Restaurante.Data.DAO;
 using Restaurante.Model;
-using Restaurante.Model.DTOs;
 using Restaurante.Web.Common;
 using System;
-using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurant.Web.Controllers
 {
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class ComplementoController : Controller
     {
-        private readonly ComplementosDAO _dao;
-        public ComplementoController()
+        private readonly IComplementosDAO _dao;
+        public ComplementoController(IComplementosDAO dao)
         {
-            _dao = new ComplementosDAO();
+            _dao = dao;
         }
 
         [HttpGet]

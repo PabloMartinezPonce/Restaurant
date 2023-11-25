@@ -85,24 +85,16 @@ namespace Restaurante.Data.DAO
 
         public async Task<ResponseModel> Create(CajachicaDTO entityDTO)
         {
-            throw new NotImplementedException();
-            try
+            var entity = _mapper.Map<Cajachica>(entityDTO);
+            using (var db = new restauranteContext())
             {
-                var entity = _mapper.Map<Cajachica>(entityDTO);
-                using (var db = new restauranteContext())
-                {
-                    db.Cajachicas.Add(entity);
+                db.Cajachicas.Add(entity);
 
-                    var result = await db.SaveChangesAsync();
-                    if (result > 0)
-                        return new ResponseModel { responseCode = 200, objectResponse = result, message = "Movimiento registrado exitosamente." };
-                    else
-                        return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
-                }
-            }
-            catch (Exception ex)
-            {
-                return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
+                var result = await db.SaveChangesAsync();
+                if (result > 0)
+                    return new ResponseModel { responseCode = 200, objectResponse = result, message = "Movimiento registrado exitosamente." };
+                else
+                    return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
             }
         }
 

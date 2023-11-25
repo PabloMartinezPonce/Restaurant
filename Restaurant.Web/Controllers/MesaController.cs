@@ -1,22 +1,22 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Web;
 using Restaurante.Data.DBModels;
 using Restaurant.Web.Common;
 using Restaurante.Data.DAO;
 using Restaurante.Web.Common;
 using Restaurante.Model;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurant.Web.Controllers
 {
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class MesaController : Controller
     {
-        private readonly MesasDAO _dao;
-        public MesaController()
+        private readonly IMesasDAO _dao;
+        public MesaController(IMesasDAO dao)
         {
-            _dao = new MesasDAO();
+            _dao = dao;
         }
 
         [HttpGet]

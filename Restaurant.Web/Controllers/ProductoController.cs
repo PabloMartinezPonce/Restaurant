@@ -2,38 +2,34 @@
 using Restaurant.Web.Common;
 using Restaurante.Data.DAO;
 using Restaurante.Model;
-using Restaurante.Model.DTOs;
 using Restaurante.Web.Common;
 using System;
-using System.Collections.Generic;
-using System.Text.Json;
 using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
-using System.Linq;
 using Microsoft.AspNetCore.Http;
-using System.IO;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurant.Web.Controllers
 {
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class ProductoController : Controller
     {
-        private readonly ProductosDAO _dao;
-        private readonly CategoriasDAO _daoCat;
-        private readonly ComplementosDAO _daoCom;
+        private readonly IProductosDAO _dao;
+        private readonly IComplementosDAO _daoCom;
+        private readonly IUsuariosDAO _daoUsr;
+        private readonly ICategoriasDAO _daoCat;
+        private readonly IVentasDAO _daoVenta;
         private readonly ProveedoresDAO _daoPro;
-        private readonly UsuarioDAO _daoUsr;
-        private readonly VentasDAO _daoVenta;
         private readonly MedicionesDAO _daoMed;
         private readonly IngredientesDAO _daoIng;
-        public ProductoController()
+        public ProductoController(IProductosDAO dao, IComplementosDAO daoCom, IUsuariosDAO daoUsr, ICategoriasDAO daoCat, IVentasDAO daoVenta)
         {
-            _dao = new ProductosDAO();
-            _daoCat = new CategoriasDAO();
-            _daoCom = new ComplementosDAO();
+            _dao = dao;
+            _daoCom = daoCom;
+            _daoUsr = daoUsr;
+            _daoCat= daoCat;
             _daoPro = new ProveedoresDAO();
-            _daoUsr = new UsuarioDAO();
-            _daoVenta = new VentasDAO();
+            _daoVenta = daoVenta;
             _daoMed = new MedicionesDAO();
             _daoIng = new IngredientesDAO();
         }

@@ -1,22 +1,21 @@
 ﻿using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Web;
 using Restaurante.Data.DBModels;
 using Restaurant.Web.Common;
-using Restaurante.Data.DAO;
 using Restaurante.Web.Common;
 using Restaurante.Model;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurant.Web.Controllers
 {
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class CategoriaController : Controller
     {
-        private readonly CategoriasDAO _dao;
-        public CategoriaController()
+        private readonly ICategoriasDAO _dao;
+        public CategoriaController(ICategoriasDAO dao)
         {
-            _dao = new CategoriasDAO();
+            _dao = dao;
         }
 
         [HttpGet]

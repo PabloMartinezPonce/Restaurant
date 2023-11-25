@@ -1,15 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Restaurante.Model;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
-using System;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurante.Data.DAO
 {
-    public class ProductosDAO
+    public class ProductosDAO : IProductosDAO
     {
         #region CRUD Entidad Productos
 

@@ -5,10 +5,11 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurante.Data.DAO
 {
-    public class UsuarioDAO
+    public class UsuarioDAO : IUsuariosDAO
     {
         #region CRUD Entidad Usuario
 

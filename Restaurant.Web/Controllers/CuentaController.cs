@@ -1,13 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Restaurant.Web;
+using Restaurant.Repository.Interfaces;
 using Restaurant.Web.Common;
-using Restaurante.Data.DAO;
 using Restaurante.Data.DBModels;
 using Restaurante.Model;
 using Restaurante.Web.Common;
@@ -17,21 +14,21 @@ namespace Restaurant.Web.Controllers
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class CuentaController : Controller
     {
-        private readonly CuentasDAO _dao;
-        private readonly CategoriasDAO _daoCat;
-        private readonly UsuarioDAO _daoUsr;
-        private readonly MesasDAO _daoMsa;
-        private readonly ProductosDAO _daoPro;
-        private readonly ComplementosDAO _daoCom;
+        private readonly ICuentasDAO _dao;
+        private readonly ICategoriasDAO _daoCat;
+        private readonly IUsuariosDAO _daoUsr;
+        private readonly IMesasDAO _daoMsa;
+        private readonly IProductosDAO _daoPro;
+        private readonly IComplementosDAO _daoCom;
 
-        public CuentaController()
+        public CuentaController(ICuentasDAO dao, IUsuariosDAO daoUsr, ICategoriasDAO daoCat, IMesasDAO daoMsa, IProductosDAO daoPro, IComplementosDAO daoCom)
         {
-            _dao = new CuentasDAO();
-            _daoCat = new CategoriasDAO();
-            _daoUsr = new UsuarioDAO();
-            _daoMsa = new MesasDAO();
-            _daoPro = new ProductosDAO();
-            _daoCom = new ComplementosDAO();
+            _dao = dao;
+            _daoCat = daoCat;
+            _daoUsr = daoUsr;
+            _daoMsa = daoMsa;
+            _daoPro = daoPro;
+            _daoCom = daoCom;
         }
 
         [HttpGet]

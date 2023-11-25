@@ -10,20 +10,21 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
 using Microsoft.AspNetCore.Http;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurant.Web.Controllers
 {
     [Permiso(permiso = EnumPermisos.AdministradorTotal)]
     public class UsuarioController : Controller
     {
-        private readonly UsuarioDAO _daoUsuario;
+        private readonly IUsuariosDAO _daoUsuario;
+        private readonly IConfiguracionDAO _daoConfig;
         private readonly RolesDAO _daoRoles;
-        private readonly ConfiguracionDAO _daoConfig;
-        public UsuarioController()
+        public UsuarioController(IUsuariosDAO daoUsuario, IConfiguracionDAO daoConfig)
         {
-            _daoUsuario = new UsuarioDAO();
+            _daoUsuario = daoUsuario;
+            _daoConfig = daoConfig;
             _daoRoles = new RolesDAO();
-            _daoConfig = new ConfiguracionDAO();
         }
 
         [HttpGet]
