@@ -27,7 +27,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "No se encontraron roles." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
             }

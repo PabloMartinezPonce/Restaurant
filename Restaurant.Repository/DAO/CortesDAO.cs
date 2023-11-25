@@ -28,7 +28,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = new List<Corte>(), message = "No se encontraron cortes." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = new List<Corte>(), message = ex.Message };
             }
@@ -48,7 +48,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = new List<Corte>(), message = "No se encontraron cortes." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = new List<Corte>(), message = ex.Message };
             }
@@ -70,7 +70,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "Las cuentas no se han actualizado." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -92,7 +92,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "Las cuentas no se han actualizado." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -114,7 +114,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "Las cuentas no se han actualizado." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -151,7 +151,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El producto no pudo ser actualizado." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -172,7 +172,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -194,7 +194,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La categoría no pudo ser eliminada." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }

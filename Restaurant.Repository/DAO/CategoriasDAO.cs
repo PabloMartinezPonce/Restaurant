@@ -26,7 +26,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = new List<Categoria>(), message = "No se encontraron categorías." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = new List<Categoria>(), message = ex.Message };
             }
@@ -46,7 +46,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = new Categoria(), message = "No se encontraron categorías." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = new Categoria(), message = ex.Message };
             }
@@ -67,7 +67,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -91,7 +91,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La categoría no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -113,7 +113,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La categoría no pudo ser eliminada." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }

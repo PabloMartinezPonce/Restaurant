@@ -59,7 +59,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontraron cuentas." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
             }
@@ -86,7 +86,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo abrir la cuenta." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -111,7 +111,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo cancelar la cuenta." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -138,7 +138,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se puedo abrir la cuenta." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -168,7 +168,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se pudo agregar el producto a la cuenta." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -190,7 +190,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El producto no pudo ser eliminado." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -226,7 +226,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "No se encontraron ventas." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -249,7 +249,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La mesa no pudo ser guardada." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -298,7 +298,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = new List<Cuenta>(), message = "No se encontraron cuentas." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = new List<Cuenta>(), message = ex.Message };
             }
@@ -340,7 +340,7 @@ namespace Restaurante.Data.DAO
                 else
                     return new ResponseModel { responseCode = 404, objectResponse = new Cuenta(), message = "No se encontraron cuentas." };
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel
                 {
@@ -366,7 +366,7 @@ namespace Restaurante.Data.DAO
                 else
                     return false;
             }
-            catch (SqlException)
+            catch (Exception)
             {
                 return false;
             }

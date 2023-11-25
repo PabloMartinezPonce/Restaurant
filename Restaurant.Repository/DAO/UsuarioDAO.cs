@@ -31,7 +31,7 @@ namespace Restaurante.Data.DAO
         //                return null;
         //        }
         //    }
-        //    catch (SqlException ex)
+        //    catch (Exception ex)
         //    {
         //        throw ex;
         //    }
@@ -51,7 +51,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "No se encontraron usuarios." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
             }
@@ -71,7 +71,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
             }
@@ -91,7 +91,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -111,7 +111,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = new List<Usuario>(), message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -132,7 +132,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -163,7 +163,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }
@@ -185,7 +185,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
             }
@@ -207,7 +207,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = null, message = "El usuario no existe." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = ex, message = ex.Message };
             }
@@ -229,7 +229,7 @@ namespace Restaurante.Data.DAO
                         return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no pudo ser eliminada." };
                 }
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
             }

@@ -8,6 +8,7 @@ using Restaurante.Data.DAO;
 using Restaurante.Web.Common;
 using Restaurant.Model;
 using Restaurante.Model;
+using Restaurant.Repository.Interfaces;
 
 namespace Restaurant.Web.Controllers
 {
@@ -16,12 +17,12 @@ namespace Restaurant.Web.Controllers
     {
         private readonly CortesDAO _dao;
         private readonly VentasDAO _daoVen;
-        private readonly CajaChicaDAO _daoCaja;
-        public CorteController()
+        private readonly ICajaChicaDAO _daoCaja;
+        public CorteController(ICajaChicaDAO daoCaja)
         {
             _dao = new CortesDAO();
             _daoVen = new VentasDAO();
-            _daoCaja = new CajaChicaDAO();
+            _daoCaja = daoCaja;
         }
 
         [HttpGet]

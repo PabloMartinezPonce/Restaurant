@@ -44,7 +44,7 @@ namespace Restaurante.Web.Common
                 //    }));
                 //}
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 //MvcApplication.log.Error(ex.Message);
                 filterContext.Result = new RedirectToRouteResult(new RouteValueDictionary(new

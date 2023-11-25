@@ -1,4 +1,7 @@
 ﻿
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using Nancy.Json;
 using Restaurante.Model;
 using System;
 
@@ -6,6 +9,12 @@ namespace Restaurant.Web.Common
 {
     public class CommonTxt
     {
+        private readonly ILogger<Controller> _logger;
+
+        public  CommonTxt(ILogger<Controller> logger)
+        {
+            _logger = logger;
+        }
 
         #region Métodos String
         public static string GetMessage(Exception ex)
@@ -19,6 +28,7 @@ namespace Restaurant.Web.Common
             catch (Exception exc)
             {
                 message = "No se pudo detectar el error en la excepción: " + ex + ". debido a: " + exc;
+                //_logger.LogError(message);
                 //MvcApplication.log.Error(message);
             }
             return message;
@@ -57,6 +67,22 @@ namespace Restaurant.Web.Common
                 message = message,
             };
         }
+        #endregion
+
+
+        #region Respuestas Dinamicas
+        public static ResponseModel Response(string message, dynamic objectResponse, int responseCode) =>
+            new ResponseModel { objectResponse = objectResponse, message = message, responseCode = responseCode };
+
+        public static string ResponseSerialized(string message, dynamic objectResponse, int responseCode) =>
+           Serialize(new ResponseModel
+           { objectResponse = objectResponse, message = message, responseCode = responseCode }).ToString();
+
+        public static string Serialize(dynamic objectResponse) =>
+          new JavaScriptSerializer().Serialize(objectResponse).ToString();
+
+        public static string Log(string message, string endPoint) =>
+          string.Format(message, DateTime.UtcNow.ToLongTimeString(), endPoint);
         #endregion
 
     }

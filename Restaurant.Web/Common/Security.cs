@@ -8,8 +8,8 @@ namespace Restaurante.Web.Common
 {
     public class Security : Controller
     {
-        private string session = string.Empty;
-        IHttpContextAccessor httpContextAccessor;
+        //private string session = string.Empty;
+        //IHttpContextAccessor httpContextAccessor = null;
         public Security()
         {
             //session = httpContextAccessor.HttpContext.Session.GetString("UserSession");

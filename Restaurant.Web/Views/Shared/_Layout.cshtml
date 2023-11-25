@@ -84,7 +84,7 @@
                             <li class="dropdown notifications-menu">
                                 @*<span class="label label-primary">5</span>*@
                                 <a href="#" class="waves-effect waves-light dropdown-toggle btn-primary-light" data-bs-toggle="dropdown" title="Notifications">
-                                    <i class="icon-Notifications"><span class="path1"></span><span class="path2"></span></i>
+                                    <i class="fa fa-bell"><span class="path1"></span><span class="path2"></span></i>
                                 </a>
                                 <ul class="dropdown-menu animated bounceIn">
 
@@ -140,7 +140,7 @@
                             <li class="dropdown messages-menu">
                                 <span class="label label-danger"></span>
                                 <a onclick="Hablame()" href="javascript:void(0)" class="dropdown-toggle btn-danger-light" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="icon-Mic"><span class="path1"></span><span class="path2"></span></i>
+                                    <i class="fa fa-microphone"><span class="path1"></span><span class="path2"></span></i>
                                 </a>
                             </li>
                             <!-- Right Sidebar Toggle Button -->
@@ -193,26 +193,25 @@
                 @if (usuario.IdRol == 1)
                 {
 
-                    <li><a href="../Login/Dashboard"><i class="icon-Home"><span class="path1"></span><span class="path2"></span></i>Dashboard</a></li>
+                    <li><a href="../Login/Dashboard"><i class="fa fa-dashboard"><span class="path1"></span><span class="path2"></span></i>Dashboard</a></li>
                     <li>
-                        <a href="#"><i class="icon-Dinner"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Menú</a>
+                        <a href="#"><i class="fa fa-calendar-minus-o"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Menú</a>
                         <ul>
-                            <li><a href="../Categoria/Categorias"><i class="mdi mdi-format-list-bulleted-type"><span class="path1"></span><span class="path2"></span></i>Categorías</a></li>
-                            <li><a href="../Producto/Productos"><i class="mdi mdi-food"><span class="path1"></span><span class="path2"></span></i>Productos</a></li>
-                            <li><a href="../Complemento/Complementos"><i class="mdi mdi-cookie"><span class="path1"></span><span class="path2"></span></i>Complementos</a></li>
-                            <li><a href="../Ingrediente/Ingredientes"><i class="mdi mdi-library-books"><span class="path1"></span><span class="path2"></span></i>Ingredientes</a></li>
-                        </ul>
-
-                    </li>
-                    <li>
-                        <a href="#"><i class="mdi mdi-account-multiple"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Personas</a>
-                        <ul>
-                            <li><a href="../Usuario/Usuarios"><i class="iconsmind-Add-UserStar"><span class="path1"></span><span class="path2"></span></i>Staff</a></li>
-                            <li><a href="../Login/Dashboard"><i class="ti ti-truck"><span class="path1"></span><span class="path2"></span></i>Proveedores</a></li>
+                            <li><a href="../Categoria/Categorias"><i class="fa fa-list"><span class="path1"></span><span class="path2"></span></i>Categorías</a></li>
+                            <li><a href="../Producto/Productos"><i class="fa fa-beer"><span class="path1"></span><span class="path2"></span></i>Productos</a></li>
+                            <li><a href="../Complemento/Complementos"><i class="fa fa-apple"><span class="path1"></span><span class="path2"></span></i>Complementos</a></li>
+                            <li><a href="../Ingrediente/Ingredientes"><i class="fa fa-bookmark"><span class="path1"></span><span class="path2"></span></i>Ingredientes</a></li>
                         </ul>
                     </li>
                     <li>
-                        <a href="#"><i class="mdi mdi-file-export"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Administrar</a>
+                        <a href="#"><i class="fa fa-user-circle"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Personas</a>
+                        <ul>
+                            <li><a href="../Usuario/Usuarios"><i class="fa fa-users"><span class="path1"></span><span class="path2"></span></i>Staff</a></li>
+                            <li><a href="../Login/Dashboard"><i class="fa fa-truck"><span class="path1"></span><span class="path2"></span></i>Proveedores</a></li>
+                        </ul>
+                    </li>
+                    <li>
+                        <a href="#"><i class="fa fa-suitcase"><span class="path1"></span><span class="path2"></span><span class="path3"></span></i>Administrar</a>
                         <ul>
                             <li><a href="../Cuenta/Cuentas"><i class="fa fa-sticky-note-o"><span class="path1"></span><span class="path2"></span></i> Cuentas</a></li>
                             <li><a href="../Venta/Ventas?_fechaInicio=@GlobalConfig.GetMexDate().Date&_fechaFin=@GlobalConfig.GetMexDate().Date"><i class="fa fa-money"><span class="path1"></span><span class="path2"></span></i> Ventas</a></li>

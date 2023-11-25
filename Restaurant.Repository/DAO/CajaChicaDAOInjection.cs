@@ -27,7 +27,7 @@ namespace Restaurante.Data.DAO
         //        else
         //            return new ResponseModel { responseCode = 404, objectResponse = new List<Cajachica>(), message = "No se encontraron categorías." };
         //    }
-        //    catch (SqlException ex)
+        //    catch (Exception ex)
         //    {
         //        return new ResponseModel { responseCode = 500, objectResponse = new List<Cajachica>(), message = ex.Message };
         //    }
@@ -57,7 +57,7 @@ namespace Restaurante.Data.DAO
         //        else
         //            return new ResponseModel { responseCode = 404, objectResponse = totales, message = "No se encontraron categorías." };
         //    }
-        //    catch (SqlException ex)
+        //    catch (Exception ex)
         //    {
         //        return new ResponseModel { responseCode = 500, objectResponse = new Cajachica(), message = ex.Message };
         //    }
@@ -74,7 +74,7 @@ namespace Restaurante.Data.DAO
         //        else
         //            return new ResponseModel { responseCode = 404, objectResponse = new Cajachica(), message = "No se encontraron categorías." };
         //    }
-        //    catch (SqlException ex)
+        //    catch (Exception ex)
         //    {
         //        return new ResponseModel { responseCode = 500, objectResponse = new Cajachica(), message = ex.Message };
         //    }
@@ -92,7 +92,7 @@ namespace Restaurante.Data.DAO
         //        else
         //            return new ResponseModel { responseCode = 404, objectResponse = 0, message = "El usuario no existe." };
         //    }
-        //    catch (SqlException ex)
+        //    catch (Exception ex)
         //    {
         //        return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
         //    }
@@ -111,7 +111,7 @@ namespace Restaurante.Data.DAO
         //        else
         //            return new ResponseModel { responseCode = 404, objectResponse = 0, message = "La categoría no pudo ser eliminada." };
         //    }
-        //    catch (SqlException ex)
+        //    catch (Exception ex)
         //    {
         //        return new ResponseModel { responseCode = 500, objectResponse = 0, message = ex.Message };
         //    }
