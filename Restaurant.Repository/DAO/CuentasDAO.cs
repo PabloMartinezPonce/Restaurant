@@ -232,10 +232,15 @@ namespace Restaurante.Data.DAO
             Cuenta cuenta = new Cuenta();
             using (var db = new restauranteContext())
             {
+                //cuenta = await db.Cuentas
+                //             .Include(c => c.RelCuentaProductos)
+                //                 .ThenInclude(r => r.IdProductoNavigation)
+                //             .Where(c => (c.IdCorte == null || c.IdCorte == 0))
+                //             .FirstAsync();
                 cuenta = await db.Cuentas
                              .Include(c => c.RelCuentaProductos)
                                  .ThenInclude(r => r.IdProductoNavigation)
-                             .Where(c => (c.IdCorte == null || c.IdCorte == 0))
+                             .Where(c => c.Id == id)
                              .FirstAsync();
             }
 

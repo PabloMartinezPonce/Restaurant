@@ -1,17 +1,16 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Restaurante.Model;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Threading.Tasks;
 using Restaurante.Data.DBModels;
 using Restaurant.Repository.Interfaces;
+//using Microsoft.Extensions.Caching.Memory;
+using System.Runtime.Caching;
 
 namespace Restaurante.Data.DAO
 {
     public class UsuarioDAO : IUsuariosDAO
     {
         #region CRUD Entidad Usuario
+        private static ObjectCache cache = MemoryCache.Default;
 
         //public Usuario GetUserLogin(LoginRequestModel login)
         //{
@@ -111,6 +110,39 @@ namespace Restaurante.Data.DAO
                     else
                         return new ResponseModel { responseCode = 404, objectResponse = new List<Usuario>(), message = "El usuario no existe." };
                 }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public async Task<ResponseModel> GetUserByRolCacje(int idRol)
+        {
+            try
+            {
+                string claveCache = "miClaveDeDatos";
+                var datos = cache[claveCache] as ResponseModel;
+
+                if (datos == null)
+                {
+                    // La data no está en la caché, así que la obtenemos de la base de datos
+                    using (var db = new restauranteContext())
+                    {
+                        var usuarios = await db.Usuarios.AsNoTracking().Where(e => e.IdRol == idRol).ToListAsync();
+
+                        if (usuarios.Count > 0)
+                            datos = new ResponseModel { responseCode = 200, objectResponse = usuarios, message = "Success" };
+                        else
+                            datos = new ResponseModel { responseCode = 404, objectResponse = new List<Usuario>(), message = "El usuario no existe." };
+                    }
+
+                    // Almacenar en la caché
+                    CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddHours(1) };
+                    cache.Add(claveCache, datos, policy);
+                }
+
+                return datos;
             }
             catch (Exception ex)
             {

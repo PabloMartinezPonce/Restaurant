@@ -19,7 +19,7 @@ namespace Restaurante.Data.DAO
                 if (mesas.Any())
                     return new ResponseModel { responseCode = 200, objectResponse = mesas, message = "Success" };
                 else
-                    return new ResponseModel { responseCode = 404, objectResponse = mesas, message = "No se encontraron mesas." };
+                    return new ResponseModel { responseCode = 404, objectResponse = new Mesa(), message = "No se encontraron mesas." };
             }
         }
 
@@ -32,7 +32,7 @@ namespace Restaurante.Data.DAO
                 if (mesa != null)
                     return new ResponseModel { responseCode = 200, objectResponse = mesa, message = "Success" };
                 else
-                    return new ResponseModel { responseCode = 404, objectResponse = mesa, message = "No se encontraron mesas." };
+                    return new ResponseModel { responseCode = 404, objectResponse = new Mesa(), message = "No se encontraron mesas." };
             }
         }
 

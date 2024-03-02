@@ -28,24 +28,24 @@
                         <a class="dropdown-item" href="@Url.Action("Cuentas", "Cuenta", new {idEmpleado = 0, estaActiva = false })"><span class="badge badge-ring badge-danger me-1"></span> Cuenta Inactiva</a>
                     </div>
                 </div>
-                @*<div class="dropdown">
-                        <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesero</a>
-                        <div class="dropdown-menu">
-                            @foreach (var item in ViewBag.ListaEmpleados)
-                            {
-                                <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.Nombre</a>
-                            }
-                        </div>
-                    </div>*@
-                @*<div class="dropdown">
-                        <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesa</a>
-                        <div class="dropdown-menu">
-                            @foreach (var item in ViewBag.ListaMesas)
-                            {
-                                <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.TipoLugar #@item.Id</a>
-                            }
-                        </div>
-                    </div>*@
+                <div class="dropdown">
+                    <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesero</a>
+                    <div class="dropdown-menu">
+                        @foreach (var item in ViewBag.ListaEmpleados)
+                        {
+                            <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.Nombre</a>
+                        }
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <a class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" href="#" aria-expanded="false">Filtrar por mesa</a>
+                    <div class="dropdown-menu">
+                        @foreach (var item in ViewBag.ListaMesas)
+                        {
+                            <a class="dropdown-item" href="#"><span class="badge badge-ring badge-danger me-1"></span> @item.TipoLugar #@item.Id</a>
+                        }
+                    </div>
+                </div>
             </div>
 
             <div>
@@ -144,6 +144,7 @@ else
                                                 <option disabled selected value="">Selecciona una mesa</option>
                                                 @foreach (var item in ViewBag.ListaMesas)
                                                 {
+                                                    @*<option value="0">#Sin Mesa - Cuenta Aparte</option>*@
                                                     <option value="@item.Id">#@item.TipoLugar - @item.Descripcion</option>
                                                 }
                                             </select>
@@ -180,7 +181,7 @@ else
 </div>
 <!-- /.modal -->
 @section scripts
-{
+    {
     @*<script src="~/ViewAjax/ProductoFunction.js"></script>*@
 
     <script>
@@ -233,7 +234,7 @@ else
             });
         });
 
-         //Cancelar cuenta
+        //Cancelar cuenta
         function CancelarCuenta(idCuenta) {
             swal({
                 title: '¿Esta seguro de canlear la cuenta?',
@@ -247,24 +248,24 @@ else
             },
                 function (isConfirm) {
                     if (isConfirm) {
-            $.ajax({
-                url: "CancelarCuenta",
-                data: { id: idCuenta },
-                type: 'POST',
-                dataType: "json",
-                success: function (data) {
-                    if (data.responseCode == 200) {
-                        swal({ title: 'Éxito', text: data.message, type: "success", },
-                            function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/Cuentas"; } });
-                    } else {
-                        swal({ title: "Error", text: data.message, icon: "error" });
-                    }
-                }, error: function (err) {
-                    swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
-                }
-            }).done(function (data) {
-                //AlertExpiration(data);
-            });
+                        $.ajax({
+                            url: "CancelarCuenta",
+                            data: { id: idCuenta },
+                            type: 'POST',
+                            dataType: "json",
+                            success: function (data) {
+                                if (data.responseCode == 200) {
+                                    swal({ title: 'Éxito', text: data.message, type: "success", },
+                                        function (isConfirm) { if (isConfirm) { window.location.href = "/Cuenta/Cuentas"; } });
+                                } else {
+                                    swal({ title: "Error", text: data.message, icon: "error" });
+                                }
+                            }, error: function (err) {
+                                swal({ title: "Error Inesperado", text: err.responseText, icon: "error" });
+                            }
+                        }).done(function (data) {
+                            //AlertExpiration(data);
+                        });
                     }
                 })
         };
